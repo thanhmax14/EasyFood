@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.Services.Categorys
 {
-    public class CategoryService
+    public class CategoryService:ICategoryService
     {
         private readonly ICategoryRepository _repository;
         private readonly IMapper _mapper;
