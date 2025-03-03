@@ -3,6 +3,7 @@ using BusinessLogic.Mapper;
 using BusinessLogic.Services.BalanceChanges;
 using BusinessLogic.Services.Carts;
 using BusinessLogic.Services.Categorys;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using BusinessLogic.Services.ProductImages;
 using BusinessLogic.Services.Products;
 using BusinessLogic.Services.ProductVariants;
@@ -17,6 +18,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static BusinessLogic.EmailServices.EmailService;
 
 namespace BusinessLogic.Config
 {
@@ -47,6 +49,24 @@ namespace BusinessLogic.Config
 
 
 
+          
+            var mailSettings = new MailSettings
+            {
+                Mail = "shopmmo.vn@gmail.com",
+                DisplayName = "ShopMMO",
+                Password = "znsb kkty fdfx nlxs",
+                Host = "smtp.gmail.com",
+                Port = 587
+            }; 
+            services.Configure<MailSettings>(options =>
+            {
+                options.Mail = mailSettings.Mail;
+                options.DisplayName = mailSettings.DisplayName;
+                options.Password = mailSettings.Password;
+                options.Host = mailSettings.Host;
+                options.Port = mailSettings.Port;
+            });
+            services.AddTransient<IEmailSender, SendMailService>();
 
 
             PayOS payOS = new PayOS("fa2021f3-d725-4587-a48f-8b55bccf7744" ?? throw new Exception("Cannot find environment"),

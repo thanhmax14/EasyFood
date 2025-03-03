@@ -3,13 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLogic", "BusinessLogic\BusinessLogic.csproj", "{3E044668-8F06-4499-98E0-1372758AC736}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLogic", "BusinessLogic\BusinessLogic.csproj", "{3E044668-8F06-4499-98E0-1372758AC736}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "Models\Models.csproj", "{439B7340-1A78-4FCB-98CC-67BE21052D0F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "Models\Models.csproj", "{439B7340-1A78-4FCB-98CC-67BE21052D0F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repository", "Repository\Repository.csproj", "{F4F393C5-9480-4C2A-98CD-3EFA94ABEC04}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repository", "Repository\Repository.csproj", "{F4F393C5-9480-4C2A-98CD-3EFA94ABEC04}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyFood.web", "EasyFood.web\EasyFood.web.csproj", "{056F64EC-AE74-420E-91CD-4DA51FAF20E0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyFood.web", "EasyFood.web\EasyFood.web.csproj", "{3FF04EF3-0F07-44F1-93E3-7ED9B623F954}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthService", "AuthService\AuthService.csproj", "{E1A7A0EF-1FBD-4B43-BB42-49F09BC1A3E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIGateway", "APIGateway\APIGateway.csproj", "{715FE147-7CF6-4F66-9BA3-F58D3FD8536A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +33,18 @@ Global
 		{F4F393C5-9480-4C2A-98CD-3EFA94ABEC04}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4F393C5-9480-4C2A-98CD-3EFA94ABEC04}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F4F393C5-9480-4C2A-98CD-3EFA94ABEC04}.Release|Any CPU.Build.0 = Release|Any CPU
-		{056F64EC-AE74-420E-91CD-4DA51FAF20E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{056F64EC-AE74-420E-91CD-4DA51FAF20E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{056F64EC-AE74-420E-91CD-4DA51FAF20E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{056F64EC-AE74-420E-91CD-4DA51FAF20E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3FF04EF3-0F07-44F1-93E3-7ED9B623F954}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FF04EF3-0F07-44F1-93E3-7ED9B623F954}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3FF04EF3-0F07-44F1-93E3-7ED9B623F954}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FF04EF3-0F07-44F1-93E3-7ED9B623F954}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1A7A0EF-1FBD-4B43-BB42-49F09BC1A3E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1A7A0EF-1FBD-4B43-BB42-49F09BC1A3E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1A7A0EF-1FBD-4B43-BB42-49F09BC1A3E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1A7A0EF-1FBD-4B43-BB42-49F09BC1A3E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{715FE147-7CF6-4F66-9BA3-F58D3FD8536A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{715FE147-7CF6-4F66-9BA3-F58D3FD8536A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{715FE147-7CF6-4F66-9BA3-F58D3FD8536A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{715FE147-7CF6-4F66-9BA3-F58D3FD8536A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

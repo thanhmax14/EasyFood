@@ -11,10 +11,10 @@ namespace Models.DBContext
 {
     public class EasyFoodDbContext:IdentityDbContext<AppUser>
     {
-        /*       public EasyFoodDbContext(DbContextOptions<EasyFoodDbContext> options) : base(options)
-               {
-               }
-       */
+        public EasyFoodDbContext(DbContextOptions<EasyFoodDbContext> options) : base(options)
+        {
+        }
+
 
 
         public DbSet<BalanceChange> BalanceChanges { get; set; }
@@ -23,6 +23,7 @@ namespace Models.DBContext
         public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<ProductVariant> ProductVariants { get; set; }
         public DbSet<StoreDetails> StoreDetails { get; set; }
+        
         protected override void OnModelCreating(ModelBuilder builder)
         {
 

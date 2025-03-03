@@ -1,13 +1,16 @@
-﻿using EasyFood.web.Data;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Models;
+﻿using Microsoft.AspNetCore.Identity;
 using Models.DBContext;
+using Models;
 using BusinessLogic.Config;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddRazorPages();
 
+
+builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<EasyFoodDbContext>(options =>
     options.UseSqlServer(connectionString));
@@ -51,55 +54,22 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.SignIn.RequireConfirmedEmail = true;
 
 });
-// Cấu hình Cookie
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.LoginPath = "/Home/Login";
-    options.LogoutPath = "/Home/Logout"; 
-    options.AccessDeniedPath = "/Account/AccessDenied";
-    options.ReturnUrlParameter = "ReturnUrl"; 
-    options.ExpireTimeSpan = TimeSpan.FromDays(14);
-    options.SlidingExpiration = true;
-});
-
-
-
-
-
-
-
-
-
-
-
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseMigrationsEndPoint();
-}
-else
-{
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 await SeedDataAsync(app);
 app.UseHttpsRedirection();
-app.UseStaticFiles();
-
-app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
-app.MapRazorPages();
+app.MapControllers();
 
 app.Run();
 static async Task SeedDataAsync(WebApplication app)
