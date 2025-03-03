@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Repository.Categorys;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace BusinessLogic.Config
     {
         public static void ConfigureRepository(this IServiceCollection services)
         {
-
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
 
         }
 
