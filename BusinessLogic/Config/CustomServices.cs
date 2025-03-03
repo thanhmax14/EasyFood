@@ -1,9 +1,18 @@
 ﻿using AutoMapper;
 using BusinessLogic.Mapper;
+using BusinessLogic.Services.BalanceChanges;
+using BusinessLogic.Services.Carts;
 using BusinessLogic.Services.Categorys;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using BusinessLogic.Services.ProductImages;
+using BusinessLogic.Services.Products;
+using BusinessLogic.Services.ProductVariants;
+using BusinessLogic.Services.ProductVariantVariants;
+using BusinessLogic.Services.Reviews;
+using BusinessLogic.Services.StoreDetail;
 using Microsoft.Extensions.DependencyInjection;
 using Net.payOS;
+using Repository.StoreDetails;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,8 +27,13 @@ namespace BusinessLogic.Config
         public static void ConfigureServices(this IServiceCollection services)
         {
             services.AddScoped<ICategoryService, CategoryService>();
-
-
+            services.AddScoped<IStoreDetailService, StoreDetailService>();
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IBalanceChangeService, BalanceChangeService>();
+            services.AddScoped<ICartService, CartService>();
+            services.AddScoped<IProductImageService, ProductImageService>();
+            services.AddScoped<IProductVariantService, ProductVariantService>();
+            services.AddScoped<IReviewService, ReviewService>();
 
 
 
