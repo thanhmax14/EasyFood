@@ -1,3 +1,4 @@
+
 ﻿using BusinessLogic.Services.BalanceChanges;
 using BusinessLogic.Services.Categorys;
 using BusinessLogic.Services.ProductImages;
@@ -12,6 +13,8 @@ using Repository.Products;
 using Repository.ProductVariants;
 using Repository.Reviews;
 using Repository.StoreDetails;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Repository.Categorys;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +27,6 @@ namespace BusinessLogic.Config
     {
         public static void ConfigureRepository(this IServiceCollection services)
         {
-
             services.AddScoped<IStoreDetailsRepository, StoreDetailsRepository>();
             services.AddScoped<IProductsRepository, ProductsRepository>();
             services.AddScoped<IBalanceChangeRepository, BalanceChangeRepository>();
@@ -32,6 +34,7 @@ namespace BusinessLogic.Config
             services.AddScoped<IProductImageRepository, ProductImageRepository>();
             services.AddScoped<IProductVariantRepository, ProductVariantRepository>();
             services.AddScoped<IReviewRepository, ReviewRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
         }
 
 
