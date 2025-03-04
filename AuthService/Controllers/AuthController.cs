@@ -24,19 +24,19 @@
                 _emailSender = emailSender;
             }
             [HttpPost("login")]
-            public async Task<IActionResult> Login(string username, string password)
+            public async Task<IActionResult> Login([FromBody] LoginModel model)
             {
-                if (string.IsNullOrWhiteSpace(username))
+                if (string.IsNullOrWhiteSpace(model.Username))
                 {
                     return BadRequest(new { status = "error", msg = "Tên Người Dùng Không Được Để Trống" });
                 }
-                if (string.IsNullOrEmpty(password))
+                if (string.IsNullOrEmpty(model.Password))
                 {
                     return Unauthorized(new { status = "error", msg = "Mật Khẩu Không Được Để Trống" });
                 }
                 // Xử lý ReturnUrl tương tự GET
           
-                var user = await _userManager.FindByNameAsync(username) ?? await _userManager.FindByEmailAsync(username);
+                var user = await _userManager.FindByNameAsync(model.Username) ?? await _userManager.FindByEmailAsync(model.Username);
                 if (user == null)
                 {
                     return Unauthorized(new { status = "error", msg = "Tài khoản không tồn tại" });
@@ -49,7 +49,7 @@
                 {
                     return Unauthorized(new { status = "error", msg = "Bạn phải xác thực email trước khi đăng nhập." });
                 }
-                var isPasswordValid = await _userManager.CheckPasswordAsync(user, password);
+                var isPasswordValid = await _userManager.CheckPasswordAsync(user, model.Password);
                 if (!isPasswordValid)
                 {
                     await _userManager.AccessFailedAsync(user);
@@ -66,7 +66,7 @@
                 }
 
                 await _userManager.ResetAccessFailedCountAsync(user);
-                var result = await _signInManager.PasswordSignInAsync(user, password, true, lockoutOnFailure: true);
+                var result = await _signInManager.PasswordSignInAsync(user, model.Password, true, lockoutOnFailure: true);
                 if (result.IsLockedOut)
                 {
                     return Unauthorized(new { status = "error", msg = "Tài khoản của bạn đã bị khóa." });
