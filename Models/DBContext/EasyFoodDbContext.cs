@@ -11,10 +11,10 @@ namespace Models.DBContext
 {
     public class EasyFoodDbContext:IdentityDbContext<AppUser>
     {
-        public EasyFoodDbContext(DbContextOptions<EasyFoodDbContext> options) : base(options)
+    /*    public EasyFoodDbContext(DbContextOptions<EasyFoodDbContext> options) : base(options)
         {
         }
-
+*/
 
 
         public DbSet<BalanceChange> BalanceChanges { get; set; }
@@ -23,6 +23,17 @@ namespace Models.DBContext
         public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<ProductVariant> ProductVariants { get; set; }
         public DbSet<StoreDetails> StoreDetails { get; set; }
+        public DbSet<Wishlist> Wishlists { get; set; }
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; }
+        public DbSet<Complain> Complains { get; set; }
+        public DbSet<Recipe> Recipes { get; set; }
+        public DbSet<FavoriteRecipe> FavoriteRecipes { get; set; }
+        public DbSet<RecipeReview> RecipeReviews { get; set; }
+
+
+
         
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -41,38 +52,106 @@ namespace Models.DBContext
             builder.Entity<StoreDetails>()
             .HasOne(h => h.AppUser) 
             .WithOne(u => u.StoreDetails) 
-            .HasForeignKey<StoreDetails>(h => h.UserID);
+            .HasForeignKey<StoreDetails>(h => h.UserID).OnDelete(DeleteBehavior.NoAction);
 
             builder.Entity<Product>()
            .HasOne(h => h.StoreDetails)
            .WithMany(h => h.Products)
-           .HasForeignKey(h => h.StoreID);
+           .HasForeignKey(h => h.StoreID).OnDelete(DeleteBehavior.NoAction);
 
             builder.Entity<BalanceChange>()
            .HasOne(h => h.AppUser)
            .WithMany(h => h.BalanceChanges)
-           .HasForeignKey(h => h.UserID);
+           .HasForeignKey(h => h.UserID).OnDelete(DeleteBehavior.NoAction);
 
 
             builder.Entity<Product>()
            .HasOne(h => h.Categories)
            .WithMany(h => h.Products)
-           .HasForeignKey(h => h.CateID);
+           .HasForeignKey(h => h.CateID).OnDelete(DeleteBehavior.NoAction);
 
             builder.Entity<ProductVariant>()
            .HasOne(h => h.Product)
            .WithMany(h => h.ProductVariants)
-           .HasForeignKey(h => h.ProductID);
+           .HasForeignKey(h => h.ProductID).OnDelete(DeleteBehavior.NoAction);
 
             builder.Entity<ProductImage>()
            .HasOne(h => h.Product)
            .WithMany(h => h.ProductImages)
-           .HasForeignKey(h => h.ProductID);
+           .HasForeignKey(h => h.ProductID).OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<Wishlist>()
+            .HasOne(h => h.AppUser)
+            .WithMany(h => h.Wishlists)
+            .HasForeignKey(h => h.UserID).OnDelete(DeleteBehavior.NoAction);
+            builder.Entity<Wishlist>()
+            .HasOne(h => h.Product)
+            .WithMany(h => h.Wishlists)
+            .HasForeignKey(h => h.ProductID).OnDelete(DeleteBehavior.NoAction); 
 
 
+            builder.Entity<Cart>()
+            .HasOne(h => h.AppUser)
+            .WithMany(h => h.Carts)
+            .HasForeignKey(h => h.UserID).OnDelete(DeleteBehavior.Cascade); ;
+
+            builder.Entity<Cart>()
+            .HasOne(h => h.Product)
+            .WithMany(h => h.Carts)
+            .HasForeignKey(h => h.ProductID).OnDelete(DeleteBehavior.NoAction); ;
 
 
+            builder.Entity<Order>()
+            .HasOne(h => h.AppUser)
+            .WithMany(h => h.Orders)
+            .HasForeignKey(h => h.UserID).OnDelete(DeleteBehavior.NoAction);
 
+            builder.Entity<OrderDetail>()
+            .HasOne(h => h.Product)
+            .WithMany(h => h.OrderDetails)
+            .HasForeignKey(h => h.ProductID).OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<OrderDetail>()
+           .HasOne(h => h.Order)
+           .WithMany(h => h.OrderDetails)
+           .HasForeignKey(h => h.OrderID).OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<Complain>()
+           .HasOne(h => h.OrderDetail)
+           .WithMany(h => h.Complains)
+           .HasForeignKey(h => h.OrderDetailID).OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<Recipe>()
+           .HasOne(h => h.AppUser)
+           .WithMany(h => h.Recipes)
+           .HasForeignKey(h => h.UserID).OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<Recipe>()
+           .HasOne(h => h.Categories)
+           .WithMany(h => h.Recipes)
+           .HasForeignKey(h => h.CateID).OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<FavoriteRecipe>()
+           .HasOne(h => h.AppUser)
+           .WithMany(h => h.FavoriteRecipes)
+           .HasForeignKey(h => h.UserID).OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<FavoriteRecipe>()
+           .HasOne(h => h.Recipe)
+           .WithMany(h => h.FavoriteRecipes)
+           .HasForeignKey(h => h.RecipeID).OnDelete(DeleteBehavior.NoAction);  
+
+            builder.Entity<RecipeReview>()
+           .HasOne(h => h.Recipe)
+           .WithMany(h => h.RecipeReviews)
+           .HasForeignKey(h => h.RecipeID).OnDelete(DeleteBehavior.NoAction); 
+            
+            builder.Entity<FavoriteRecipe>()
+           .HasOne(h => h.AppUser)
+           .WithMany(h => h.FavoriteRecipes)
+           .HasForeignKey(h => h.UserID).OnDelete(DeleteBehavior.NoAction);
+
+           
         }
 
 

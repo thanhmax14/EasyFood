@@ -16,9 +16,10 @@ namespace Models.Migrations
                 columns: table => new
                 {
                     ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    img = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Img = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    stt = table.Column<int>(type: "int", nullable: false),
+                    Number = table.Column<int>(type: "int", nullable: false),
+                    Commission = table.Column<float>(type: "real", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -119,8 +120,62 @@ namespace Models.Migrations
                         name: "FK_BalanceChanges_Users_UserID",
                         column: x => x.UserID,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Orders",
+                columns: table => new
+                {
+                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    OrderCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    TotalsPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    MethodPayment = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StatusPayment = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UserID = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Orders", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Orders_Users_UserID",
+                        column: x => x.UserID,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Recipes",
+                columns: table => new
+                {
+                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LongDescriptions = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ShortDescriptions = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CateID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserID = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Recipes", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Recipes_Categories_CateID",
+                        column: x => x.CateID,
+                        principalTable: "Categories",
+                        principalColumn: "ID");
+                    table.ForeignKey(
+                        name: "FK_Recipes_Users_UserID",
+                        column: x => x.UserID,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -132,9 +187,13 @@ namespace Models.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LongDescriptions = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ShortDescriptions = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Call = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Img = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -143,8 +202,7 @@ namespace Models.Migrations
                         name: "FK_StoreDetails_Users_UserID",
                         column: x => x.UserID,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -233,6 +291,61 @@ namespace Models.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FavoriteRecipes",
+                columns: table => new
+                {
+                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    isActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    RecipeID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserID = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FavoriteRecipes", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_FavoriteRecipes_Recipes_RecipeID",
+                        column: x => x.RecipeID,
+                        principalTable: "Recipes",
+                        principalColumn: "ID");
+                    table.ForeignKey(
+                        name: "FK_FavoriteRecipes_Users_UserID",
+                        column: x => x.UserID,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RecipeReviews",
+                columns: table => new
+                {
+                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Cmt = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Relay = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateRelay = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    RecipeID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserID = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RecipeReviews", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_RecipeReviews_Recipes_RecipeID",
+                        column: x => x.RecipeID,
+                        principalTable: "Recipes",
+                        principalColumn: "ID");
+                    table.ForeignKey(
+                        name: "FK_RecipeReviews_Users_UserID",
+                        column: x => x.UserID,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Products",
                 columns: table => new
                 {
@@ -240,10 +353,10 @@ namespace Models.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ShortDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LongDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Tags = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ManufactureDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsAvailable = table.Column<bool>(type: "bit", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     IsOnSale = table.Column<bool>(type: "bit", nullable: false),
                     CateID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     StoreID = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
@@ -255,14 +368,69 @@ namespace Models.Migrations
                         name: "FK_Products_Categories_CateID",
                         column: x => x.CateID,
                         principalTable: "Categories",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "ID");
                     table.ForeignKey(
                         name: "FK_Products_StoreDetails_StoreID",
                         column: x => x.StoreID,
                         principalTable: "StoreDetails",
-                        principalColumn: "ID",
+                        principalColumn: "ID");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Carts",
+                columns: table => new
+                {
+                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UserID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProductID = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Carts", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Carts_Products_ProductID",
+                        column: x => x.ProductID,
+                        principalTable: "Products",
+                        principalColumn: "ID");
+                    table.ForeignKey(
+                        name: "FK_Carts_Users_UserID",
+                        column: x => x.UserID,
+                        principalTable: "Users",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderDetails",
+                columns: table => new
+                {
+                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProductPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsFeedBack = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    OrderID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProductID = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderDetails", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_OrderDetails_Orders_OrderID",
+                        column: x => x.OrderID,
+                        principalTable: "Orders",
+                        principalColumn: "ID");
+                    table.ForeignKey(
+                        name: "FK_OrderDetails_Products_ProductID",
+                        column: x => x.ProductID,
+                        principalTable: "Products",
+                        principalColumn: "ID");
                 });
 
             migrationBuilder.CreateTable(
@@ -281,8 +449,7 @@ namespace Models.Migrations
                         name: "FK_ProductImages_Products_ProductID",
                         column: x => x.ProductID,
                         principalTable: "Products",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "ID");
                 });
 
             migrationBuilder.CreateTable(
@@ -294,6 +461,8 @@ namespace Models.Migrations
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     OriginalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     Stock = table.Column<int>(type: "int", nullable: false),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ManufactureDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ProductID = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -303,13 +472,98 @@ namespace Models.Migrations
                         name: "FK_ProductVariants_Products_ProductID",
                         column: x => x.ProductID,
                         principalTable: "Products",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "ID");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Wishlists",
+                columns: table => new
+                {
+                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UserID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProductID = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Wishlists", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Wishlists_Products_ProductID",
+                        column: x => x.ProductID,
+                        principalTable: "Products",
+                        principalColumn: "ID");
+                    table.ForeignKey(
+                        name: "FK_Wishlists_Users_UserID",
+                        column: x => x.UserID,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Complains",
+                columns: table => new
+                {
+                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Descriptions = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Replay = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateReplay = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    OrderDetailID = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Complains", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Complains_OrderDetails_OrderDetailID",
+                        column: x => x.OrderDetailID,
+                        principalTable: "OrderDetails",
+                        principalColumn: "ID");
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_BalanceChanges_UserID",
                 table: "BalanceChanges",
+                column: "UserID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Carts_ProductID",
+                table: "Carts",
+                column: "ProductID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Carts_UserID",
+                table: "Carts",
+                column: "UserID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Complains_OrderDetailID",
+                table: "Complains",
+                column: "OrderDetailID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FavoriteRecipes_RecipeID",
+                table: "FavoriteRecipes",
+                column: "RecipeID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FavoriteRecipes_UserID",
+                table: "FavoriteRecipes",
+                column: "UserID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderDetails_OrderID",
+                table: "OrderDetails",
+                column: "OrderID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderDetails_ProductID",
+                table: "OrderDetails",
+                column: "ProductID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_UserID",
+                table: "Orders",
                 column: "UserID");
 
             migrationBuilder.CreateIndex(
@@ -331,6 +585,26 @@ namespace Models.Migrations
                 name: "IX_ProductVariants_ProductID",
                 table: "ProductVariants",
                 column: "ProductID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RecipeReviews_RecipeID",
+                table: "RecipeReviews",
+                column: "RecipeID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RecipeReviews_UserID",
+                table: "RecipeReviews",
+                column: "UserID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Recipes_CateID",
+                table: "Recipes",
+                column: "CateID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Recipes_UserID",
+                table: "Recipes",
+                column: "UserID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RoleClaims_RoleId",
@@ -376,6 +650,16 @@ namespace Models.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Wishlists_ProductID",
+                table: "Wishlists",
+                column: "ProductID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Wishlists_UserID",
+                table: "Wishlists",
+                column: "UserID");
         }
 
         /// <inheritdoc />
@@ -385,10 +669,22 @@ namespace Models.Migrations
                 name: "BalanceChanges");
 
             migrationBuilder.DropTable(
+                name: "Carts");
+
+            migrationBuilder.DropTable(
+                name: "Complains");
+
+            migrationBuilder.DropTable(
+                name: "FavoriteRecipes");
+
+            migrationBuilder.DropTable(
                 name: "ProductImages");
 
             migrationBuilder.DropTable(
                 name: "ProductVariants");
+
+            migrationBuilder.DropTable(
+                name: "RecipeReviews");
 
             migrationBuilder.DropTable(
                 name: "RoleClaims");
@@ -406,10 +702,22 @@ namespace Models.Migrations
                 name: "UserTokens");
 
             migrationBuilder.DropTable(
-                name: "Products");
+                name: "Wishlists");
+
+            migrationBuilder.DropTable(
+                name: "OrderDetails");
+
+            migrationBuilder.DropTable(
+                name: "Recipes");
 
             migrationBuilder.DropTable(
                 name: "Roles");
+
+            migrationBuilder.DropTable(
+                name: "Orders");
+
+            migrationBuilder.DropTable(
+                name: "Products");
 
             migrationBuilder.DropTable(
                 name: "Categories");

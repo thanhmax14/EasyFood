@@ -291,14 +291,48 @@ namespace Models.Migrations
                     b.ToTable("BalanceChanges");
                 });
 
+            modelBuilder.Entity("Models.Cart", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ProductID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ProductID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Carts");
+                });
+
             modelBuilder.Entity("Models.Categories", b =>
                 {
                     b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<float>("Commission")
+                        .HasColumnType("real");
+
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Img")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
@@ -307,15 +341,169 @@ namespace Models.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("img")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("stt")
+                    b.Property<int>("Number")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("Models.Complain", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateReplay")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Descriptions")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("OrderDetailID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Replay")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("OrderDetailID");
+
+                    b.ToTable("Complains");
+                });
+
+            modelBuilder.Entity("Models.FavoriteRecipe", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("RecipeID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("isActive")
+                        .HasColumnType("bit");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("RecipeID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("FavoriteRecipes");
+                });
+
+            modelBuilder.Entity("Models.Order", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MethodPayment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("OrderCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StatusPayment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("TotalsPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("Models.OrderDetail", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsFeedBack")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("OrderID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("ProductPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("OrderID");
+
+                    b.HasIndex("ProductID");
+
+                    b.ToTable("OrderDetails");
                 });
 
             modelBuilder.Entity("Models.Product", b =>
@@ -327,7 +515,10 @@ namespace Models.Migrations
                     b.Property<Guid>("CateID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("IsAvailable")
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsOnSale")
@@ -339,6 +530,9 @@ namespace Models.Migrations
                     b.Property<DateTime>("ManufactureDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -348,12 +542,6 @@ namespace Models.Migrations
 
                     b.Property<Guid>("StoreID")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Tags")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
@@ -393,6 +581,12 @@ namespace Models.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("ManufactureDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<decimal?>("OriginalPrice")
                         .HasColumnType("decimal(18,2)");
 
@@ -416,6 +610,87 @@ namespace Models.Migrations
                     b.ToTable("ProductVariants");
                 });
 
+            modelBuilder.Entity("Models.Recipe", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CateID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LongDescriptions")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ShortDescriptions")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CateID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Recipes");
+                });
+
+            modelBuilder.Entity("Models.RecipeReview", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Cmt")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateRelay")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("RecipeID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Relay")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("RecipeID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("RecipeReviews");
+                });
+
             modelBuilder.Entity("Models.StoreDetails", b =>
                 {
                     b.Property<Guid>("ID")
@@ -425,13 +700,16 @@ namespace Models.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Call")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("Img")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LongDescriptions")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("ModifiedDate")
@@ -439,6 +717,15 @@ namespace Models.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ShortDescriptions")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserID")
@@ -451,6 +738,31 @@ namespace Models.Migrations
                         .IsUnique();
 
                     b.ToTable("StoreDetails");
+                });
+
+            modelBuilder.Entity("Models.Wishlist", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ProductID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ProductID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Wishlists");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -509,10 +821,89 @@ namespace Models.Migrations
                     b.HasOne("Models.AppUser", "AppUser")
                         .WithMany("BalanceChanges")
                         .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+                });
+
+            modelBuilder.Entity("Models.Cart", b =>
+                {
+                    b.HasOne("Models.Product", "Product")
+                        .WithMany("Carts")
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Models.AppUser", "AppUser")
+                        .WithMany("Carts")
+                        .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("AppUser");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Models.Complain", b =>
+                {
+                    b.HasOne("Models.OrderDetail", "OrderDetail")
+                        .WithMany("Complains")
+                        .HasForeignKey("OrderDetailID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("OrderDetail");
+                });
+
+            modelBuilder.Entity("Models.FavoriteRecipe", b =>
+                {
+                    b.HasOne("Models.Recipe", "Recipe")
+                        .WithMany("FavoriteRecipes")
+                        .HasForeignKey("RecipeID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Models.AppUser", "AppUser")
+                        .WithMany("FavoriteRecipes")
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("Recipe");
+                });
+
+            modelBuilder.Entity("Models.Order", b =>
+                {
+                    b.HasOne("Models.AppUser", "AppUser")
+                        .WithMany("Orders")
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+                });
+
+            modelBuilder.Entity("Models.OrderDetail", b =>
+                {
+                    b.HasOne("Models.Order", "Order")
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("OrderID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Models.Product", "Product")
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Models.Product", b =>
@@ -520,13 +911,13 @@ namespace Models.Migrations
                     b.HasOne("Models.Categories", "Categories")
                         .WithMany("Products")
                         .HasForeignKey("CateID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Models.StoreDetails", "StoreDetails")
                         .WithMany("Products")
                         .HasForeignKey("StoreID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Categories");
@@ -539,7 +930,7 @@ namespace Models.Migrations
                     b.HasOne("Models.Product", "Product")
                         .WithMany("ProductImages")
                         .HasForeignKey("ProductID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Product");
@@ -550,10 +941,48 @@ namespace Models.Migrations
                     b.HasOne("Models.Product", "Product")
                         .WithMany("ProductVariants")
                         .HasForeignKey("ProductID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Models.Recipe", b =>
+                {
+                    b.HasOne("Models.Categories", "Categories")
+                        .WithMany("Recipes")
+                        .HasForeignKey("CateID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Models.AppUser", "AppUser")
+                        .WithMany("Recipes")
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("Categories");
+                });
+
+            modelBuilder.Entity("Models.RecipeReview", b =>
+                {
+                    b.HasOne("Models.Recipe", "Recipe")
+                        .WithMany("RecipeReviews")
+                        .HasForeignKey("RecipeID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Models.AppUser", "AppUser")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("Recipe");
                 });
 
             modelBuilder.Entity("Models.StoreDetails", b =>
@@ -561,30 +990,84 @@ namespace Models.Migrations
                     b.HasOne("Models.AppUser", "AppUser")
                         .WithOne("StoreDetails")
                         .HasForeignKey("Models.StoreDetails", "UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("AppUser");
+                });
+
+            modelBuilder.Entity("Models.Wishlist", b =>
+                {
+                    b.HasOne("Models.Product", "Product")
+                        .WithMany("Wishlists")
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Models.AppUser", "AppUser")
+                        .WithMany("Wishlists")
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Models.AppUser", b =>
                 {
                     b.Navigation("BalanceChanges");
 
+                    b.Navigation("Carts");
+
+                    b.Navigation("FavoriteRecipes");
+
+                    b.Navigation("Orders");
+
+                    b.Navigation("Recipes");
+
                     b.Navigation("StoreDetails")
                         .IsRequired();
+
+                    b.Navigation("Wishlists");
                 });
 
             modelBuilder.Entity("Models.Categories", b =>
                 {
                     b.Navigation("Products");
+
+                    b.Navigation("Recipes");
+                });
+
+            modelBuilder.Entity("Models.Order", b =>
+                {
+                    b.Navigation("OrderDetails");
+                });
+
+            modelBuilder.Entity("Models.OrderDetail", b =>
+                {
+                    b.Navigation("Complains");
                 });
 
             modelBuilder.Entity("Models.Product", b =>
                 {
+                    b.Navigation("Carts");
+
+                    b.Navigation("OrderDetails");
+
                     b.Navigation("ProductImages");
 
                     b.Navigation("ProductVariants");
+
+                    b.Navigation("Wishlists");
+                });
+
+            modelBuilder.Entity("Models.Recipe", b =>
+                {
+                    b.Navigation("FavoriteRecipes");
+
+                    b.Navigation("RecipeReviews");
                 });
 
             modelBuilder.Entity("Models.StoreDetails", b =>

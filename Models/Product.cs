@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -9,14 +10,15 @@ namespace Models
 {
     public class Product
     {
+        [Key]
         public Guid ID { get; set; } = Guid.NewGuid();
         public string Name { get; set; }
         public string? ShortDescription { get; set; }
         public string? LongDescription { get; set; }
-        public string? Tags { get; set; } // Tag (VD: "Organic, Brown")
-        public string? Type { get; set; } // Loại sản phẩm (VD: "Organic")
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime? ModifiedDate { get; set; }
         public DateTime ManufactureDate { get; set; }// Ngày sản xuất
-        public bool IsAvailable { get; set; } = true;
+        public bool IsActive { get; set; } = false;
         public bool IsOnSale { get; set; } // Có đang giảm giá?
         [ForeignKey("Categories")]
         public Guid CateID { get; set; }
@@ -26,9 +28,11 @@ namespace Models
         public virtual StoreDetails StoreDetails { get; set; }
         public ICollection<ProductVariant> ProductVariants { get; set; }
         public ICollection<ProductImage> ProductImages { get; set; }
-    
-        
-        
+        public ICollection<Cart> Carts { get; set; }
+        public ICollection<Wishlist> Wishlists { get; set; }
+
+        public ICollection<OrderDetail> OrderDetails { get; set; }
+
 
     }
 }

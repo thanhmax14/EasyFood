@@ -25,6 +25,11 @@ namespace Models
 
         public virtual StoreDetails StoreDetails { get; set; }
         public ICollection<BalanceChange> BalanceChanges { get; set; }
+        public ICollection<Wishlist> Wishlists { get; set; }
+        public ICollection<Cart> Carts { get; set; }
+        public ICollection<Order> Orders { get; set; }
+        public ICollection<FavoriteRecipe> FavoriteRecipes { get; set; }
+        public ICollection<Recipe> Recipes { get; set; }
 
     }
 }

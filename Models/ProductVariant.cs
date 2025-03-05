@@ -16,6 +16,8 @@ namespace Models
         public decimal Price { get; set; } = 0; // Giá bán
         public decimal? OriginalPrice { get; set; }
         public int Stock { get; set; } = 0;
+        public DateTime? ModifiedDate { get; set; }
+        public DateTime ManufactureDate { get; set; }// Ngày sản xuất
         [ForeignKey("Product")]
         public Guid ProductID { get; set; }
         public virtual Product Product { get; set; }
