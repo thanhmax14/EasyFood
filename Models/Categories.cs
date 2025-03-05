@@ -11,11 +11,13 @@ namespace Models
     {
         [Key]
         public Guid ID { get; set; } = Guid.NewGuid();
-        public string? img { get; set; }
+        public string? Img { get; set; }
         public string Name { get; set; }
-        public int stt { get; set; } = 0;
+        public int Number { get; set; } = 0;
+        public float Commission { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? ModifiedDate { get; set; }
         public ICollection<Product> Products { get; set; }
+        public ICollection<Recipe> Recipes { get; set; }
     }
 }

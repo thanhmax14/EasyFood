@@ -19,9 +19,14 @@ namespace Models
             public string Name { get; set; } = default!;
             public DateTime CreatedDate { get; set; } = DateTime.Now;
             public DateTime? ModifiedDate { get; set; }
-            public string? Description { get; set; }
+            public string? LongDescriptions { get; set; }
+            public string? ShortDescriptions { get; set; }
             public string? Address { get; set; }
-            public string? Call { get; set; }
+            public string? Phone { get; set; }
+            public string? Img { get; set; }
+            public string? Status { get; set; }
+            public bool IsActive { get; set; } = false;
+
 
             public virtual AppUser AppUser { get; set; }
             public ICollection<Product> Products { get; set; }

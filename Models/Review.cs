@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,7 @@ namespace Models
 {
     public class Review
     {
+        [Key]
         public Guid ID { get; set; } = Guid.NewGuid();
         public string? Cmt { get; set; }
         public DateTime Datecmt { get; set; } = DateTime.Now;
