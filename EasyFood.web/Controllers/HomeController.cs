@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Models;
+using Repository.ViewModels;
 using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Security.Claims;
@@ -122,6 +123,28 @@ namespace EasyFood.web.Controllers
             return View();
         }
 
+        public async Task<IActionResult> GetAllProduct()
+        {
+            var list = new List<ProductsViewModel>();
+            this._url = "https://localhost:5555/Gateway/ProductsService";
+            try
+            {
+                var response = await client.GetAsync(this._url);
+                if (!response.IsSuccessStatusCode)
+                {
+                    return View(list);
+                }
+
+                var mes = await response.Content.ReadAsStringAsync();
+                 list = JsonSerializer.Deserialize<List<ProductsViewModel>>(mes, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                return View(list);
+            }
+            catch (Exception ex)
+            {
+                return View(list);
+            }
+        }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
