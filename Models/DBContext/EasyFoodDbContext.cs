@@ -11,10 +11,10 @@ namespace Models.DBContext
 {
     public class EasyFoodDbContext:IdentityDbContext<AppUser>
     {
-           public EasyFoodDbContext(DbContextOptions<EasyFoodDbContext> options) : base(options)
+  /*         public EasyFoodDbContext(DbContextOptions<EasyFoodDbContext> options) : base(options)
             {
             }
-    
+    */
 
 
         public DbSet<BalanceChange> BalanceChanges { get; set; }
@@ -163,7 +163,7 @@ namespace Models.DBContext
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-      => optionsBuilder.UseSqlServer("Data Source=SQL1002.site4now.net;Initial Catalog=db_ab376a_easyfood;User Id=db_ab376a_easyfood_admin;Password=Xinchao123@");
+      => optionsBuilder.UseSqlServer("Server=tcp:easyfood.database.windows.net,1433;Initial Catalog=EasyFood;Persist Security Info=False;User ID=easyfood;Password=Xinchao123@;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
 
 
 }
