@@ -11,6 +11,7 @@
       ],
       "UpstreamPathTemplate": "/Gateway/authenticate/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+    },
     {
       "DownstreamPathTemplate": "/api/Products/{everything}",
       "DownstreamScheme": "https",
