@@ -11,10 +11,10 @@ namespace Models.DBContext
 {
     public class EasyFoodDbContext:IdentityDbContext<AppUser>
     {
-  /*         public EasyFoodDbContext(DbContextOptions<EasyFoodDbContext> options) : base(options)
-            {
-            }
-    */
+        public EasyFoodDbContext(DbContextOptions<EasyFoodDbContext> options) : base(options)
+        {
+        }
+
 
 
         public DbSet<BalanceChange> BalanceChanges { get; set; }
