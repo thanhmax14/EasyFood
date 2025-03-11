@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Models;
+using Repository.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +13,7 @@ namespace BusinessLogic.Mapper
     {
         public MappingProfile()
         {
-
+            CreateMap<StoreViewModel, StoreDetails>();
 
 
         } 
