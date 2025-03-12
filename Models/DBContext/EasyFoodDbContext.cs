@@ -11,9 +11,9 @@ namespace Models.DBContext
 {
     public class EasyFoodDbContext:IdentityDbContext<AppUser>
     {
-        public EasyFoodDbContext(DbContextOptions<EasyFoodDbContext> options) : base(options)
+        /*public EasyFoodDbContext(DbContextOptions<EasyFoodDbContext> options) : base(options)
         {
-        }
+        }*/
 
 
 
@@ -31,7 +31,8 @@ namespace Models.DBContext
         public DbSet<Recipe> Recipes { get; set; }
         public DbSet<FavoriteRecipe> FavoriteRecipes { get; set; }
         public DbSet<RecipeReview> RecipeReviews { get; set; }
-
+        public DbSet<Review> Reviews { get; set; }
+        
 
 
         
