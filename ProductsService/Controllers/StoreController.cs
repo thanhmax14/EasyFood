@@ -29,9 +29,9 @@ namespace ProductsService.Controllers
                     list.Add(new StoreViewModel
                     {
                         Name = item.Name,
-                        Description = item.ShortDescriptions,
+                        //Description = item.ShortDescriptions,
                         Address = item.Address,
-                        Call = item.Phone,
+                       // Call = item.Phone,
 
                     });
                 }

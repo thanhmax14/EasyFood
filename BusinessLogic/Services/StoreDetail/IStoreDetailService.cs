@@ -1,4 +1,5 @@
 ﻿using Models;
+using Repository.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,5 +30,13 @@ namespace BusinessLogic.Services.StoreDetail
             Func<IQueryable<StoreDetails>, IOrderedQueryable<StoreDetails>> orderBy = null,
             Func<IQueryable<StoreDetails>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<StoreDetails, object>> includeProperties = null);
         Task<bool> AddStoreAsync(StoreDetails store, string userId);
+        Task<IEnumerable<StoreDetails>> GetAllStoresAsync();
+        Task<StoreDetails?> GetStoreByIdAsync(Guid storeId);
+        Task<bool> UpdateStoreAsync(Guid id, string name, string longDesc, string shortDesc, string address, string phone, string img);
+        Task<List<StoreViewModel>> GetInactiveStoresAsync();
+        Task<List<StoreViewModel>> GetActiveStoresAsync();
+        Task<bool> HideStoreAsync(Guid storeId);
+        Task<bool> UpdateStoreAsync(StoreDetails store);
+        Task<bool> ShowStoreAsync(Guid storeId);
     }
 }
