@@ -23,6 +23,7 @@
       ],
       "UpstreamPathTemplate": "/Gateway/ProductsService/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+
     },
     {
       "DownstreamPathTemplate": "/api/Users/{everything}",

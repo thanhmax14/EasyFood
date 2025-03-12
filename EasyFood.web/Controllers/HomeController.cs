@@ -123,7 +123,7 @@ namespace EasyFood.web.Controllers
             return View();
         }
 
-        public async Task<IActionResult> GetAllProduct()
+        public async Task<IActionResult> ListProducts()
         {
             var list = new List<ProductsViewModel>();
             this._url = "https://localhost:5555/Gateway/ProductsService";

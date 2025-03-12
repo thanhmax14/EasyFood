@@ -20,6 +20,8 @@ namespace Repository.ViewModels
         public bool IsActive { get; set; } = false;
         public bool IsOnSale { get; set; } // Có đang giảm giá?
 
+        public decimal Price { get; set; } = 0;
+
         public List<string> Img { get; set; } = new List<string>();
         public Guid CateID { get; set; }
        
