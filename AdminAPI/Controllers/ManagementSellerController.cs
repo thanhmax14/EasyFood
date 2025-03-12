@@ -39,6 +39,7 @@ namespace AdminAPI.Controllers
                             PhoneNumber = user.PhoneNumber,
                             UserName = user.UserName,
                             Email = user.Email,
+                            IsBanByadmin = user.IsBanByadmin,
                         });
                     }
                 }
