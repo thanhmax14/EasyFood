@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProductsService", "Products
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserAPI", "UserAPI\UserAPI.csproj", "{DACE898E-3FCA-4ECA-9C3F-8066F73042AF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdminAPI", "AdminAPI\AdminAPI.csproj", "{4A6A2B00-DA80-40A3-8AD3-412BC94A9A81}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdminAPI", "AdminAPI\AdminAPI.csproj", "{4A6A2B00-DA80-40A3-8AD3-412BC94A9A81}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
