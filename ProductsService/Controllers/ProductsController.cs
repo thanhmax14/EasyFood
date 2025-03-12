@@ -32,6 +32,7 @@ namespace ProductsService.Controllers
         }
 
         [HttpGet]
+       
         public async Task<IActionResult> GetAll()
         {
             var list = new List<ProductsViewModel>();
@@ -72,6 +73,8 @@ namespace ProductsService.Controllers
             }
             return BadRequest(false);
         }
+
+       
 
     }
 }
