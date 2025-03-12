@@ -20,7 +20,10 @@ namespace Repository.ViewModels
         public string? PhoneNumber { get; set; }
         public string? img { get; set; } = "";
         public bool isUpdateProfile { get; set; } = false;
-/*        public bool IsBanByadmin { get; set; } = false;
-*/        public DateTime? ModifyUpdate { get; set; } = DateTime.Now;
+        public bool IsBanByadmin { get; set; } = false;
+
+        /*        public bool IsBanByadmin { get; set; } = false;
+        */
+        public DateTime? ModifyUpdate { get; set; } = DateTime.Now;
     }
 }
