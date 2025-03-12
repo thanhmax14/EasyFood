@@ -145,6 +145,20 @@ namespace EasyFood.web.Controllers
                 return View(list);
             }
         }
+        public async Task<IActionResult> Logout()
+        {
+
+            if (User.Identity.IsAuthenticated)
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var getUser = await this._userManager.FindByIdAsync(userId);
+                getUser.lastAssces = DateTime.Now;
+                await this._userManager.UpdateAsync(getUser);
+            }
+            await _signInManager.SignOutAsync();
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index");
+        }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
