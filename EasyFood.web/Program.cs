@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Models;
 using Models.DBContext;
 using BusinessLogic.Config;
+using AutoMapper;
+using BusinessLogic.Mapper;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
@@ -20,6 +22,11 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
 builder.Services.ConfigureServices();
 builder.Services.ConfigureRepository();
+builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddScoped<Repository.StoreDetails.StoreDetailsRepository>();
+builder.Services.AddScoped<BusinessLogic.Services.StoreDetail.IStoreDetailService, BusinessLogic.Services.StoreDetail.StoreDetailService>();
+builder.Services.AddHttpClient();
+
 
 
 builder.Services.AddDistributedMemoryCache();
@@ -156,6 +163,17 @@ static async Task SeedDataAsync(WebApplication app)
             if (result.Succeeded)
             {
                 await userManager.AddToRoleAsync(ctvUser, "Seller");
+            }
+        }
+
+        var seller02 = await userManager.FindByEmailAsync("tranthaitansang23122003@gmail.com");
+        if (seller02 == null)
+        {
+            seller02 = new AppUser { UserName = "Shang12345", Email = "tranthaitansang23122003@gmail.com", EmailConfirmed = true };
+            var result = await userManager.CreateAsync(seller02, "Password123!");
+            if (result.Succeeded)
+            {
+                await userManager.AddToRoleAsync(seller02, "Seller");
             }
         }
     }

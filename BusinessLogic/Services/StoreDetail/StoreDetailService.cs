@@ -14,12 +14,14 @@ namespace BusinessLogic.Services.StoreDetail
     public class StoreDetailService : IStoreDetailService
     {
         private readonly IStoreDetailsRepository _repository;
+        private readonly StoreDetailsRepository _repositorys;
         private readonly IMapper _mapper;
 
-        public StoreDetailService(IStoreDetailsRepository repository, IMapper mapper)
+        public StoreDetailService(IStoreDetailsRepository repository, IMapper mapper, StoreDetailsRepository repositorys)
         {
             _repository = repository;
             _mapper = mapper;
+            _repositorys = repositorys;
         }
 
         public IQueryable<StoreDetails> GetAll() => _repository.GetAll();
@@ -53,5 +55,19 @@ namespace BusinessLogic.Services.StoreDetail
             Func<IQueryable<StoreDetails>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<StoreDetails, object>> includeProperties = null) =>
             await _repository.ListAsync(filter, orderBy, includeProperties);
         public async Task<int> SaveChangesAsync() => await _repository.SaveChangesAsync();
+        public async Task<bool> AddStoreAsync(StoreDetails store, string userId)
+        {
+            bool isSeller = await _repositorys.IsUserSellerAsync(userId);
+            if (!isSeller)
+            {
+                return false; // Người dùng không phải Seller
+            }
+
+            store.UserID = userId;
+            store.CreatedDate = DateTime.Now;
+            store.ModifiedDate = null;
+
+            return await _repositorys.AddStoreAsync(store);
+        }
     }
 }

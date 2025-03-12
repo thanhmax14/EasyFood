@@ -28,5 +28,6 @@ namespace BusinessLogic.Services.StoreDetail
             Expression<Func<StoreDetails, bool>> filter = null,
             Func<IQueryable<StoreDetails>, IOrderedQueryable<StoreDetails>> orderBy = null,
             Func<IQueryable<StoreDetails>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<StoreDetails, object>> includeProperties = null);
+        Task<bool> AddStoreAsync(StoreDetails store, string userId);
     }
 }
