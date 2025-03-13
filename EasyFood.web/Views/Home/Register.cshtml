@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿
+@model Repository.ViewModels.RegisterViewModel 
+<!DOCTYPE html>
 <html class="no-js" lang="en">
 
 <head>
@@ -11,9 +13,10 @@
     <meta property="og:type" content="" />
     <meta property="og:url" content="" />
     <meta property="og:image" content="" />
+    <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="~/assets/imgs/theme/favicon.svg" />
+    <!-- Template CSS -->
     <link rel="stylesheet" href="~/assets/css/main.css?v=6.0" />
-    <script src="https://cdn.jsdelivr.net/npm/cute-alert@0.0.3/dist/cute-alert.min.js"></script>
 </head>
 
 <body>
@@ -215,40 +218,32 @@
                 <div class="row">
                     <div class="col-xl-8 col-lg-10 col-md-12 m-auto">
                         <div class="row">
-                            <div class="col-lg-6 pr-30 d-none d-lg-block">
-                                <img class="border-radius-15" src="~/assets/imgs/page/login-1.png" alt="" />
-                            </div>
                             <div class="col-lg-6 col-md-8">
                                 <div class="login_wrap widget-taber-content background-white">
                                     <div class="padding_eight_all bg-white">
                                         <div class="heading_s1">
-                                            <h1 class="mb-5">Login</h1>
-                                            <p class="mb-30">
-                                                Don't have an account? <a href="page-register.html">
-                                                    Create
-                                                    here
-                                                </a>
-                                            </p>
+                                            <h1 class="mb-5">Create an Account</h1>
+                                            <p class="mb-30">Already have an account? <a href="page-login.html">Login</a></p>
                                         </div>
-                                        ﻿@{
-
-                                            string returnUrl = ViewData["ReturnUrl"]?.ToString() ?? "/";
-                                        }
+                                        
                                         <form>
                                             @Html.AntiForgeryToken()
-                                            <input type="hidden" id="ReturnUrl" value="@returnUrl" />
+                                            <input type="hidden" id="ReturnUrl" value="@ViewData["ReturnUrl"]" />
                                             <div class="form-group">
-                                                <input type="text" id="username"
-                                                       placeholder="Username or Email *" />
+                                                <input type="text" id="username" name="username" placeholder="Username" />
                                             </div>
                                             <div class="form-group">
-                                                <input id="password" type="password" name="password"
-                                                       placeholder="Your password *" />
+                                                <input type="text" id="email" name="email" placeholder="Email" />
                                             </div>
-                                        </form>
+                                            <div class="form-group">
+                                                <input id="password" type="password" name="password" placeholder="Password" />
+                                            </div>
+                                            <div class="form-group">
+                                                <input id="repassword" type="password" name="password" placeholder="Confirm password" />
+                                            </div>
                                             <div class="login_footer form-group">
                                                 <div class="chek-form">
-                                                    <button>Login With gg</button>
+                                                    <input type="text" required="" name="email" placeholder="Security code *" />
                                                 </div>
                                                 <span class="security-code">
                                                     <b class="text-new">8</b>
@@ -257,25 +252,47 @@
                                                     <b class="text-best">5</b>
                                                 </span>
                                             </div>
+                                            <div class="payment_option mb-50">
+                                                <div class="custome-radio">
+                                                    <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios3" checked="" />
+                                                    <label class="form-check-label" for="exampleRadios3" data-bs-toggle="collapse" data-target="#bankTranfer" aria-controls="bankTranfer">I am a customer</label>
+                                                </div>
+                                                <div class="custome-radio">
+                                                    <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios4" checked="" />
+                                                    <label class="form-check-label" for="exampleRadios4" data-bs-toggle="collapse" data-target="#checkPayment" aria-controls="checkPayment">I am a vendor</label>
+                                                </div>
+                                            </div>
                                             <div class="login_footer form-group mb-50">
                                                 <div class="chek-form">
                                                     <div class="custome-checkbox">
-                                                        <input class="form-check-input" type="checkbox" name="checkbox"
-                                                           id="remembers_me"  />
-                                                        <label class="form-check-label"
-                                                           for="remembers_me"><span>Remember me</span></label>
+                                                        <input class="form-check-input" type="checkbox" name="isCheckbox" id="isCheckbox" value="" />
+                                                        <label class="form-check-label" for="isCheckbox"><span>I agree to terms &amp; Policy.</span></label>
                                                     </div>
                                                 </div>
-                                                <a class="text-muted" href="#">Forgot password?</a>
+                                                <a href="page-privacy-policy.html"><i class="fi-rs-book-alt mr-5 text-muted"></i>Lean more</a>
                                             </div>
-                                            <div class="form-group">
-                                            <button type="button" id="btnLogin" class="btn btn-heading btn-block hover-up"
-                                                        name="login">
-                                                    Log in
-                                                </button>
+                                            <div class="form-group mb-30">
+                                                <button type="button" id="btnRegister" class="btn btn-fill-out btn-block hover-up font-weight-bold" name="login">Submit &amp; Register</button>
                                             </div>
-                                        
+                                            <p class="font-xs text-muted"><strong>Note:</strong>Your personal data will be used to support your experience throughout this website, to manage access to your account, and for other purposes described in our privacy policy</p>
+                                        </form>
                                     </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 pr-30 d-none d-lg-block">
+                                <div class="card-login mt-115">
+                                    <a href="#" class="social-login facebook-login">
+                                        <img src="~/assets/imgs/theme/icons/logo-facebook.svg" alt="" />
+                                        <span>Continue with Facebook</span>
+                                    </a>
+                                    <a href="#" class="social-login google-login">
+                                        <img src="~/assets/imgs/theme/icons/logo-google.svg" alt="" />
+                                        <span>Continue with Google</span>
+                                    </a>
+                                    <a href="#" class="social-login apple-login">
+                                        <img src="~/assets/imgs/theme/icons/logo-apple.svg" alt="" />
+                                        <span>Continue with Apple</span>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -295,12 +312,7 @@
                                     Stay home & get your daily <br />
                                     needs from our shop
                                 </h2>
-                                <p class="mb-45">
-                                    Start You'r Daily Shopping with <span class="text-brand">
-                                        Nest
-                                        Mart
-                                    </span>
-                                </p>
+                                <p class="mb-45">Start You'r Daily Shopping with <span class="text-brand">Nest Mart</span></p>
                                 <form class="form-subcriber d-flex">
                                     <input type="email" placeholder="Your emaill address" />
                                     <button class="btn" type="submit">Subscribe</button>
@@ -390,32 +402,14 @@
                     <div class="col">
                         <div class="widget-about font-md mb-md-3 mb-lg-3 mb-xl-0">
                             <div class="logo mb-30">
-                                <a href="index.html" class="mb-15">
-                                    <img src="~/assets/imgs/theme/logo.svg"
-                                         alt="logo" />
-                                </a>
+                                <a href="index.html" class="mb-15"><img src="~/assets/imgs/theme/logo.svg" alt="logo" /></a>
                                 <p class="font-lg text-heading">Awesome grocery store website template</p>
                             </div>
                             <ul class="contact-infor">
-                                <li>
-                                    <img src="~/assets/imgs/theme/icons/icon-location.svg" alt="" /><strong>
-                                        Address:
-                                    </strong> <span>5171 W Campbell Ave undefined Kent, Utah 53127 United States</span>
-                                </li>
-                                <li>
-                                    <img src="~/assets/imgs/theme/icons/icon-contact.svg" alt="" /><strong>
-                                        Call
-                                        Us:
-                                    </strong><span>(+91) - 540-025-124553</span>
-                                </li>
-                                <li>
-                                    <img src="~/assets/imgs/theme/icons/icon-email-2.svg"
-                                         alt="" /><strong>Email:</strong><span>sale@Nest.com</span>
-                                </li>
-                                <li>
-                                    <img src="~/assets/imgs/theme/icons/icon-clock.svg"
-                                         alt="" /><strong>Hours:</strong><span>10:00 - 18:00, Mon - Sat</span>
-                                </li>
+                                <li><img src="~/assets/imgs/theme/icons/icon-location.svg" alt="" /><strong>Address: </strong> <span>5171 W Campbell Ave undefined Kent, Utah 53127 United States</span></li>
+                                <li><img src="~/assets/imgs/theme/icons/icon-contact.svg" alt="" /><strong>Call Us:</strong><span>(+91) - 540-025-124553</span></li>
+                                <li><img src="~/assets/imgs/theme/icons/icon-email-2.svg" alt="" /><strong>Email:</strong><span>sale@Nest.com</span></li>
+                                <li><img src="~/assets/imgs/theme/icons/icon-clock.svg" alt="" /><strong>Hours:</strong><span>10:00 - 18:00, Mon - Sat</span></li>
                             </ul>
                         </div>
                     </div>
@@ -471,14 +465,8 @@
                         <h4 class="widget-title">Install App</h4>
                         <p class="wow fadeIn animated">From App Store or Google Play</p>
                         <div class="download-app">
-                            <a href="#" class="hover-up mb-sm-2 mb-lg-0">
-                                <img class="active"
-                                     src="~/assets/imgs/theme/app-store.jpg" alt="" />
-                            </a>
-                            <a href="#" class="hover-up mb-sm-2">
-                                <img src="~/assets/imgs/theme/google-play.jpg"
-                                     alt="" />
-                            </a>
+                            <a href="#" class="hover-up mb-sm-2 mb-lg-0"><img class="active" src="~/assets/imgs/theme/app-store.jpg" alt="" /></a>
+                            <a href="#" class="hover-up mb-sm-2"><img src="~/assets/imgs/theme/google-play.jpg" alt="" /></a>
                         </div>
                         <p class="mb-20">Secured Payment Gateways</p>
                         <img class="wow fadeIn animated" src="~/assets/imgs/theme/payment-method.png" alt="" />
@@ -492,10 +480,7 @@
                     <div class="footer-bottom"></div>
                 </div>
                 <div class="col-xl-4 col-lg-6 col-md-6">
-                    <p class="font-sm mb-0">
-                        &copy; 2024, <strong class="text-brand">Nest</strong> - HTML Ecommerce
-                        Template <br />All rights reserved
-                    </p>
+                    <p class="font-sm mb-0">&copy; 2024, <strong class="text-brand">Nest</strong> - HTML Ecommerce Template <br />All rights reserved</p>
                 </div>
                 <div class="col-xl-4 col-lg-6 text-center d-none d-xl-block">
                     <div class="hotline d-lg-inline-flex mr-30">
@@ -559,94 +544,43 @@
 </html>
 
 <script type="text/javascript">
-    $("#btnLogin").on("click", function () {
-        $('#btnLogin').html('<i class="fa fa-spinner fa-spin"></i> Đang xử lý...').prop('disabled', true);
-        var username = $("#username").val();
-        var password = $("#password").val();
-        var ReturnUrl = $("#ReturnUrl").val();
-        var rememberMe = $("#remembers_me").is(":checked");
+ 
+    $("#btnRegister").on("click", function () {
+        var checkbox = document.getElementById("isCheckbox");
         var token = $("input[name='__RequestVerificationToken']").val();
+
+        if (!checkbox.checked) {
+            Swal.fire(
+                'Thất bại',
+                "Vui lòng đồng ý điều khoản và chính sách sẽ tiếp tục",
+                'error'
+            );
+            return 0;
+        }
+
+        $('#btnRegister').html('<i class="fa fa-spinner fa-spin"></i> Đang xử lý...').prop('disabled', true);
+
         $.ajax({
-            url: '@Url.Action("Login", "Home")',
+            url: "@Url.Action("Register", "Home")",
             method: "POST",
             dataType: "JSON",
             data: {
-                username: username,
-                password: password,
-                ReturnUrl: ReturnUrl,
-                rememberMe: rememberMe,
+                username: $("#username").val(),
+                email: $("#email").val(),
+                password: $("#password").val(),
+                ReturnUrl: $("#ReturnUrl").val(),
+                repassword: $("#repassword").val(),
                 __RequestVerificationToken: token
             },
             success: function (response) {
-                if (response.status == 'success') {
-                    cuteToast({
-                        type: "success",
-                        message: response.msg,
-                        timer: 5000
-                    });
-                    setTimeout("location.href = '" + response.redirectUrl + "';", 100);
-                } else if (response.status == 'verify') {
+                if (response.status === 'success') {
                     Swal.fire({
-                        title: "Nhập mã xác minh 2 bước",
-                        input: "text",
-                        inputAttributes: {
-                            autocapitalize: "off"
-                        },
-                        showCancelButton: true,
-                        confirmButtonText: "Xác nhận",
-                        showLoaderOnConfirm: true,
-                        preConfirm: async (otp) => {
-                            if (!otp) {
-                                Swal.showValidationMessage("Vui lòng nhập mã xác minh.");
-                            }
-                            return otp;
-                        },
-                        allowOutsideClick: () => !Swal.isLoading()
-                    }).then(async (result) => {
-                        if (result.isConfirmed) {
-                            var otp = result.value;
-
-                            $.ajax({
-                                url: '@Url.Action("VerifyTwoFactor", "Home")',
-                                method: "POST",
-                                dataType: "JSON",
-                                data: {
-                                    username: username,
-                                    otp: otp,
-                                    __RequestVerificationToken: token,
-                                    ReturnUrl: ReturnUrl,
-
-                                },
-                                success: function (response) {
-                                    if (response.status == 'success') {
-                                        cuteToast({
-                                            type: "success",
-                                            message: response.msg,
-                                            timer: 5000
-                                        });
-                                        setTimeout("location.href = '" + response.redirectUrl + "';", 100);
-                                    } else {
-                                        Swal.fire('Thất bại', response.msg, 'error');
-                                    }
-                                },
-                                error: function () {
-                                    cuteToast({
-                                        type: "error",
-                                        message: 'Không thể xử lý',
-                                        timer: 5000
-                                    });
-                                }
-                            });
-                        }
-                    });
-                } else if (response.status == 'comfirm') {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Account Not Verified',
-                        text: "Your account has not been verified yet. Please check your email to confirm your registration.",
-                        footer: '<a href="#" onclick="resendVerificationEmail()" style="text-decoration: underline;">Click here to resend the verification email</a>',
+                        icon: "success",
+                        title: "Register Success",
+                        text: "Please check your email to verify your account. If you didn't receive the email, you can request a new one.",
+                       footer: '<a href="#" onclick="resendVerificationEmail()" style="text-decoration: underline;">Click here to resend the verification email</a>',
                     }).then((result) => {
-
+                        window.location.href = "/Home/Login"
                     });
                 } else {
                     Swal.fire(
@@ -655,7 +589,7 @@
                         'error'
                     );
                 }
-                $('#btnLogin').html('Đăng Nhập').prop('disabled', false);
+                $('#btnRegister').html('Đăng Ký').prop('disabled', false);
             },
             error: function () {
                 cuteToast({
@@ -663,7 +597,7 @@
                     message: 'Không thể xử lý',
                     timer: 5000
                 });
-                $('#btnLogin').html('Đăng Nhập').prop('disabled', false);
+                $('#btnRegister').html('Đăng Ký').prop('disabled', false);
             }
         });
     });
@@ -701,7 +635,7 @@
                 }).then((result) => {
                     // AJAX call to resend the verification email
                     $.ajax({
-                        url: '/Home/ResendConfirmationEmail', 
+                        url: '/Home/ResendConfirmationEmail',  // Update with your actual endpoint
                         type: 'POST',
                         data: {
                             username: username,

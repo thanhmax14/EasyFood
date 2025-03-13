@@ -22,5 +22,6 @@ namespace Repository.ViewModels
         [Required(ErrorMessage = "Vui lòng nhập lại mật khẩu.")]
         [Compare("Password", ErrorMessage = "Mật khẩu nhập lại không khớp.")]
         public string repassword { get; set; }
+        public string? ReturnUrl { get; set; }
     }
 }
