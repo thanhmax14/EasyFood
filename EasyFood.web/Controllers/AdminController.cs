@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Net.Http.Headers;
+using System.Text.Json;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Models;
 using Repository.ViewModels;
-using System.Net.Http.Headers;
-using System.Runtime.InteropServices;
-using System.Text.Json;
 
 namespace EasyFood.web.Controllers
 {
@@ -59,21 +58,22 @@ namespace EasyFood.web.Controllers
         public async Task<IActionResult> Hidden([FromBody] UsersViewModel obj)
         {
             var admin = await _userManager.GetUserAsync(User);
-            if(admin == null)
+            if (admin == null)
             {
                 return RedirectToAction("Login", "Home");
             }
-            if(!await _userManager.IsInRoleAsync(admin,"Admin")) {
+            if (!await _userManager.IsInRoleAsync(admin, "Admin"))
+            {
                 return RedirectToAction("Login", "Home");
             }
-         
+
             string apiURL = $"https://localhost:5555/Gateway/ManagementSellerService/Admin-Hiden/{obj.Email}";
             try
             {
                 var jsonContent = JsonSerializer.Serialize(obj);
                 var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
-                var respone = await client.PostAsync(apiURL, content);  
-                if(respone.IsSuccessStatusCode)
+                var respone = await client.PostAsync(apiURL, content);
+                if (respone.IsSuccessStatusCode)
                 {
                     return Json(new { success = true, message = "Cập nhật thành công!" });
                 }
@@ -92,11 +92,11 @@ namespace EasyFood.web.Controllers
         public async Task<IActionResult> Show([FromBody] UsersViewModel obj)
         {
             var admin = await _userManager.GetUserAsync(User);
-            if(admin == null)
+            if (admin == null)
             {
                 return RedirectToAction("Login", "Home");
-            } 
-            if(!await _userManager.IsInRoleAsync(admin, "Admin"))
+            }
+            if (!await _userManager.IsInRoleAsync(admin, "Admin"))
             {
                 return RedirectToAction("Login", "Home");
             }
@@ -105,11 +105,12 @@ namespace EasyFood.web.Controllers
             {
                 var jsonContent = JsonSerializer.Serialize(obj);
                 var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
-                var respone = await client.PostAsync(apiURL,content);
-                if(respone.IsSuccessStatusCode)
+                var respone = await client.PostAsync(apiURL, content);
+                if (respone.IsSuccessStatusCode)
                 {
                     return Json(new { success = true, message = "Cập nhật thành Công" });
-                } else
+                }
+                else
                 {
                     return Json(new { success = false, message = "Cập nhật thất bại" });
                 }
@@ -123,12 +124,12 @@ namespace EasyFood.web.Controllers
         }
         public async Task<IActionResult> UpdateByAdmin([FromBody] UsersViewModel obj)
         {
-            var admin = await _userManager.GetUserAsync (User);
-            if(admin == null)
+            var admin = await _userManager.GetUserAsync(User);
+            if (admin == null)
             {
                 return RedirectToAction("Login", "Home");
             }
-            if(!await _userManager.IsInRoleAsync(admin, "Admin"))
+            if (!await _userManager.IsInRoleAsync(admin, "Admin"))
             {
                 return RedirectToAction("Login", "Home");
             }
@@ -137,11 +138,12 @@ namespace EasyFood.web.Controllers
             {
                 var jsonContent = JsonSerializer.Serialize(obj);
                 var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
-                var response = await client.PostAsync(apiURL,content);  
-                if(response.IsSuccessStatusCode)
+                var response = await client.PostAsync(apiURL, content);
+                if (response.IsSuccessStatusCode)
                 {
                     return Json(new { success = true, message = "Cập nhật thành công" });
-                } else
+                }
+                else
                 {
                     return Json(new { success = true, message = "Cập nhật thất bại" });
                 }
@@ -152,7 +154,7 @@ namespace EasyFood.web.Controllers
                 return Json(new { success = false, message = "Lỗi kết nối API Gateway!" }); ;
             }
         }
-        }
-
     }
+
 }
+
