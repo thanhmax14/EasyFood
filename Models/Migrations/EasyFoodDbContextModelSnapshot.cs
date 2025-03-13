@@ -697,13 +697,10 @@ namespace Models.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("AppUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("Cmt")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("DateRelay")
+                    b.Property<DateTime?>("DateRelay")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("Datecmt")
@@ -723,13 +720,13 @@ namespace Models.Migrations
 
                     b.Property<string>("UserID")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("AppUserId");
-
                     b.HasIndex("ProductID");
+
+                    b.HasIndex("UserID");
 
                     b.ToTable("Reviews");
                 });
@@ -1030,13 +1027,15 @@ namespace Models.Migrations
 
             modelBuilder.Entity("Models.Review", b =>
                 {
-                    b.HasOne("Models.AppUser", "AppUser")
-                        .WithMany()
-                        .HasForeignKey("AppUserId");
-
                     b.HasOne("Models.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Models.AppUser", "AppUser")
+                        .WithMany()
+                        .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

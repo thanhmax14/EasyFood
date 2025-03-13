@@ -24,10 +24,15 @@ namespace AdminAPI.Controllers
             {
                 var list = new List<UsersViewModel>();
                 var obj = _userManager.Users.ToList();
+
                 if (obj.Any())
                 {
                     foreach (var user in obj)
                     {
+                        // Kiểm tra nếu là Admin thì bỏ qua
+                        if (_userManager.IsInRoleAsync(user, "Admin").Result)
+                            continue;
+
                         list.Add(new UsersViewModel
                         {
                             Birthday = user.Birthday,
@@ -39,6 +44,7 @@ namespace AdminAPI.Controllers
                             PhoneNumber = user.PhoneNumber,
                             UserName = user.UserName,
                             Email = user.Email,
+                            IsBanByadmin = user.IsBanByadmin,
                         });
                     }
                 }
@@ -49,6 +55,7 @@ namespace AdminAPI.Controllers
                 return StatusCode(500, new { message = "An error occurred while retrieving users", error = ex.Message });
             }
         }
+
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByID(string id)
@@ -148,36 +155,48 @@ namespace AdminAPI.Controllers
                 return StatusCode(500, new { message = "An error occurred while updating the user", error = ex.Message });
             }
         }
-        [HttpPost("Admin-Hiden")]
-        public async Task<IActionResult> Hiden(string id)
+        [HttpPost("Admin-Hiden/{email}")]
+        public async Task<IActionResult> Hiden(string email, [FromBody] UsersViewModel obj)
         {
             try
             {
-                var user = _userManager.Users.FirstOrDefault(x => x.Id == id);
+                if (obj == null || string.IsNullOrWhiteSpace(obj.Email))
+                {
+                    return BadRequest(new { message = "Invalid request, email is required" });
+                }
+
+                var user = await _userManager.FindByEmailAsync(obj.Email); // Tối ưu hơn FirstOrDefault()
                 if (user == null)
                 {
                     return BadRequest(new { message = "User not found" });
                 }
-                user.IsBanByadmin = true;
+
+                user.IsBanByadmin = true; // Cập nhật theo yêu cầu từ client (ẩn hoặc bỏ ẩn)
                 var result = await _userManager.UpdateAsync(user);
+
                 if (!result.Succeeded)
                 {
-                    return BadRequest(new { message = "Failed to Hiden users" });
+                    return BadRequest(new { message = "Failed to update user", errors = result.Errors });
                 }
-                return Ok(new { message = "User Hiden success" });
+
+                return Ok(new { success = true, message = "User status updated successfully" });
             }
             catch (Exception ex)
             {
-
                 return StatusCode(500, new { message = "An error occurred while updating the user", error = ex.Message });
             }
         }
-        [HttpPost("Admin-Show")]
-        public async Task<IActionResult> Show(string id)
+
+        [HttpPost("Admin-Show/{email}")]
+        public async Task<IActionResult> Show(string email, [FromBody] UsersViewModel obj)
         {
             try
             {
-                var user = _userManager.Users.FirstOrDefault(x => x.Id == id);
+                if (obj == null || string.IsNullOrWhiteSpace(obj.Email))
+                {
+                    return BadRequest(new { message = "Invalid request, email is required" });
+                }
+                var user = _userManager.Users.FirstOrDefault(x => x.Email == email);
                 if (user == null)
                 {
                     return BadRequest(new { message = "User not found" });
@@ -196,8 +215,8 @@ namespace AdminAPI.Controllers
             }
 
         }
-        [HttpPut("Admin-Update{id}")]
-        public async Task<IActionResult> updateByAdmin(string id, [FromBody] AdminViewModel obj)
+        [HttpPut("Admin-Update{email}")]
+        public async Task<IActionResult> updateByAdmin(string email, [FromBody] AdminViewModel obj)
         {
             try
             {
@@ -206,7 +225,7 @@ namespace AdminAPI.Controllers
                     return BadRequest(new { message = "User not found" });
 
                 }
-                var user = await _userManager.FindByIdAsync(id);
+                var user = await _userManager.FindByEmailAsync(email);
                 user.UserName = obj.UserName;
                 user.Email = obj.Email;
                 user.Address = obj.Address;

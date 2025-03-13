@@ -16,10 +16,10 @@ namespace Models
         public DateTime Datecmt { get; set; } = DateTime.Now;
 
         public string? Relay { get; set; }
-        public DateTime DateRelay { get; set; } = DateTime.Now;
+        public DateTime? DateRelay { get; set; } = DateTime.Now;
         public bool Status { get; set; } = false;
         public int Rating { get; set; } = 5;
-
+        [ForeignKey("AppUser")]
         public string UserID { get; set; }
         [ForeignKey("Product")]
         public Guid ProductID { get; set; }

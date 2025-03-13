@@ -575,8 +575,7 @@
                 password: password,
                 ReturnUrl: ReturnUrl,
                 rememberMe: rememberMe,
-                __RequestVerificationToken: token,
-
+                __RequestVerificationToken: token
             },
             success: function (response) {
                 if (response.status == 'success') {
@@ -640,6 +639,15 @@
                             });
                         }
                     });
+                } else if (response.status == 'comfirm') {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Account Not Verified',
+                        text: "Your account has not been verified yet. Please check your email to confirm your registration.",
+                        footer: '<a href="#" onclick="resendVerificationEmail()" style="text-decoration: underline;">Click here to resend the verification email</a>',
+                    }).then((result) => {
+
+                    });
                 } else {
                     Swal.fire(
                         'Thất bại',
@@ -659,4 +667,65 @@
             }
         });
     });
+
+    function resendVerificationEmail() {
+        var username = $("#username").val();
+        var token = $("input[name='__RequestVerificationToken']").val();
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you want to resend the verification email?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'No'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Show loading alert with timer and progress bar
+                let timerInterval;
+                Swal.fire({
+                    title: "Sending Email...",
+                    html: "Please wait, we are resending the email. <b></b> milliseconds remaining.",
+                    timer: 4000, // Adjust the timer value as needed
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading();
+                        const timer = Swal.getPopup().querySelector("b");
+                        timerInterval = setInterval(() => {
+                            timer.textContent = `${Swal.getTimerLeft()}`;
+                        }, 100);
+                    },
+                    willClose: () => {
+                        clearInterval(timerInterval);
+                    }
+                }).then((result) => {
+                    // AJAX call to resend the verification email
+                    $.ajax({
+                        url: '/Home/ResendConfirmationEmail', 
+                        type: 'POST',
+                        data: {
+                            username: username,
+                            __RequestVerificationToken: token
+                        },
+                        success: function (response) {
+                            Swal.fire({
+                                icon: "info",
+                                title: "Verification Email Resent",
+                                text: "A new verification email has been sent to your inbox. Please check your email.",
+                            });
+
+                        },
+                        error: function () {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error",
+                                text: "There was an issue resending the email. Please try again later.",
+                            });
+                        }
+                    });
+                });
+            }
+        });
+    }
+
 </script>
