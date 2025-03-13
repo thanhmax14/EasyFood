@@ -2510,63 +2510,158 @@
                         <!-- end col -->
                     </div>
                     <!-- end row -->
-                <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        if (document.getElementById("table-gridjs1111")) {
-            var users = @Html.Raw(JsonSerializer.Serialize(Model)); // ✅ Lấy dữ liệu từ Razor Model
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                            if (document.getElementById("table-gridjs1111")) {
+                                var users = @Html.Raw(JsonSerializer.Serialize(Model));
 
-            new gridjs.Grid({
-                columns: [
-                    { name: "UserName", width: "140" },
-                    { name: "Email", width: "150px" },
-                    { name: "PhoneNumber", width: "220px", formatter: (e) => gridjs.html(`<a href="#">${e}</a>`) },
-                    { name: "Address", width: "250px" },
-                    { name: "Birthday", width: "180px" },
-                    { name: "IsBanByadmin", width: "180px" },
-                    {
-                        name: "Actions",
-                        width: "150px",
-                        formatter: () => gridjs.html(`
-                            <div class="dropdown">
-                                <button class="btn btn-soft-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="ri-more-fill align-middle"></i>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li>
-                                        <button class="dropdown-item" onclick="location.href = 'apps-tickets-details.html';">
-                                            <i class="ri-eye-fill align-bottom me-2 text-muted"></i> View
-                                        </button>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item edit-item-btn" href="#showModal" data-bs-toggle="modal">
-                                            <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item remove-item-btn" data-bs-toggle="modal" href="#deleteOrder">
-                                            <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        `)
-                    }
-                ],
-                pagination: { enabled: true, limit: 10, summary: true },
-                sort: true,
-                search: true,
-                data: users.map(user => [
-                    user.UserName,
-                    user.Email,
-                    user.PhoneNumber,
-                    user.Address,
-                    user.Birthday,
-                    user.IsBanByadmin
-                ])
-            }).render(document.getElementById("table-gridjs1111"));
-        }
-    });
-</script>
+                                new gridjs.Grid({
+                                    columns: [
+                                        { name: "UserName", width: "140" },
+                                        { name: "Email", width: "150px" },
+                                        { name: "PhoneNumber", width: "220px", formatter: (e) => gridjs.html(`<a href="#">${e}</a>`) },
+                                        { name: "Address", width: "250px" },
+                                        { name: "Birthday", width: "180px" },
+                                        {
+                                            name: "IsBanByadmin",
+                                            width: "180px",
+                                            formatter: (value) => value ? "❌ Disable" : "✔ Active"
+                                        },
+                                        {
+                                            name: "Actions",
+                                            width: "150px",
+                                            formatter: (_, row) => {
+                                                let userEmail = row.cells[1].data; // Lấy Email của user
+                                                let isBanned = row.cells[5].data; // Giá trị IsBanByadmin
+                                                let actionButton = isBanned
+                                                    ? `<button class="dropdown-item toggle-ban-btn" data-useremail="${userEmail}" data-ban="false">
+                                    <i class="ri-eye-fill align-bottom me-2 text-muted"></i> Show
+                               </button>`
+                                                    : `<button class="dropdown-item toggle-ban-btn" data-useremail="${userEmail}" data-ban="true">
+                                    <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Hidden
+                               </button>`;
+
+                                                return gridjs.html(`
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-soft-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                            <i class="ri-more-fill align-middle"></i>
+                                                        </button>
+                                                        <ul class="dropdown-menu dropdown-menu-end">
+                                                            <li>
+                                                                <button class="dropdown-item" onclick="location.href = 'apps-tickets-details.html';">
+                                                                    <i class="ri-eye-fill align-bottom me-2 text-muted"></i> View
+                                                                </button>
+                                                            </li>
+                                                            <li>${actionButton}</li>
+                                                        </ul>
+                                                    </div>
+                                                `);
+                                            }
+                                        }
+                                    ],
+                                    pagination: { enabled: true, limit: 10, summary: true },
+                                    sort: true,
+                                    search: true,
+                                    data: users.map(user => [
+                                        user.UserName,
+                                        user.Email,
+                                        user.PhoneNumber,
+                                        user.Address,
+                                        user.Birthday,
+                                        user.IsBanByadmin
+                                    ])
+                                }).render(document.getElementById("table-gridjs1111"));
+
+                                document.body.addEventListener("click", function (e) {
+                                    let target = e.target.closest(".toggle-ban-btn");
+                                    if (target) {
+                                        let userEmail = target.getAttribute("data-useremail");
+                                        let isBan = target.getAttribute("data-ban") === "false"; // Nếu đang bị ẩn, chuyển sang hiện
+
+                                        if (isBan) {
+                                            showUser(userEmail);
+                                        } else {
+                                            toggleUserBan(userEmail, isBan);
+                                        }
+                                    }
+                                });
+
+                            }
+                        });
+                        function showUser(userEmail) {
+                            $.ajax({
+                                url: "/Admin/Show",
+                                type: "POST",
+                                contentType: "application/json",
+                                data: JSON.stringify({ Email: userEmail }),
+                                success: function (response) {
+                                    if (response.success) {
+                                        Swal.fire({
+                                            icon: "success",
+                                            title: "Thành công!",
+                                            text: response.message,
+                                            confirmButtonText: "OK"
+                                        }).then(() => {
+                                            location.reload(); // Reload lại trang để cập nhật trạng thái
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            icon: "error",
+                                            title: "Lỗi!",
+                                            text: response.message,
+                                            confirmButtonText: "OK"
+                                        });
+                                    }
+                                },
+                                error: function () {
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: "Lỗi!",
+                                        text: "Có lỗi xảy ra khi gửi yêu cầu!",
+                                        confirmButtonText: "OK"
+                                    });
+                                }
+                            });
+                        }
+                        function toggleUserBan(userEmail, isBan) {
+                            $.ajax({
+                                url: "/Admin/Hidden",
+                                type: "POST",
+                                contentType: "application/json",
+                                data: JSON.stringify({ Email: userEmail, IsBanByadmin: isBan }),
+                                success: function (response) {
+                                    if (response.success) {
+                                        Swal.fire({
+                                            icon: "success",
+                                            title: "Thành công!",
+                                            text: response.message,
+                                            confirmButtonText: "OK"
+                                        }).then(() => {
+                                            location.reload();
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            icon: "error",
+                                            title: "Lỗi!",
+                                            text: response.message,
+                                            confirmButtonText: "OK"
+                                        });
+                                    }
+                                },
+                                error: function () {
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: "Lỗi!",
+                                        text: "Có lỗi xảy ra khi gửi yêu cầu!",
+                                        confirmButtonText: "OK"
+                                    });
+                                }
+                            });
+                        }
+
+                    </script>
+
+
 
 
                     <!-- end row -->
@@ -2609,8 +2704,9 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
     <!-- JAVASCRIPT -->
