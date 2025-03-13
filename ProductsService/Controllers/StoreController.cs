@@ -29,10 +29,16 @@ namespace ProductsService.Controllers
                     list.Add(new StoreViewModel
                     {
                         Name = item.Name,
-                        //Description = item.ShortDescriptions,
+                        LongDescriptions = item.LongDescriptions,
                         Address = item.Address,
-                       // Call = item.Phone,
-
+                        Phone = item.Phone,
+                        ShortDescriptions = item.ShortDescriptions,
+                        CreatedDate = item.CreatedDate,
+                        ID = item.ID,
+                        Img = item.Img,
+                        IsActive = item.IsActive,
+                        ModifiedDate = item.ModifiedDate,
+                        Status = item.Status,   
                     });
                 }
                 return Ok(list);
