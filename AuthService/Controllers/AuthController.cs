@@ -152,6 +152,28 @@
 
             }
 
+        [HttpPost("ResendEmail")]
+        public async Task<IActionResult> ResendEmail(string username)
+        {
+            var user = await _userManager.FindByNameAsync(username) ?? await _userManager.FindByEmailAsync(username);
+            if (user == null)
+            {
+                return BadRequest(new { status = "error", msg = "Tài khoản không tồn tại." });
+            }
+
+            // Kiểm tra email đã xác nhận chưa
+            if (await _userManager.IsEmailConfirmedAsync(user))
+            {
+                return BadRequest(new { status = "error", msg = "Email đã được xác nhận." });
+            }
+
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var confirmationLink = Url.Action(nameof(HomeController.ConfirmEmail), "Home", new { userId = user.Id, token }, Request.Scheme);
+            await _emailSender.SendEmailAsync(user.Email, "Email Verification", $"Please click the following link to verify your email: {confirmationLink}");
+
+            return Ok(new { status = "success", msg = "Một email xác nhận mới đã được gửi." });
+        }
+
         [HttpGet]
         public async Task<IActionResult> hello()
         {
