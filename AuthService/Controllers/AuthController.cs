@@ -168,8 +168,9 @@
             }
 
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            var confirmationLink = Url.Action(nameof(HomeController.ConfirmEmail), "Home", new { userId = user.Id, token }, Request.Scheme);
-            await _emailSender.SendEmailAsync(user.Email, "Email Verification", $"Please click the following link to verify your email: {confirmationLink}");
+            var confirmationLink = Url.Action("ConfirmEmail", "Home", new { userId = user.Id, token = token }, Request.Scheme);
+            await _emailSender.SendEmailAsync(user.Email, "Email Verification",
+                $"Please click the following link to verify your email: {confirmationLink}");
 
             return Ok(new { status = "success", msg = "Một email xác nhận mới đã được gửi." });
         }
