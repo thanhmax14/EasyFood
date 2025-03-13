@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Models;
 using Repository.ViewModels;
 using System.Net.Http.Headers;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 
 namespace EasyFood.web.Controllers
@@ -55,7 +56,103 @@ namespace EasyFood.web.Controllers
                 return StatusCode(500, new { message = "Lỗi server", error = ex.Message });
             }
         }
+        public async Task<IActionResult> Hidden([FromBody] UsersViewModel obj)
+        {
+            var admin = await _userManager.GetUserAsync(User);
+            if(admin == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if(!await _userManager.IsInRoleAsync(admin,"Admin")) {
+                return RedirectToAction("Login", "Home");
+            }
+         
+            string apiURL = $"https://localhost:5555/Gateway/ManagementSellerService/Admin-Hiden/{obj.Email}";
+            try
+            {
+                var jsonContent = JsonSerializer.Serialize(obj);
+                var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+                var respone = await client.PostAsync(apiURL, content);  
+                if(respone.IsSuccessStatusCode)
+                {
+                    return Json(new { success = true, message = "Cập nhật thành công!" });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Cập nhật thất bại!" });
 
+                }
+            }
+            catch (Exception)
+            {
+
+                return Json(new { success = false, message = "Lỗi kết nối API Gateway!" }); ;
+            }
+        }
+        public async Task<IActionResult> Show([FromBody] UsersViewModel obj)
+        {
+            var admin = await _userManager.GetUserAsync(User);
+            if(admin == null)
+            {
+                return RedirectToAction("Login", "Home");
+            } 
+            if(!await _userManager.IsInRoleAsync(admin, "Admin"))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            string apiURL = $"https://localhost:5555/Gateway/ManagementSellerService/Admin-Show/{obj.Email}";
+            try
+            {
+                var jsonContent = JsonSerializer.Serialize(obj);
+                var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+                var respone = await client.PostAsync(apiURL,content);
+                if(respone.IsSuccessStatusCode)
+                {
+                    return Json(new { success = true, message = "Cập nhật thành Công" });
+                } else
+                {
+                    return Json(new { success = false, message = "Cập nhật thất bại" });
+                }
+
+            }
+            catch (Exception)
+            {
+
+                return Json(new { success = false, message = "Lỗi kết nối API Gateway!" }); ;
+            }
+        }
+        public async Task<IActionResult> UpdateByAdmin([FromBody] UsersViewModel obj)
+        {
+            var admin = await _userManager.GetUserAsync (User);
+            if(admin == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if(!await _userManager.IsInRoleAsync(admin, "Admin"))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            string apiURL = $"https://localhost:5555/Gateway/ManagementSellerService/Admin-Update/{obj.Email}";
+            try
+            {
+                var jsonContent = JsonSerializer.Serialize(obj);
+                var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+                var response = await client.PostAsync(apiURL,content);  
+                if(response.IsSuccessStatusCode)
+                {
+                    return Json(new { success = true, message = "Cập nhật thành công" });
+                } else
+                {
+                    return Json(new { success = true, message = "Cập nhật thất bại" });
+                }
+            }
+            catch (Exception)
+            {
+
+                return Json(new { success = false, message = "Lỗi kết nối API Gateway!" }); ;
+            }
+        }
+        }
 
     }
 }
