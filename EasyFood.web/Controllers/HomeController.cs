@@ -260,10 +260,33 @@ namespace EasyFood.web.Controllers
             }
         }
 
+        public async Task<IActionResult> ProductDetail()
+        {
+            var list = new List<ProductsViewModel>();
+            this._url = "https://localhost:5555/Gateway/ProductsService";
+            try
+            {
+                var response = await client.GetAsync(this._url);
+                if (!response.IsSuccessStatusCode)
+                {
+                    return View(list);
+                }
+
+                var mes = await response.Content.ReadAsStringAsync();
+                list = JsonSerializer.Deserialize<List<ProductsViewModel>>(mes, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                return View(list);
+            }
+            catch (Exception ex)
+            {
+                return View(list);
+            }
+        }
+
         public async Task<IActionResult> GetAllStore()
         {
             var list = new List<StoreViewModel>();
-            this._url = "https://localhost:5555/Gateway/ProductsService";
+            this._url = "https://localhost:5555/Gateway/StoreDetailService";
             try
             {
                 var response = await client.GetAsync(this._url);
