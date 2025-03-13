@@ -9,13 +9,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "Models\Models.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repository", "Repository\Repository.csproj", "{F4F393C5-9480-4C2A-98CD-3EFA94ABEC04}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyFood.web", "EasyFood.web\EasyFood.web.csproj", "{3FF04EF3-0F07-44F1-93E3-7ED9B623F954}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyFood.web", "EasyFood.web\EasyFood.web.csproj", "{3FF04EF3-0F07-44F1-93E3-7ED9B623F954}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthService", "AuthService\AuthService.csproj", "{E1A7A0EF-1FBD-4B43-BB42-49F09BC1A3E3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthService", "AuthService\AuthService.csproj", "{E1A7A0EF-1FBD-4B43-BB42-49F09BC1A3E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIGateway", "APIGateway\APIGateway.csproj", "{715FE147-7CF6-4F66-9BA3-F58D3FD8536A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APIGateway", "APIGateway\APIGateway.csproj", "{715FE147-7CF6-4F66-9BA3-F58D3FD8536A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductsService", "ProductsService\ProductsService.csproj", "{D0DA34C9-D61B-4A8D-BEA6-2C8EB1705D9B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProductsService", "ProductsService\ProductsService.csproj", "{D0DA34C9-D61B-4A8D-BEA6-2C8EB1705D9B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserAPI", "UserAPI\UserAPI.csproj", "{DACE898E-3FCA-4ECA-9C3F-8066F73042AF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdminAPI", "AdminAPI\AdminAPI.csproj", "{4A6A2B00-DA80-40A3-8AD3-412BC94A9A81}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +55,14 @@ Global
 		{D0DA34C9-D61B-4A8D-BEA6-2C8EB1705D9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0DA34C9-D61B-4A8D-BEA6-2C8EB1705D9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0DA34C9-D61B-4A8D-BEA6-2C8EB1705D9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DACE898E-3FCA-4ECA-9C3F-8066F73042AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DACE898E-3FCA-4ECA-9C3F-8066F73042AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DACE898E-3FCA-4ECA-9C3F-8066F73042AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DACE898E-3FCA-4ECA-9C3F-8066F73042AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A6A2B00-DA80-40A3-8AD3-412BC94A9A81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A6A2B00-DA80-40A3-8AD3-412BC94A9A81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A6A2B00-DA80-40A3-8AD3-412BC94A9A81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A6A2B00-DA80-40A3-8AD3-412BC94A9A81}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

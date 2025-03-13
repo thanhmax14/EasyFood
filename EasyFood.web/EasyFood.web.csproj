@@ -19,4 +19,8 @@
     <ProjectReference Include="..\BusinessLogic\BusinessLogic.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\assetsAdmin\" />
+  </ItemGroup>
+
 </Project>

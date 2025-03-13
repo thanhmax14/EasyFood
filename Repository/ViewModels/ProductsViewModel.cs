@@ -19,6 +19,10 @@ namespace Repository.ViewModels
         public DateTime ManufactureDate { get; set; }// Ngày sản xuất
         public bool IsActive { get; set; } = false;
         public bool IsOnSale { get; set; } // Có đang giảm giá?
+        public string? StoreName { get; set; }
+
+        public string CategoryName { get; set; }
+        public decimal Price { get; set; } = 0;
 
         public List<string> Img { get; set; } = new List<string>();
         public Guid CateID { get; set; }
