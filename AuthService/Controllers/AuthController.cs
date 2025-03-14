@@ -135,22 +135,18 @@
                 if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(user, "User");
-                    var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                   
 
-                    var confirmationLink = Url.Action("ConfirmEmail", "Home",
-                        new { userId = user.Id, token = token }, Request.Scheme);
-
-                    await _emailSender.SendEmailAsync(user.Email, "Xác nhận email",
-                        $"Vui lòng nhấp vào liên kết để xác nhận email: {confirmationLink}");
+                   
 
                     return Ok(new { status = "success", msg = "Đăng ký thành công." });
 
                 }
                 var firstResultError = result.Errors.FirstOrDefault()?.Description;
                 return BadRequest(new { status = "error", msg = firstResultError ?? "Đăng ký thất bại." });
-
-
             }
+
+      
 
         [HttpPost("ResendEmail")]
         public async Task<IActionResult> ResendEmail(string username)
@@ -160,8 +156,6 @@
             {
                 return BadRequest(new { status = "error", msg = "Tài khoản không tồn tại." });
             }
-
-            // Kiểm tra email đã xác nhận chưa
             if (await _userManager.IsEmailConfirmedAsync(user))
             {
                 return BadRequest(new { status = "error", msg = "Email đã được xác nhận." });
@@ -174,6 +168,26 @@
 
             return Ok(new { status = "success", msg = "Một email xác nhận mới đã được gửi." });
         }
+
+        [HttpPost("Forgot")]
+        public async Task<IActionResult> ForgotPassword([FromBody]string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return BadRequest(new { status = "error", msg = "Email không hợp lệ" });
+            }
+
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return BadRequest(new { status = "error", msg = "Email không tồn tại trong hệ thống." });
+            }
+
+  
+
+            return Ok(new { status = "success",
+                msg = "Đã gửi email để đặt lại mật khẩu. Vui lòng kiểm tra hộp thư của bạn." });
+            }
 
         [HttpGet]
         public async Task<IActionResult> hello()

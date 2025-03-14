@@ -1,10 +1,12 @@
-﻿using EasyFood.web.Models;
+﻿using BusinessLogic.Services.Carts;
+using EasyFood.web.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Models;
 using Net.payOS.Types;
 using Repository.ViewModels;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Security.Claims;
@@ -20,7 +22,8 @@ namespace EasyFood.web.Controllers
         private readonly IEmailSender _emailSender;
         private HttpClient client = null;
         private string _url;
-        public HomeController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, IEmailSender emailSender)
+        private readonly ICartService _cart;
+        public HomeController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, IEmailSender emailSender, ICartService cart)
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -28,6 +31,7 @@ namespace EasyFood.web.Controllers
             client = new HttpClient();
             var contentype = new MediaTypeWithQualityHeaderValue("application/json");
             client.DefaultRequestHeaders.Accept.Add(contentype);
+            _cart = cart;
         }
 
         public IActionResult Index()
@@ -196,7 +200,14 @@ namespace EasyFood.web.Controllers
 
                 if (response.IsSuccessStatusCode)
                 {
-                  
+                    var user = await _userManager.FindByNameAsync(model.Username) ?? await _userManager.FindByEmailAsync(model.Username);
+                    var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var confirmationLink = Url.Action("ConfirmEmail", "Home",
+                       new { userId = user.Id, token = token }, Request.Scheme);
+
+                    await _emailSender.SendEmailAsync(user.Email, "Xác nhận email",
+                        $"Vui lòng nhấp vào liên kết để xác nhận email: {confirmationLink}");
+
                     return Json(new
                     {
                         status,
@@ -216,8 +227,7 @@ namespace EasyFood.web.Controllers
         {
             this._url = "https://localhost:5555/Gateway/authenticate/ResendEmail";
             var temp = new { username };
-            string json = JsonSerializer.Serialize(temp);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var content = new StringContent($"\"{username}\"", Encoding.UTF8, "application/json");
             try
             {
                 var response = await client.PostAsync(this._url, content);
@@ -305,6 +315,57 @@ namespace EasyFood.web.Controllers
                 }
             }
         }
+
+
+        [HttpGet]
+        public IActionResult Forgot()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Forgot(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return Json(new { status = "error", msg = "Email không hợp lệ" });
+            }
+
+            this._url = "https://localhost:5555/Gateway/authenticate/Forgot";
+            var content = new StringContent($"\"{email}\"", Encoding.UTF8, "application/json");
+
+            try
+            {
+                var response = await client.PostAsync(this._url, content);
+                var mes = await response.Content.ReadAsStringAsync();
+                using var doc = JsonDocument.Parse(mes);
+                var root = doc.RootElement;
+                var status = root.GetProperty("status").GetString();
+                var msg = root.GetProperty("msg").GetString();
+                if (response.IsSuccessStatusCode)
+                {
+                    var user = await _userManager.FindByNameAsync(email) ?? await _userManager.FindByEmailAsync(email);
+                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                    var resetLink = Url.Action("ResetPassword", "Home", new { token = token, email = email }, protocol: HttpContext.Request.Scheme);
+                    var subject = "Đặt lại mật khẩu của bạn";
+                    var body = $"Vui lòng nhấp vào đường dẫn dưới đây để đặt lại mật khẩu của bạn: <br/><a href='{resetLink}'>Đặt lại mật khẩu</a>";
+                    await _emailSender.SendEmailAsync(email, subject, body);
+                    return Json(new { status, msg });
+                }
+                return Json(new { status, msg });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return Json(new { status = "error", msg = "Lỗi không xác định, vui lòng thử lại." });
+            }
+        }
+
+
         public async Task<IActionResult> Logout()
         {
 
@@ -319,10 +380,102 @@ namespace EasyFood.web.Controllers
             HttpContext.Session.Clear();
             return RedirectToAction("Index");
         }
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        [HttpGet]
+        public IActionResult ResetPassword(string token, string email)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            if (token == null || email == null)
+            {
+                return BadRequest("Invalid request");
+            }
+
+            return View(new ResetPasswordViewModel { Token = token, Email = email });
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                if (ModelState.ContainsKey("Password") && ModelState["Password"].Errors.Any())
+                {
+                    return Json(new { status = "error", msg = "" + ModelState["Password"].Errors[0].ErrorMessage });
+                }
+
+                if (ModelState.ContainsKey("ConfirmPassword") && ModelState["ConfirmPassword"].Errors.Any())
+                {
+                    return Json(new { status = "error", msg = "" + ModelState["ConfirmPassword"].Errors[0].ErrorMessage });
+                }
+            }
+
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                return Json(new { status = "error", msg = "Email không tồn tại trong hệ thống." });
+            }
+
+            var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+            if (result.Succeeded)
+            {
+                return Json(new { status = "success", msg = "Mật khẩu đã được thay đổi thành công." });
+            }
+
+            var firstResultError = result.Errors.FirstOrDefault()?.Description;
+            if (firstResultError == "Invalid token.")
+            {
+                firstResultError = "Link cập nhật mật khẩu đã hết hạn!!";
+            }
+
+            return Json(new { status = "error", msg = firstResultError ?? "Cập nhật mật khẩu thất bại." });
+
+        }
+        [HttpGet]
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            if (userId == null || token == null)
+            {
+                return BadRequest("Yêu cầu không hợp lệ.");
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound("Không tìm thấy người dùng.");
+            }
+
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            if (result.Succeeded)
+            {
+                return Ok("Xác nhận email thành công.");
+            }
+
+            return BadRequest("Xác nhận email không thành công.");
+        }
+
+
+        public async Task<IActionResult> Cart()
+        {
+            var getCart = this._cart.GetCartFromSession();
+            var listtem = new List<CartViewModels>();
+
+            if (getCart.Any())
+            {
+                foreach(var item in getCart)
+                {
+
+
+
+
+                    listtem.Add(new CartViewModels
+                    {
+                          
+                    });
+                }
+            }
+            
+
+            return View();
+        }
+
+
     }
 }
