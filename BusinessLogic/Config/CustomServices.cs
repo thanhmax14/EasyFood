@@ -19,6 +19,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static BusinessLogic.EmailServices.EmailService;
+using BusinessLogic.Services.Wishlists;
 
 namespace BusinessLogic.Config
 {
@@ -34,6 +35,7 @@ namespace BusinessLogic.Config
             services.AddScoped<IProductImageService, ProductImageService>();
             services.AddScoped<IProductVariantService, ProductVariantService>();
             services.AddScoped<IReviewService, ReviewService>();
+            services.AddScoped<IWishlistServices, WishlistServices>();
 
 
 

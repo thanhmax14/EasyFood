@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Models;
@@ -7,6 +8,7 @@ using Repository.ViewModels;
 
 namespace EasyFood.web.Controllers
 {
+    
     public class AdminController : Controller
     {
         private readonly UserManager<AppUser> _userManager;
