@@ -104,10 +104,6 @@ namespace BusinessLogic.Services.StoreDetail
         {
             return await _repositorys.GetInactiveStoresAsync();
         }
-        public async Task<List<StoreViewModel>> GetActiveStoresAsync()
-        {
-            return await _repositorys.GetActiveStoresAsync();
-        }
         public async Task<bool> HideStoreAsync(Guid storeId)
         {
             var store = await _repositorys.GetByIdAsync(storeId);
@@ -143,6 +139,43 @@ namespace BusinessLogic.Services.StoreDetail
         public async Task<bool> UpdateStoreAsync(StoreDetails store)
         {
             return await _repositorys.UpdateStoreAsync(store);
+        }
+        public async Task<List<StoreDetails>> GetStoresAsync()
+        {
+            return await _repositorys.GetStoresAsync();
+        }
+
+        public async Task UpdateStoreStatusAsync(int storeId, bool isActive)
+        {
+            await _repositorys.UpdateStoreStatusAsync(storeId, isActive);
+        }
+
+        public Task<List<StoreViewModel>> GetStoreRegistrationRequestsAsync()
+        {
+            return _repositorys.GetStoreRegistrationRequestsAsync();
+        }
+        public async Task<bool> AcceptStoreAsync(Guid id)
+        {
+            return await _repositorys.AcceptStoreAsync(id);
+        }
+        public async Task<bool> RejectStoreAsync(Guid id)
+        {
+            return await _repositorys.RejectStoreAsync(id);
+        }
+
+        public async Task<bool> UpdateStoreStatusAsync(Guid storeId, string newStatus)
+        {
+            var storeDetail = await _repositorys.GetStoreByIdAsync(storeId);
+            if (storeDetail == null)
+            {
+                return false;
+            }
+
+            storeDetail.Status = newStatus;
+            storeDetail.ModifiedDate = DateTime.UtcNow;
+
+            await _repositorys.UpdateStoreAsync(storeDetail);
+            return true;
         }
     }
 }
