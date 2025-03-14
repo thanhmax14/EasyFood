@@ -51,17 +51,30 @@
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
     },
     {
-      "DownstreamPathTemplate": "/api/ManagementSeller/{everything}",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7071
-        }
-      ],
-      "UpstreamPathTemplate": "/Gateway/ManagementSellerService/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+        "DownstreamPathTemplate": "/api/ManagementSeller/{everything}",
+        "DownstreamScheme": "https",
+        "DownstreamHostAndPorts": [
+            {
+                "Host": "localhost",
+                "Port": 7071
+            }
+        ],
+        "UpstreamPathTemplate": "/Gateway/ManagementSellerService/{everything}",
+        "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+    },
+    {
+        "DownstreamPathTemplate": "/api/Review/{everything}",
+        "DownstreamScheme": "https",
+        "DownstreamHostAndPorts": [
+            {
+                "Host": "localhost",
+                "Port": 7190
+            }
+        ],
+        "UpstreamPathTemplate": "/Gateway/ReviewService/{everything}",
+        "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
     }
+
   ],
   "GlobalConfiguration": {
     "BaseUrl": "https://localhost:5555"
