@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Headers;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -57,6 +58,97 @@ namespace EasyFood.web.Controllers
                 return StatusCode(500, new { message = "Lỗi server", error = ex.Message });
             }
         }
+        [HttpGet]
+        public async Task<IActionResult> ManagementSeller()
+        {
+            var admin = await _userManager.GetUserAsync(User);
+            if(admin == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            if(!await _userManager.IsInRoleAsync(admin, "Admin"))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            string apiURL = "https://localhost:5555/Gateway/ManagementSellerService";
+            List<UsersViewModel> usersViews = new List<UsersViewModel>();
+            try
+            {
+                var respone = await client.GetAsync(apiURL);
+                if(!respone.IsSuccessStatusCode)
+                {
+                    return View(usersViews);
+                }
+                var mes = await respone.Content.ReadAsStringAsync();
+                usersViews = JsonSerializer.Deserialize<List<UsersViewModel>>(mes, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+                return View(usersViews);
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500, new { message = "Lỗi server", error = ex.Message });
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> AcceptSeller([FromBody] UsersViewModel obj) {
+            var admin = await _userManager.GetUserAsync (User);
+            if(admin == null || !await _userManager.IsInRoleAsync(admin, "Admin"))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+             string apiURL = $"https://localhost:5555/Gateway/ManagementSellerService/Accept-seller/{obj.Email}";
+            try
+            {
+                var jsonContent = JsonSerializer.Serialize(obj);
+                var content = new StringContent(jsonContent,System.Text.Encoding.UTF8, "application/json");
+                var respone = await client.PostAsync(apiURL, content);
+                if (respone.IsSuccessStatusCode) {
+                    return Json(new { success = true, message = "Cập nhật thành công" });
+                } else
+                {
+                    return Json(new { success = false, message = "Cập nhật thất bại" });
+                }
+
+            }
+            catch (Exception)
+            {
+
+                return Json(new { success = false, message = "Lỗi kết nối API Gateway!" });
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> RejectSeller([FromBody] UsersViewModel obj)
+        {
+            var admin = await _userManager.GetUserAsync(User);
+            if (admin == null || !await _userManager.IsInRoleAsync(admin, "Admin"))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            string apiURL = $"https://localhost:5555/Gateway/ManagementSellerService/Reject-seller/{obj.Email}";
+            try
+            {
+                var jsonContent = JsonSerializer.Serialize(obj);
+                var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+                var response = await client.PostAsync(apiURL,content);
+                if(response.IsSuccessStatusCode)
+                {
+                    return Json(new { success = true, message = "Cập nhật thành công" });
+                }else
+                {
+                    return Json(new { success = true, message = "Cập nhật thất bại" });
+                }
+            }
+            catch (Exception)
+            {
+
+                return Json(new { success = false, message = "Lỗi kết nối API Gateway!" });
+            }
+        }
+
+
         public async Task<IActionResult> Hidden([FromBody] UsersViewModel obj)
         {
             var admin = await _userManager.GetUserAsync(User);
@@ -69,7 +161,7 @@ namespace EasyFood.web.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
-            string apiURL = $"https://localhost:5555/Gateway/ManagementSellerService/Admin-Hiden/{obj.Email}";
+            string apiURL = $"https://localhost:5555/Gateway/ManagementSellerService/Admin-Hiden{obj.Email}";
             try
             {
                 var jsonContent = JsonSerializer.Serialize(obj);
@@ -124,38 +216,73 @@ namespace EasyFood.web.Controllers
                 return Json(new { success = false, message = "Lỗi kết nối API Gateway!" }); ;
             }
         }
-        public async Task<IActionResult> UpdateByAdmin([FromBody] UsersViewModel obj)
+        [HttpGet]
+        public async Task<IActionResult> UpdateByAdmin(AdminViewModel obj)
         {
+            if (string.IsNullOrEmpty(obj.Email))
+            {
+                return Json(new { success = false, message = "Email is required" });
+            }
+
+            var getbyEmail = await _userManager.FindByEmailAsync(obj.Email);
+            if (getbyEmail == null)
+            {
+                return Json(new { success = false, message = "Email not found" });
+            }
+
+            var UserModel = new AdminViewModel
+            {
+                Email = getbyEmail.Email,
+                Address = getbyEmail.Address,
+                Birthday = getbyEmail.Birthday,
+                PhoneNumber = getbyEmail.PhoneNumber,
+                UserName = getbyEmail.UserName,
+            };
+
+            return View(UserModel);
+        }
+        [HttpPost]
+        public async Task<IActionResult> UpdateByAdmin([FromBody] AdminViewModel obj1, string id)
+        {
+            if (obj1 == null || string.IsNullOrEmpty(obj1.Email))
+            {
+                return Json(new { success = false, message = "Dữ liệu không hợp lệ!" });
+            }
+
             var admin = await _userManager.GetUserAsync(User);
             if (admin == null)
             {
-                return RedirectToAction("Login", "Home");
+                return Json(new { success = false, message = "Bạn chưa đăng nhập!" });
             }
             if (!await _userManager.IsInRoleAsync(admin, "Admin"))
             {
-                return RedirectToAction("Login", "Home");
+                return Json(new { success = false, message = "Bạn không có quyền cập nhật!" });
             }
-            string apiURL = $"https://localhost:5555/Gateway/ManagementSellerService/Admin-Update/{obj.Email}";
+
+            string apiURL = $"https://localhost:5555/Gateway/ManagementSellerService/Admin-Update/{obj1.Email}";
+
             try
             {
-                var jsonContent = JsonSerializer.Serialize(obj);
+                var jsonContent = JsonSerializer.Serialize(obj1);
                 var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
-                var response = await client.PostAsync(apiURL, content);
+                var response = await client.PutAsync(apiURL, content);
+
                 if (response.IsSuccessStatusCode)
                 {
-                    return Json(new { success = true, message = "Cập nhật thành công" });
+                    return Json(new { success = true, message = "Cập nhật thành công!" });
                 }
                 else
                 {
-                    return Json(new { success = true, message = "Cập nhật thất bại" });
+                    return Json(new { success = false, message = "Cập nhật thất bại!" });
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                return Json(new { success = false, message = "Lỗi kết nối API Gateway!" }); ;
+                return Json(new { success = false, message = "Lỗi kết nối API Gateway! " + ex.Message });
             }
         }
+
+
     }
 
 }

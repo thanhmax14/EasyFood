@@ -48,7 +48,7 @@ namespace UserAPI.Controllers
 
             return Ok(list);
         }
-        [HttpGet("{id}")]
+        [HttpGet("View-Profile/{id}")]
         public async Task<IActionResult> GetById(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
