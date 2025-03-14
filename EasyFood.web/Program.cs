@@ -6,6 +6,7 @@ using Models.DBContext;
 using BusinessLogic.Config;
 using AutoMapper;
 using BusinessLogic.Mapper;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();

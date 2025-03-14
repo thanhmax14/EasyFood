@@ -2,9 +2,11 @@
 using BusinessLogic.Services.StoreDetail;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Models;
 using Repository.StoreDetails;
 using Repository.ViewModels;
+using System.Text.Json;
 
 namespace EasyFood.web.Controllers
 {
@@ -28,47 +30,110 @@ namespace EasyFood.web.Controllers
         public async Task<IActionResult> Index()
         {
             var stores = await _storeService.GetInactiveStoresAsync();
+
+            if (stores == null || stores.Count == 0)
+            {
+                TempData["Message"] = "No inactive stores found.";
+            }
+
+            return View(stores);
+        }
+
+        public async Task<IActionResult> ViewStoreRegistrationRequests()
+        {
+            var stores = await _storeService.GetStoreRegistrationRequestsAsync();
+
+            if (stores == null || stores.Count == 0)
+            {
+                TempData["Message"] = "No inactive stores found.";
+            }
+
             return View(stores);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Hidden(Guid id)
+        public async Task<IActionResult> Hidden([FromBody] Guid id)
         {
             var result = await _storeService.HideStoreAsync(id);
-
-            if (result)
-            {
-                TempData["success"] = "Store has been hidden successfully.";
-            }
-            else
-            {
-                TempData["fail"] = "Failed to hide store.";
-            }
-
-            return RedirectToAction("Index", "AdminStore"); // Chuyển hướng đến /AdminStore/Index
+            return Json(new { success = result });
         }
 
         [HttpPost]
-        public async Task<IActionResult> Show(Guid id)
+        public async Task<IActionResult> Show([FromBody] Guid id)
         {
             var result = await _storeService.ShowStoreAsync(id);
+            return Json(new { success = result });
+        }
 
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateStatus(Guid id, bool isActive)
+        {
+            var store = await _storeService.GetStoreByIdAsync(id);
+            if (store == null)
+            {
+                return Json(new { success = false, message = "Store not found" });
+            }
+
+            // Đặt trạng thái mới dựa trên hành động
+            store.IsActive = isActive ? true : false;
+
+            var result = await _storeService.UpdateStoreAsync(store);
             if (result)
             {
-                TempData["success"] = "Store has been hidden successfully.";
+                string statusText = isActive ? "shown" : "hidden";
+                return Json(new { success = true, message = $"Store {statusText} successfully", isActive = store.IsActive });
             }
             else
             {
-                TempData["fail"] = "Failed to hide store.";
+                return Json(new { success = false, message = "Failed to update store status" });
             }
-
-            return RedirectToAction("Index", "AdminStore"); // Chuyển hướng đến /AdminStore/Index
         }
 
-        public async Task<IActionResult> ViewHiddenStore()
+        [HttpPost]
+        public async Task<IActionResult> AcceptStore(Guid id)
         {
-            var stores = await _storeService.GetActiveStoresAsync();
-            return View(stores);
+            var result = await _storeService.AcceptStoreAsync(id);
+            if (result)
+            {
+                TempData["SuccessMessage"] = "Store approved successfully!";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed to approve store.";
+            }
+
+            return RedirectToAction("ViewStoreRegistrationRequests");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RejectStore(Guid id)
+        {
+            var result = await _storeService.RejectStoreAsync(id);
+            if (result)
+            {
+                TempData["SuccessMessage"] = "Store rejected successfully!";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed to reject store.";
+            }
+
+            return RedirectToAction("ViewStoreRegistrationRequests");
+        }
+
+        [HttpPost]
+        [Route("AdminStore/UpdateStoreStatus")]
+        public async Task<JsonResult> UpdateStoreStatus(Guid storeId, string newStatus)
+        {
+            bool isUpdated = await _storeService.UpdateStoreStatusAsync(storeId, newStatus);
+
+            if (!isUpdated)
+            {
+                return Json(new { success = false, message = "Store not found" });
+            }
+
+            return Json(new { success = true, message = "Store status updated successfully" });
         }
     }
 }

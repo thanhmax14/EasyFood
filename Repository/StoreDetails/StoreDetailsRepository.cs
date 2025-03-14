@@ -70,19 +70,24 @@ namespace Repository.StoreDetails
                         ID = s.ID,
                         Name = s.Name,
                         CreatedDate = s.CreatedDate,
+                        ModifiedDate = s.ModifiedDate,
                         ShortDescriptions = s.ShortDescriptions ?? "No description available",
+                        LongDescriptions = s.LongDescriptions ?? "No description available",
                         Address = s.Address,
                         Phone = s.Phone,
-                        Img = !string.IsNullOrEmpty(s.Img) ? s.Img : "default-store.png", // Chỉ lưu tên file
+                        Img = !string.IsNullOrEmpty(s.Img) ? s.Img : "default-store.png",
+                        IsActive = s.IsActive, // Giữ nguyên trạng thái hoạt động
+                        Status = s.Status ?? "PENDING", // Lấy trạng thái từ DB hoặc mặc định "PENDING"
                         UserName = u.UserName,
-                        IsActive = s.IsActive,
+                        UserID = s.UserID // Thêm UserID nếu cần
                     }
                 )
                 .ToListAsync();
 
             return stores;
         }
-        public async Task<List<StoreViewModel>> GetActiveStoresAsync()
+
+        public async Task<List<StoreViewModel>> GetStoreRegistrationRequestsAsync()
         {
             var stores = await _context.StoreDetails
                 .Join(
@@ -94,17 +99,25 @@ namespace Repository.StoreDetails
                         ID = s.ID,
                         Name = s.Name,
                         CreatedDate = s.CreatedDate,
+                        ModifiedDate = s.ModifiedDate,
                         ShortDescriptions = s.ShortDescriptions ?? "No description available",
+                        LongDescriptions = s.LongDescriptions ?? "No description available",
                         Address = s.Address,
                         Phone = s.Phone,
-                        Img = !string.IsNullOrEmpty(s.Img) ? s.Img : "default-store.png", // Chỉ lưu tên file
-                        UserName = u.UserName
+                        Img = !string.IsNullOrEmpty(s.Img) ? s.Img : "default-store.png",
+                        IsActive = s.IsActive,
+                        Status = s.Status ?? "PENDING",
+                        UserName = u.UserName,
+                        UserID = s.UserID
                     }
                 )
                 .ToListAsync();
 
             return stores;
         }
+
+
+
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
@@ -123,6 +136,45 @@ namespace Repository.StoreDetails
                 Console.WriteLine($"Error updating store: {ex.Message}");
                 return false;
             }
+        }
+        public async Task UpdateStoreStatusAsync(int storeId, bool isActive)
+        {
+            var store = await _context.StoreDetails.FindAsync(storeId);
+            if (store != null)
+            {
+                store.IsActive = isActive;
+                store.ModifiedDate = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+            }
+        }
+        public async Task<List<Models.StoreDetails>> GetStoresAsync()
+        {
+            return await _context.StoreDetails.ToListAsync();
+        }
+        public async Task<bool> AcceptStoreAsync(Guid id)
+        {
+            var store = await _context.StoreDetails.FindAsync(id);
+            if (store == null)
+                return false;
+
+            store.Status = "APPROVED";
+            store.ModifiedDate = DateTime.UtcNow; // Cập nhật ngày sửa đổi
+
+            _context.StoreDetails.Update(store);
+            return await _context.SaveChangesAsync() > 0;
+        }
+        public async Task<bool> RejectStoreAsync(Guid id)
+        {
+            var store = await _context.StoreDetails.FindAsync(id);
+            if (store == null)
+                return false;
+
+            store.Status = "REJECTED";
+            store.ModifiedDate = DateTime.UtcNow; // Cập nhật ngày sửa đổi
+
+            _context.StoreDetails.Update(store);
+            return await _context.SaveChangesAsync() > 0;
         }
     }
 }
