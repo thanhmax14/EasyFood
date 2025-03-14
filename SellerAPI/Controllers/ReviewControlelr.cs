@@ -25,8 +25,13 @@ namespace SellerAPI.Controllers
             _storeDetailService = storeDetailService;
         }
 
+        /// <summary>
+        /// Lấy feedback theo StoreID của role seller
+        /// </summary>
+        /// <param name="storeId"></param>
+        /// <returns></returns>
         [HttpGet("{storeId}")]
-        public async Task<IActionResult> GetByStoreId(Guid storeId)
+        public async Task<IActionResult> GetReviewByStoreId(Guid storeId)
         {
             // Lấy danh sách sản phẩm thuộc StoreId
             var products = await _productService.ListAsync(p => p.StoreID == storeId);
@@ -52,6 +57,51 @@ namespace SellerAPI.Controllers
                     Username = user?.UserName,
                     ProductName = product?.Name,
                     StoreId = storeId
+                };
+
+                result.Add(reviewModel);
+            }
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Lấy feedback theo UserID của role user
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetReviewByUserId(string userId)
+        {
+            // Lấy danh sách review theo UserID
+            var reviews = await _reviewService.ListAsync(r => r.UserID == userId);
+
+            if (reviews == null || !reviews.Any())
+            {
+                return NotFound("Không có đánh giá nào của người dùng này.");
+            }
+
+            var productIds = reviews.Select(r => r.ProductID).ToList();
+
+            // Lấy danh sách sản phẩm tương ứng với ProductID trong review
+            var products = await _productService.ListAsync(p => productIds.Contains(p.ID));
+
+            var result = new List<ReivewViewModel>();
+
+            foreach (var review in reviews)
+            {
+                var product = products.FirstOrDefault(p => p.ID == review.ProductID);
+
+                var reviewModel = new ReivewViewModel
+                {
+                    Cmt = review.Cmt,
+                    Relay = review.Relay,
+                    Datecmt = review.Datecmt,
+                    Status = review.Status,
+                    Rating = review.Rating,
+                    Username = userId.ToString(), // Nếu cần lấy UserName, bạn có thể gọi lại _userManager
+                    ProductName = product?.Name ?? "Không xác định",
+                    StoreId = product?.StoreID ?? Guid.Empty // Lấy StoreID từ Product
                 };
 
                 result.Add(reviewModel);
