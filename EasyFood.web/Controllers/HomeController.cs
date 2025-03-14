@@ -1,5 +1,10 @@
 ﻿using BusinessLogic.Services.Carts;
+using BusinessLogic.Services.ProductImages;
+using BusinessLogic.Services.Products;
+using BusinessLogic.Services.ProductVariants;
+using BusinessLogic.Services.Wishlists;
 using EasyFood.web.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +28,13 @@ namespace EasyFood.web.Controllers
         private HttpClient client = null;
         private string _url;
         private readonly ICartService _cart;
-        public HomeController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, IEmailSender emailSender, ICartService cart)
+        private readonly IWishlistServices _wishlist;
+        private readonly IProductService _product;
+        private readonly IProductImageService _productimg;
+        private readonly IProductVariantService _productvarian;
+
+        public HomeController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, IEmailSender emailSender, ICartService cart, IWishlistServices wishlist, IProductService product
+, IProductImageService productimg, IProductVariantService productvarian)
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -32,6 +43,10 @@ namespace EasyFood.web.Controllers
             var contentype = new MediaTypeWithQualityHeaderValue("application/json");
             client.DefaultRequestHeaders.Accept.Add(contentype);
             _cart = cart;
+            _wishlist = wishlist;
+            _product = product;
+            _productimg = productimg;
+            _productvarian = productvarian;
         }
 
         public IActionResult Index()
@@ -476,6 +491,126 @@ namespace EasyFood.web.Controllers
             return View();
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [AllowAnonymous]
+        public async Task<IActionResult> AddWish(Guid id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return Json(new { notAuth = true, message = "Bạn phải đăng nhập thể thực hiện hành động này!" });
+            }
+            var check = await this._product.FindAsync(x => x.ID == id);
+            if (check == null)
+            {
+                return Json(new { success = false, message = "Product không tồn tại!!" });
+            }
+            else if (await this._wishlist.FindAsync(x => x.ProductID == id && x.UserID ==user.Id) !=null)
+            {
+                return Json(new { success = false, message = $"{check.Name} đã tồn tại trong danh sách yêu thích.!" });
+            }
+            else
+            {
+                var tem = new Wishlist
+                {
+                    CreateDate = DateTime.Now,
+                    UserID = user.Id,
+                    ProductID = check.ID
+                };
+                try
+                {
+                  await this._wishlist.AddAsync(tem);
+                  await this._wishlist.SaveChangesAsync();
+                    return Json(new { success = true, message = $"Thêm thành công!" });
+                }
+                catch
+                {
+                    return Json(new { success = false, message = "Thêm thất bại!" });
+                }
+            }
+        }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [AllowAnonymous]
+
+        public async Task<IActionResult> RemoveWish(Guid id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return Json(new { notAuth = true, message = "Bạn phải đăng nhập thể thực hiện hành động này!" });
+            }
+            var check = await this._product.FindAsync(x => x.ID == id);
+            if (check == null)
+            {
+                return Json(new { success = false, message = "Product không tồn tại!!" });
+            }
+            var wshlict = await this._wishlist.FindAsync(x => x.ProductID == id && x.UserID == user.Id);
+            if (wshlict==null)
+            {
+                return Json(new { success = false, message = $"{check.Name} không tồn tại trong danh sách yêu thích.!" });
+            }
+            else
+            {
+               
+                try
+                {
+                    await this._wishlist.DeleteAsync(wshlict);
+                    await this._wishlist.SaveChangesAsync();
+                    return Json(new { success = true, message = $"Xoa thành công!" });
+                }
+                catch
+                {
+                    return Json(new { success = false, message = "Xoa thất bại!" });
+                }
+            }
+        }
+
+        public async Task<IActionResult> Wishlist()
+        {
+            var list = new List<wishlistViewModels>();
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            var wshlict = await this._wishlist.ListAsync(x => x.UserID == user.Id ,orderBy: q=>q.OrderByDescending(s =>s.CreateDate));
+            if (wshlict.Any())
+            {
+                foreach(var item in wshlict)
+                {
+                    var getProduct = await this._product.FindAsync(p => p.ID == item.ProductID);
+                    if (getProduct != null)
+                    {
+                        var getimg = await this._productimg.ListAsync(u => u.ProductID == getProduct.ID);
+                        var img = "https://nest-frontend-v6.vercel.app/assets/imgs/shop/product-1-1.jpg";                     
+                        if (getimg.Any())
+                        {
+                            img = getimg.FirstOrDefault().ImageUrl;
+                        }
+                        var defauPrice = 0.0m;
+
+                        var getPrice = await this._productvarian.FindAsync(u => u.ProductID == getProduct.ID);
+                        if (getPrice != null)
+                        {
+                            defauPrice = getPrice.Price;
+                        }
+                        list.Add(new wishlistViewModels
+                        {
+                            ID = item.ID,
+                            img = img,
+                            name = getProduct.Name,
+                            price = defauPrice,
+                            ProductID = getProduct.ID,
+                            vote =100
+                        });
+                    }
+                }
+            }
+            return View(list);
+        }
     }
 }

@@ -19,7 +19,8 @@ namespace Models
         public string? Description { get; set; }
         [ForeignKey("AppUser")]
         public string UserID { get; set; }
-        public string? Status { get; set; }
+        public string Status { get; set; }
+        public string Method { get; set; }
         public bool DisPlay { get; set; } = true;
         public virtual AppUser AppUser { get; set; }
     }
