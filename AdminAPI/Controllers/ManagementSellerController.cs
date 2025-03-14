@@ -88,12 +88,12 @@ namespace AdminAPI.Controllers
             }
         }
 
-        [HttpPost("Accept-seller/{id}")]
-        public async Task<IActionResult> AcceptSeller(string id)
+        [HttpPost("Accept-seller/{email}")]
+        public async Task<IActionResult> AcceptSeller(string email)
         {
             try
             {
-                var user = await _userManager.FindByIdAsync(id);
+                var user = await _userManager.FindByEmailAsync(email);
                 if (user == null)
                 {
                     return BadRequest(new { message = "User not found" });
@@ -123,12 +123,12 @@ namespace AdminAPI.Controllers
                 return StatusCode(500, new { message = "An error occurred while updating the user", error = ex.Message });
             }
         }
-        [HttpPost("Reject-seller/{id}")]
-        public async Task<IActionResult> Reject(string id)
+        [HttpPost("Reject-seller/{email}")]
+        public async Task<IActionResult> Reject(string email)
         {
             try
             {
-                var user = await _userManager.FindByIdAsync(id);
+                var user = await _userManager.FindByEmailAsync(email);
                 if (user == null)
                 {
                     return BadRequest(new { message = "User not found" });
@@ -215,35 +215,39 @@ namespace AdminAPI.Controllers
             }
 
         }
-        [HttpPut("Admin-Update{email}")]
-        public async Task<IActionResult> updateByAdmin(string email, [FromBody] AdminViewModel obj)
+        [HttpPut("Admin-Update/{email}")]
+        public async Task<IActionResult> updateByAdmin(string email, AdminViewModel obj)
         {
             try
             {
                 if (obj == null)
                 {
                     return BadRequest(new { message = "User not found" });
-
                 }
+
                 var user = await _userManager.FindByEmailAsync(email);
-                user.UserName = obj.UserName;
-                user.Email = obj.Email;
+                if (user == null)
+                {
+                    return NotFound(new { message = "User not found in database" });
+                }
+
+                // ✅ Chỉ cập nhật 2 trường này
                 user.Address = obj.Address;
-                user.PhoneNumber = obj.PhoneNumber;
                 user.Birthday = obj.Birthday;
+
                 var result = await _userManager.UpdateAsync(user);
                 if (!result.Succeeded)
                 {
                     return BadRequest(new { message = "User can not update" });
                 }
+
                 return Ok(new { message = "Update user success" });
             }
             catch (Exception ex)
             {
-
                 return StatusCode(500, new { message = "An error occurred while updating the user", error = ex.Message });
             }
-
         }
+
     }
 }

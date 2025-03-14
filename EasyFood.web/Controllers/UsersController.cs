@@ -27,7 +27,7 @@ namespace EasyFood.web.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return RedirectToAction("Erro404", "Home");
+                return RedirectToAction("Login", "Home");
             }
 
             // Lấy ID của user đăng nhập
@@ -35,7 +35,7 @@ namespace EasyFood.web.Controllers
             var userViewModel = new UsersViewModel();
 
             // Gọi API Gateway để lấy thông tin user theo ID
-            string apiUrl = $"https://localhost:5555/Gateway/UsersService/{userId}";
+            string apiUrl = $"https://localhost:5555/Gateway/UsersService/View-Profile/{userId}";
 
             try
             {

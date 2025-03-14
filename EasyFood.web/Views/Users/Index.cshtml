@@ -782,12 +782,24 @@
                                                 <i class="fi-rs-shopping-cart-check mr-10"></i>Track Your Order
                                             </a>
                                         </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" id="address-tab" data-bs-toggle="tab" href="#address"
-                                               role="tab" aria-controls="address" aria-selected="true">
-                                                <i class="fi-rs-marker mr-10"></i>Register Seller
-                                            </a>
-                                        </li>
+                                       
+                                        @if (Model.RequestSeller == "0" || Model.RequestSeller == "1")
+                                        {
+                                            <li class="nav-item">
+                                                <a class="nav-link" id="address-tab" data-bs-toggle="tab" href="#address"
+                                                   role="tab" aria-controls="address" aria-selected="true">
+                                                    <i class="fi-rs-marker mr-10"></i>Register Seller
+                                                </a>
+                                            </li>
+                                        } else
+                                        {
+                                            <li class="nav-item">
+                                                <a class="nav-link" id="address-tab" data-bs-toggle="tab" href="#address"
+                                                   role="tab" aria-controls="address" aria-selected="true">
+                                                    <i class="fi-rs-marker mr-10"></i>Management Seller
+                                                </a>
+                                            </li>
+                                        }
                                         <li class="nav-item">
                                             <a class="nav-link" id="account-detail-tab" data-bs-toggle="tab"
                                                href="#account-detail" role="tab" aria-controls="account-detail"
@@ -904,7 +916,7 @@
                                          aria-labelledby="address-tab">
                                         <div class="row justify-content-center">
                                             <div class="col-lg-8">
-                                                @if (Model.RequestSeller == "0") // Nếu chưa đăng ký seller
+                                                @if (Model.RequestSeller == "1" || Model.RequestSeller == "0") // Nếu chưa đăng ký seller
                                                 {
                                                     <div class="card shadow-sm border-0">
                                                         <div class="card-header bg-warning text-dark text-center">
@@ -918,20 +930,24 @@
                                                         </div>
                                                     </div>
                                                 }
-                                                else if (Model.RequestSeller == "1") // Nếu đã đăng ký và chờ duyệt
-                                                {
-                                                    <div class="alert alert-info mt-3" id="approvalMessage">
-                                                        <h5>Announcement!</h5>
-                                                        <p>Your request has been submitted. Please wait for admin approval.</p>
+                                                 else if (Model.RequestSeller == "3") // Nếu đã đăng ký và chờ duyệt
+                                                 {
+                                                   @*   <div class="alert alert-info mt-3" id="approvalMessage">
+                                                         <h5>Announcement!</h5>
+                                                         <p>Your request has been submitted. Please wait for admin approval.</p>
+                                                     </div> *@
+                                                    <div class="alert alert-danger mt-3" id="rejectedMessage">
+                                                        <h5>Rejected!</h5>
+                                                        <p>Your request to become a seller has been denied. Please contact support for more information.</p>
                                                     </div>
-                                                }
-                                                else // Nếu bị từ chối hoặc giá trị khác
+                                                 }
+                                              @*   else // Nếu bị từ chối hoặc giá trị khác
                                                 {
                                                     <div class="alert alert-danger mt-3" id="rejectedMessage">
                                                         <h5>Rejected!</h5>
                                                         <p>Your request to become a seller has been denied. Please contact support for more information.</p>
                                                     </div>
-                                                }
+                                                } *@
                                             </div>
 
                                         </div>
