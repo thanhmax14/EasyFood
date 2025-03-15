@@ -95,10 +95,10 @@ else
     app.UseHsts();
 }
 // Chuyển tất cả các lỗi đến HomeController -> NotFoundPage
-app.UseStatusCodePagesWithRedirects("/Error/404");
+/*app.UseStatusCodePagesWithRedirects("/Error/404");
 app.UseExceptionHandler("/Error/404");
 
-
+*/
 
 await SeedDataAsync(app);
 app.UseHttpsRedirection();
