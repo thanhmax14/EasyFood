@@ -64,7 +64,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Home/Login";
     options.LogoutPath = "/Home/Logout"; 
-    options.AccessDeniedPath = "/Account/AccessDenied";
+    options.AccessDeniedPath = "/Error/404";
     options.ReturnUrlParameter = "ReturnUrl"; 
     options.ExpireTimeSpan = TimeSpan.FromDays(14);
     options.SlidingExpiration = true;
@@ -90,10 +90,16 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/Error/404");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+// Chuyển tất cả các lỗi đến HomeController -> NotFoundPage
+app.UseStatusCodePagesWithRedirects("/Error/404");
+app.UseExceptionHandler("/Error/404");
+
+
+
 await SeedDataAsync(app);
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -103,6 +109,9 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
+
+
+
 
 app.MapControllerRoute(
     name: "default",

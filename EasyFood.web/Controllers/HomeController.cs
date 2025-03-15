@@ -612,5 +612,10 @@ namespace EasyFood.web.Controllers
             }
             return View(list);
         }
+        [Route("Error/404")]
+        public IActionResult NotFoundPage()
+        {
+            return View();
+        }
     }
 }
