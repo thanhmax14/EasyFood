@@ -1,0 +1,991 @@
+﻿@model Repository.ViewModels.AdminViewModel
+<!doctype html>
+<html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg"
+      data-sidebar-image="none" data-preloader="disable" data-theme="default" data-theme-colors="default">
+
+
+<!-- Mirrored from themesbrand.com/velzon/html/master/forms-layouts.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 26 Feb 2025 12:22:12 GMT -->
+
+<head>
+
+    <meta charset="utf-8" />
+    <title>Form layout | Velzon - Admin & Dashboard Template</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
+    <meta content="Themesbrand" name="author" />
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="~/assetsAdmin/images/favicon.ico">
+    <!-- Plugins css -->
+    <link href="~/assetsAdmin/libs/dropzone/dropzone.css" rel="stylesheet" type="text/css" />
+    <!-- Layout config Js -->
+    <script src="~/assetsAdmin/js/layout.js"></script>
+    <!-- Bootstrap Css -->
+    <link href="~/assetsAdmin/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <!-- Icons Css -->
+    <link href="~/assetsAdmin/css/icons.min.css" rel="stylesheet" type="text/css" />
+    <!-- App Css-->
+    <link href="~/assetsAdmin/css/app.min.css" rel="stylesheet" type="text/css" />
+    <!-- custom Css-->
+    <link href="~/assetsAdmin/css/custom.min.css" rel="stylesheet" type="text/css" />
+    <!-- Toastr CSS -->
+<!-- SweetAlert2 CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</head>
+
+<body>
+
+    <!-- Begin page -->
+    <div id="layout-wrapper">
+
+        <header id="page-topbar">
+            <div class="layout-width">
+                <div class="navbar-header">
+                    <div class="d-flex">
+                        <!-- LOGO -->
+                        <div class="navbar-brand-box horizontal-logo">
+                            <a href="index.html" class="logo logo-dark">
+                                <span class="logo-sm">
+                                    <img src="~/assetsAdmin/images/logo-sm.png" alt="" height="22">
+                                </span>
+                                <span class="logo-lg">
+                                    <img src="~/assetsAdmin/images/logo-dark.png" alt="" height="17">
+                                </span>
+                            </a>
+
+                            <a href="index.html" class="logo logo-light">
+                                <span class="logo-sm">
+                                    <img src="~/assetsAdmin/images/logo-sm.png" alt="" height="22">
+                                </span>
+                                <span class="logo-lg">
+                                    <img src="~/assetsAdmin/images/logo-light.png" alt="" height="17">
+                                </span>
+                            </a>
+                        </div>
+
+                        <button type="button"
+                                class="btn btn-sm px-3 fs-16 header-item vertical-menu-btn topnav-hamburger material-shadow-none"
+                                id="topnav-hamburger-icon">
+                            <span class="hamburger-icon">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </span>
+                        </button>
+
+                        <!-- App Search-->
+
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div class="dropdown d-md-none topbar-head-dropdown header-item">
+                            <button type="button"
+                                    class="btn btn-icon btn-topbar material-shadow-none btn-ghost-secondary rounded-circle"
+                                    id="page-header-search-dropdown" data-bs-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
+                                <i class="bx bx-search fs-22"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0"
+                                 aria-labelledby="page-header-search-dropdown">
+                                <form class="p-3">
+                                    <div class="form-group m-0">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" placeholder="Search ..."
+                                                   aria-label="Recipient's username">
+                                            <button class="btn btn-primary" type="submit">
+                                                <i class="mdi mdi-magnify"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="ms-1 header-item d-none d-sm-flex">
+                            <button type="button"
+                                    class="btn btn-icon btn-topbar material-shadow-none btn-ghost-secondary rounded-circle light-dark-mode">
+                                <i class='bx bx-moon fs-22'></i>
+                            </button>
+                        </div>
+                        <div class="dropdown ms-sm-3 header-item topbar-user">
+                            <button type="button" class="btn material-shadow-none" id="page-header-user-dropdown"
+                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="d-flex align-items-center">
+                                    <img class="rounded-circle header-profile-user"
+                                         src="~/assetsAdmin/images/users/avatar-1.jpg" alt="Header Avatar">
+                                    <span class="text-start ms-xl-2">
+                                        <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text">
+                                            Anna
+                                            Adame
+                                        </span>
+                                        <span class="d-none d-xl-block ms-1 fs-12 user-name-sub-text">Founder</span>
+                                    </span>
+                                </span>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <!-- item-->
+                                <h6 class="dropdown-header">Welcome Anna!</h6>
+                                <a class="dropdown-item" href="pages-profile.html">
+                                    <i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Profile</span>
+                                </a>
+                                <a class="dropdown-item" href="apps-chat.html">
+                                    <i class="mdi mdi-message-text-outline text-muted fs-16 align-middle me-1"></i>
+                                    <span class="align-middle">Messages</span>
+                                </a>
+                                <a class="dropdown-item" href="apps-tasks-kanban.html">
+                                    <i class="mdi mdi-calendar-check-outline text-muted fs-16 align-middle me-1"></i>
+                                    <span class="align-middle">Taskboard</span>
+                                </a>
+                                <a class="dropdown-item" href="pages-faqs.html">
+                                    <i class="mdi mdi-lifebuoy text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Help</span>
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="pages-profile.html">
+                                    <i class="mdi mdi-wallet text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Balance : <b>$5971.67</b></span>
+                                </a>
+                                <a class="dropdown-item" href="pages-profile-settings.html">
+                                    <span class="badge bg-success-subtle text-success mt-1 float-end">New</span><i class="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Settings</span>
+                                </a>
+                                <a class="dropdown-item" href="auth-lockscreen-basic.html">
+                                    <i class="mdi mdi-lock text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Lock screen</span>
+                                </a>
+                                <a class="dropdown-item" href="auth-logout-basic.html">
+                                    <i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> <span class="align-middle" data-key="t-logout">Logout</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+
+        <!-- ========== App Menu ========== -->
+        <div class="app-menu navbar-menu">
+            <!-- LOGO -->
+            <div class="navbar-brand-box">
+                <!-- Dark Logo-->
+                <a href="index.html" class="logo logo-dark">
+                    <span class="logo-sm">
+                        <img src="~/assetsAdmin/images/logo-sm.png" alt="" height="22">
+                    </span>
+                    <span class="logo-lg">
+                        <img src="~/assetsAdmin/images/logo-dark.png" alt="" height="17">
+                    </span>
+                </a>
+                <!-- Light Logo-->
+                <a href="index.html" class="logo logo-light">
+                    <span class="logo-sm">
+                        <img src="~/assetsAdmin/images/logo-sm.png" alt="" height="22">
+                    </span>
+                    <span class="logo-lg">
+                        <img src="~/assetsAdmin/images/logo-light.png" alt="" height="17">
+                    </span>
+                </a>
+                <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"
+                        id="vertical-hover">
+                    <i class="ri-record-circle-line"></i>
+                </button>
+            </div>
+
+            <div id="scrollbar">
+                <div class="container-fluid">
+                    <div id="two-column-menu">
+                    </div>
+                    <ul class="navbar-nav" id="navbar-nav">
+                        <li class="menu-title"><span data-key="t-menu">Menu</span></li>
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="">
+                                <i class="ri-bar-chart-box-line"></i> <span>User and Seller Statistics</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="">
+                                <i class=" ri-pie-chart-line"></i> <span>Revenue Statistics</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="">
+                                <i class="ri-account-circle-line"></i> <span>User Accounts</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="">
+                                <i class="ri-user-add-line"></i> <span>Seller Registration Requests</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="">
+                                <i class="ri-store-2-line"></i> <span>Store</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="">
+                                <i class="ri-file-add-line"></i> <span>Store Registration Requests</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="">
+                                <i class="ri-folder-2-line"></i> <span>Categories</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="">
+                                <i class=" ri-store-3-line"></i> <span>Store Types</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="">
+                                <i class="ri-exchange-dollar-line"></i> <span>Withdrawal Requests From Users</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="">
+                                <i class="ri-alert-line"></i> <span>Store Reports Form User</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="">
+                                <i class="ri-error-warning-line"></i> <span>Order Complaint Reports From Seller</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="">
+                                <i class="ri-restaurant-2-line"></i> <span>Cooking Recipes</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="">
+                                <i class=" ri-chat-3-line"></i> <span>Chat</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="">
+                                <i class="ri-notification-2-line"></i> <span>Notifications</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                </li>
+                </ul>
+            </div>
+            <!-- Sidebar -->
+        </div>
+        <div class="sidebar-background"></div>
+    </div>
+    <!-- Left Sidebar End -->
+    <!-- Vertical Overlay-->
+    <div class="vertical-overlay"></div>
+
+    <!-- ============================================================== -->
+    <!-- Start right Content here -->
+    <!-- ============================================================== -->
+    <div class="main-content">
+
+        <div class="page-content">
+            <div class="container-fluid">
+
+                <!-- start page title -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-galaxy-transparent">
+                            <h4 class="mb-sm-0">Form Layout</h4>
+
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Forms</a></li>
+                                    <li class="breadcrumb-item active">Form Layout</li>
+                                </ol>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- end page title -->
+
+                <div class="row">
+                    <div class="col-xxl-12">
+                        <div class="card">
+                            <div class="card-header align-items-center d-flex">
+                                <h4 class="card-title mb-0 flex-grow-1">Form Grid</h4>
+
+                            </div><!-- end card header -->
+
+                            <div class="card-body">
+
+                                <div class="live-preview">
+                                    <form id="updateProfileForm" method="post">
+                                            @Html.AntiForgeryToken() <!-- Thêm dòng này -->
+
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label asp-for="UserName" class="form-label">
+                                                        UserName
+                                                    </label>
+                                                    <input type="text" class="form-control" id="UserName" name="UserName" value="@Model.UserName" readonly>
+
+                                                </div>
+                                            </div>
+                                            <!--end col-->
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label asp-for="Email" class="form-label">Email</label>
+                                                    <input type="text" class="form-control"
+                                                           placeholder="Enter your Email" id="Email" name="Email" value="@Model.Email" readonly>
+                                                </div>
+                                            </div>
+                                            <!--end col-->
+                                          @*   <div class="col-md-12">
+                                                <div class="mb-3">
+                                                    <label for="compnayNameinput" class="form-label">
+                                                        Company
+                                                        Name
+                                                    </label>
+                                                    <input type="text" class="form-control"
+                                                           placeholder="Enter company name" id="compnayNameinput">
+                                                </div>
+                                            </div> *@
+                                            <!--end col-->
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label asp-for="PhoneNumber" class="form-label">
+                                                        Phone
+                                                        Number
+                                                    </label>
+                                                    <input type="tel" class="form-control"
+                                                           placeholder="Enter your PhoneNumber" name="PhoneNumber" id="PhoneNumber" value="@Model.PhoneNumber" readonly>
+                                                </div>
+                                            </div>
+                                             <!--end col-->
+                                              <div class="col-md-6">
+                                                 <div class="mb-3">
+                                                    <label asp-for="Address" class="form-label">
+                                                         Address
+                                                     </label>
+                                                    <textarea asp-for="Address" class="form-control" id="Address" name="Address" rows="3"
+                                                              placeholder="Enter your Address"></textarea>
+                                                 </div>
+                                             </div> 
+                                             <!--end col-->
+                                         @*    <div class="col-md-12">
+                                                <div class="mb-3">
+                                                    <label for="address1ControlTextarea"
+                                                           class="form-label">Address</label>
+                                                    <input type="text" class="form-control" placeholder="Address 1"
+                                                           id="address1ControlTextarea">
+                                                </div>
+                                            </div> *@
+                                            <!--end col-->
+                                        @*     <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="citynameInput" class="form-label">City</label>
+                                                    <input type="email" class="form-control"
+                                                           placeholder="Enter your city" id="citynameInput">
+                                                </div>
+                                            </div> *@
+                                            <!--end col-->
+                                           @*  <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="ForminputState" class="form-label">State</label>
+                                                    <select id="ForminputState" class="form-select" data-choices
+                                                            data-choices-sorting="true">
+                                                        <option selected>Choose...</option>
+                                                        <option>...</option>
+                                                    </select>
+                                                </div>
+                                            </div> *@
+                                            <!--end col-->
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label asp-for="Birthday" class="form-label">Date</label>
+                                                    <input type="date" asp-for="Birthday" class="form-control"
+                                                           id="Birthday" name="Birthday" value="@Model.Birthday?.ToString("yyyy-MM-dd")">
+
+                                                </div>
+                                            </div>
+                                            <!--end col-->
+                                          @*   <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="timeInput" class="form-label">Time</label>
+                                                    <input type="time" class="form-control" data-provider="timepickr"
+                                                           data-time-basic="true" id="timeInput">
+                                                </div>
+                                            </div> *@
+                                            <!--end col-->
+                                        @*     <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="leaveemails" class="form-label">
+                                                        Email
+                                                        Id
+                                                    </label>
+                                                    <input type="email" class="form-control" id="leaveemails"
+                                                           placeholder="Enter your email">
+                                                </div>
+                                            </div> *@
+                                            <!--end col-->
+                                         @*    <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="contactNumber" class="form-label">Contact Number</label>
+                                                    <input type="number" class="form-control" id="contactNumber"
+                                                           placeholder="+91 8989898989">
+                                                </div>
+                                            </div> *@
+                                            <!--end col-->
+                                         @*    <div class="col-md-12">
+                                                <div class="mb-3">
+                                                    <label for="meassageInput" class="form-label">Message</label>
+                                                    <textarea class="form-control" id="meassageInput" rows="3"
+                                                              placeholder="Enter your message"></textarea>
+                                                </div>
+                                            </div> *@
+                                            <!--end col-->
+                                           @*  <div class="col-12">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="gridCheck">
+                                                    <label class="form-check-label" for="gridCheck">
+                                                        Check me out
+                                                    </label>
+                                                </div>
+                                            </div> *@
+                                            <!--end col-->
+                                            <div class="col-lg-12">
+                                                <div class="text-end">
+                                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                                </div>
+                                            </div>
+                                            <!--end col-->
+                                        </div>
+                                        <!--end row-->
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div> <!-- end col -->
+                </div>
+                <!--end row-->
+                <form id="createproduct-form" autocomplete="off" class="needs-validation" novalidate>
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="product-title-input">Product Title</label>
+                                        <input type="hidden" class="form-control" id="formAction" name="formAction"
+                                               value="add">
+                                        <input type="text" class="form-control d-none" id="product-id-input">
+                                        <input type="text" class="form-control" id="product-title-input" value=""
+                                               placeholder="Enter product title" required>
+                                        <div class="invalid-feedback">Please Enter a product title.</div>
+                                    </div>
+                                    <div>
+                                        <label>Product Description</label>
+
+                                        <div id="ckeditor-classic">
+                                            <p>
+                                                Tommy Hilfiger men striped pink sweatshirt. Crafted with cotton.
+                                                Material composition is 100% organic cotton. This is one of the
+                                                world’s leading designer lifestyle brands and is internationally
+                                                recognized for celebrating the essence of classic American cool
+                                                style, featuring preppy with a twist designs.
+                                            </p>
+                                            <ul>
+                                                <li>Full Sleeve</li>
+                                                <li>Cotton</li>
+                                                <li>All Sizes available</li>
+                                                <li>4 Different Color</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end card -->
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">Product Gallery</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-4">
+                                        <h5 class="fs-14 mb-1">Product Image</h5>
+                                        <p class="text-muted">Add Product main Image.</p>
+                                        <div class="text-center">
+                                            <div class="position-relative d-inline-block">
+                                                <div class="position-absolute top-100 start-100 translate-middle">
+                                                    <label for="product-image-input" class="mb-0"
+                                                           data-bs-toggle="tooltip" data-bs-placement="right"
+                                                           title="Select Image">
+                                                        <div class="avatar-xs">
+                                                            <div class="avatar-title bg-light border rounded-circle text-muted cursor-pointer">
+                                                                <i class="ri-image-fill"></i>
+                                                            </div>
+                                                        </div>
+                                                    </label>
+                                                    <input class="form-control d-none" value="" id="product-image-input"
+                                                           type="file" accept="image/png, image/gif, image/jpeg">
+                                                </div>
+                                                <div class="avatar-lg">
+                                                    <div class="avatar-title bg-light rounded">
+                                                        <img src="#" id="product-img" class="avatar-md h-auto" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h5 class="fs-14 mb-1">Product Gallery</h5>
+                                        <p class="text-muted">Add Product Gallery Images.</p>
+
+                                        <div class="dropzone">
+                                            <div class="fallback">
+                                                <input name="file" type="file" multiple="multiple">
+                                            </div>
+                                            <div class="dz-message needsclick">
+                                                <div class="mb-3">
+                                                    <i class="display-4 text-muted ri-upload-cloud-2-fill"></i>
+                                                </div>
+
+                                                <h5>Drop files here or click to upload.</h5>
+                                            </div>
+                                        </div>
+
+                                        <ul class="list-unstyled mb-0" id="dropzone-preview">
+                                            <li class="mt-2" id="dropzone-preview-list">
+                                                <!-- This is used as the file preview template -->
+                                                <div class="border rounded">
+                                                    <div class="d-flex p-2">
+                                                        <div class="flex-shrink-0 me-3">
+                                                            <div class="avatar-sm bg-light rounded">
+                                                                <img data-dz-thumbnail class="img-fluid rounded d-block"
+                                                                     src="#" alt="Product-Image" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="flex-grow-1">
+                                                            <div class="pt-1">
+                                                                <h5 class="fs-14 mb-1" data-dz-name>&nbsp;</h5>
+                                                                <p class="fs-13 text-muted mb-0" data-dz-size></p>
+                                                                <strong class="error text-danger"
+                                                                        data-dz-errormessage></strong>
+                                                            </div>
+                                                        </div>
+                                                        <div class="flex-shrink-0 ms-3">
+                                                            <button data-dz-remove
+                                                                    class="btn btn-sm btn-danger">
+                                                                Delete
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                        <!-- end dropzon-preview -->
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end card -->
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <ul class="nav nav-tabs-custom card-header-tabs border-bottom-0" role="tablist">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" data-bs-toggle="tab"
+                                               href="#addproduct-general-info" role="tab">
+                                                General Info
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#addproduct-metadata"
+                                               role="tab">
+                                                Meta Data
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <!-- end card header -->
+                                <div class="card-body">
+                                    <div class="tab-content">
+                                        <div class="tab-pane active" id="addproduct-general-info" role="tabpanel">
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                    <div class="mb-3">
+                                                        <label class="form-label"
+                                                               for="manufacturer-name-input">Manufacturer Name</label>
+                                                        <input type="text" class="form-control"
+                                                               id="manufacturer-name-input"
+                                                               placeholder="Enter manufacturer name">
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="mb-3">
+                                                        <label class="form-label"
+                                                               for="manufacturer-brand-input">
+                                                            Manufacturer
+                                                            Brand
+                                                        </label>
+                                                        <input type="text" class="form-control"
+                                                               id="manufacturer-brand-input"
+                                                               placeholder="Enter manufacturer brand">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- end row -->
+
+                                            <div class="row">
+                                                <div class="col-lg-3 col-sm-6">
+                                                    <div class="mb-3">
+                                                        <label class="form-label" for="stocks-input">Stocks</label>
+                                                        <input type="text" class="form-control" id="stocks-input"
+                                                               placeholder="Stocks" required>
+                                                        <div class="invalid-feedback">
+                                                            Please Enter a product stocks.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3 col-sm-6">
+                                                    <div class="mb-3">
+                                                        <label class="form-label"
+                                                               for="product-price-input">Price</label>
+                                                        <div class="input-group has-validation mb-3">
+                                                            <span class="input-group-text"
+                                                                  id="product-price-addon">$</span>
+                                                            <input type="text" class="form-control"
+                                                                   id="product-price-input" placeholder="Enter price"
+                                                                   aria-label="Price"
+                                                                   aria-describedby="product-price-addon" required>
+                                                            <div class="invalid-feedback">
+                                                                Please Enter a product
+                                                                price.
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3 col-sm-6">
+                                                    <div class="mb-3">
+                                                        <label class="form-label"
+                                                               for="product-discount-input">Discount</label>
+                                                        <div class="input-group mb-3">
+                                                            <span class="input-group-text"
+                                                                  id="product-discount-addon">%</span>
+                                                            <input type="text" class="form-control"
+                                                                   id="product-discount-input" placeholder="Enter discount"
+                                                                   aria-label="discount"
+                                                                   aria-describedby="product-discount-addon">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3 col-sm-6">
+                                                    <div class="mb-3">
+                                                        <label class="form-label" for="orders-input">Orders</label>
+                                                        <input type="text" class="form-control" id="orders-input"
+                                                               placeholder="Orders" required>
+                                                        <div class="invalid-feedback">
+                                                            Please Enter a product orders.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- end col -->
+                                            </div>
+                                            <!-- end row -->
+                                        </div>
+                                        <!-- end tab-pane -->
+
+                                        <div class="tab-pane" id="addproduct-metadata" role="tabpanel">
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                    <div class="mb-3">
+                                                        <label class="form-label" for="meta-title-input">
+                                                            Meta
+                                                            title
+                                                        </label>
+                                                        <input type="text" class="form-control"
+                                                               placeholder="Enter meta title" id="meta-title-input">
+                                                    </div>
+                                                </div>
+                                                <!-- end col -->
+
+                                                <div class="col-lg-6">
+                                                    <div class="mb-3">
+                                                        <label class="form-label" for="meta-keywords-input">
+                                                            Meta
+                                                            Keywords
+                                                        </label>
+                                                        <input type="text" class="form-control"
+                                                               placeholder="Enter meta keywords" id="meta-keywords-input">
+                                                    </div>
+                                                </div>
+                                                <!-- end col -->
+                                            </div>
+                                            <!-- end row -->
+
+                                            <div>
+                                                <label class="form-label" for="meta-description-input">
+                                                    Meta
+                                                    Description
+                                                </label>
+                                                <textarea class="form-control" id="meta-description-input"
+                                                          placeholder="Enter meta description" rows="3"></textarea>
+                                            </div>
+                                        </div>
+                                        <!-- end tab pane -->
+                                    </div>
+                                    <!-- end tab content -->
+                                </div>
+                                <!-- end card body -->
+                            </div>
+                            <!-- end card -->
+                            <div class="text-end mb-3">
+                                <button type="submit" class="btn btn-success w-sm">Submit</button>
+                            </div>
+                        </div>
+                        <!-- end col -->
+
+                        <div class="col-lg-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">Publish</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label for="choices-publish-status-input" class="form-label">Status</label>
+
+                                        <select class="form-select" id="choices-publish-status-input" data-choices
+                                                data-choices-search-false>
+                                            <option value="Published" selected>Published</option>
+                                            <option value="Scheduled">Scheduled</option>
+                                            <option value="Draft">Draft</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label for="choices-publish-visibility-input"
+                                               class="form-label">Visibility</label>
+                                        <select class="form-select" id="choices-publish-visibility-input" data-choices
+                                                data-choices-search-false>
+                                            <option value="Public" selected>Public</option>
+                                            <option value="Hidden">Hidden</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <!-- end card body -->
+                            </div>
+                            <!-- end card -->
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">Publish Schedule</h5>
+                                </div>
+                                <!-- end card body -->
+                                <div class="card-body">
+                                    <div>
+                                        <label for="datepicker-publish-input" class="form-label">
+                                            Publish Date &
+                                            Time
+                                        </label>
+                                        <input type="text" id="datepicker-publish-input" class="form-control"
+                                               placeholder="Enter publish date" data-provider="flatpickr"
+                                               data-date-format="d.m.y" data-enable-time>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end card -->
+                            <!-- product category -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">Product Categories</h5>
+                                </div>
+                                <div class="card-body">
+
+                                    <select class="form-select" id="choices-category-input"
+                                            name="choices-category-input" data-choices data-choices-search-false>
+                                        <option value="Appliances">Appliances</option>
+                                        <option value="Automotive Accessories">Automotive Accessories</option>
+                                        <option value="Electronics">Electronics</option>
+                                        <option value="Fashion">Fashion</option>
+                                        <option value="Furniture">Furniture</option>
+                                        <option value="Grocery">Grocery</option>
+                                        <option value="Kids">Kids</option>
+                                        <option value="Watches">Watches</option>
+                                    </select>
+                                </div>
+                                <!-- end card body -->
+                            </div>
+
+                            <!-- product store type -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">Product Store type</h5>
+                                </div>
+                                <div class="card-body">
+
+                                    <select class="form-select" id="choices-category-input"
+                                            name="choices-category-input" data-choices data-choices-search-false>
+                                        <option value="Appliances">Appliances</option>
+                                        <option value="Automotive Accessories">Automotive Accessories</option>
+                                        <option value="Electronics">Electronics</option>
+                                        <option value="Fashion">Fashion</option>
+                                        <option value="Furniture">Furniture</option>
+                                        <option value="Grocery">Grocery</option>
+                                        <option value="Kids">Kids</option>
+                                        <option value="Watches">Watches</option>
+                                    </select>
+                                </div>
+                                <!-- end card body -->
+                            </div>
+
+
+                            <!-- end card -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">Product Tags</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="hstack gap-3 align-items-start">
+                                        <div class="flex-grow-1">
+                                            <input class="form-control" data-choices data-choices-multiple-remove="true"
+                                                   placeholder="Enter tags" type="text" value="Cotton" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- end card body -->
+                            </div>
+                            <!-- end card -->
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">Product Short Description</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="text-muted mb-2">Add short description for product</p>
+                                    <textarea class="form-control" placeholder="Must enter minimum of a 100 characters"
+                                              rows="3"></textarea>
+                                </div>
+                                <!-- end card body -->
+                            </div>
+                            <!-- end card -->
+
+                        </div>
+                        <!-- end col -->
+                    </div>
+                    <!-- end row -->
+
+                </form>
+
+
+            </div> <!-- container-fluid -->
+
+
+
+        </div>
+        <!-- End Page-content -->
+
+
+
+
+
+
+
+        <footer class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <script>document.write(new Date().getFullYear())</script> © EasyFood.
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="text-sm-end d-none d-sm-block">
+                            Design & Develop by EasyFood
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <!-- end main content-->
+    </div>
+    <!-- END layout-wrapper -->
+    <!--start back-to-top-->
+    <button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
+        <i class="ri-arrow-up-line"></i>
+    </button>
+    <!--end back-to-top-->
+    <!--preloader-->
+    <div id="preloader">
+        <div id="status">
+            <div class="spinner-border text-primary avatar-sm" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#updateProfileForm").submit(function (event) {
+                event.preventDefault();
+
+                var formData = {
+                    UserName: $("#UserName").val(),
+                    Email: $("#Email").val(),
+                    PhoneNumber: $("#PhoneNumber").val(),
+                    Address: $("#Address").val(),
+                    Birthday: $("#Birthday").val()
+                };
+
+                $.ajax({
+                    url: "/Admin/UpdateByAdmin",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(formData),
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire({
+                                title: "Thành công!",
+                                text: "Cập nhật thông tin thành công!",
+                                icon: "success",
+                                confirmButtonText: "OK"
+                            }).then(() => {
+
+                            });
+                        } else {
+                            Swal.fire("Lỗi!", response.message, "error");
+                        }
+                    },
+                    error: function () {
+                        Swal.fire("Lỗi!", "Không thể kết nối với máy chủ.", "error");
+                    }
+                });
+            });
+        });
+    </script>
+   
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    <!-- JAVASCRIPT -->
+    <script src="~/assetsAdmin/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/assetsAdmin/libs/simplebar/simplebar.min.js"></script>
+    <script src="~/assetsAdmin/libs/node-waves/waves.min.js"></script>
+    <script src="~/assetsAdmin/libs/feather-icons/feather.min.js"></script>
+    <script src="~/assetsAdmin/js/pages/plugins/lord-icon-2.1.0.js"></script>
+    <script src="~/assetsAdmin/js/plugins.js"></script>
+    <!-- ckeditor -->
+    <script src="~/assetsAdmin/libs/%40ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>
+
+    <!-- dropzone js -->
+    <script src="~/assetsAdmin/libs/dropzone/dropzone-min.js"></script>
+
+    <script src="~/assetsAdmin/js/pages/ecommerce-product-create.init.js"></script>
+
+    <!-- prismjs plugin -->
+    <script src="~/assetsAdmin/libs/prismjs/prism.js"></script>
+
+    <script src="~/assetsAdmin/js/app.js"></script>
+
+</body>
+
+
+<!-- Mirrored from themesbrand.com/velzon/html/master/forms-layouts.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 26 Feb 2025 12:22:12 GMT -->
+
+</html>

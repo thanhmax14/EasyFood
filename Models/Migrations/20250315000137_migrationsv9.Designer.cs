@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Models.DBContext;
 
@@ -11,9 +12,11 @@ using Models.DBContext;
 namespace Models.Migrations
 {
     [DbContext(typeof(EasyFoodDbContext))]
-    partial class EasyFoodDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250315000137_migrationsv9")]
+    partial class migrationsv9
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -265,9 +268,6 @@ namespace Models.Migrations
                     b.Property<bool>("DisPlay")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsComplele")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Method")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -291,9 +291,6 @@ namespace Models.Migrations
                     b.Property<string>("UserID")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<int?>("orderCode")
-                        .HasColumnType("int");
 
                     b.HasKey("ID");
 

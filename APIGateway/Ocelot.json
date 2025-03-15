@@ -51,17 +51,42 @@
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
     },
     {
-      "DownstreamPathTemplate": "/api/ManagementSeller/{everything}",
+        "DownstreamPathTemplate": "/api/ManagementSeller/{everything}",
+        "DownstreamScheme": "https",
+        "DownstreamHostAndPorts": [
+            {
+                "Host": "localhost",
+                "Port": 7071
+            }
+        ],
+        "UpstreamPathTemplate": "/Gateway/ManagementSellerService/{everything}",
+        "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Review/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7071
+          "Port": 7190
         }
       ],
-      "UpstreamPathTemplate": "/Gateway/ManagementSellerService/{everything}",
+      "UpstreamPathTemplate": "/Gateway/ReviewService/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Wallet/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7042
+        }
+      ],
+      "UpstreamPathTemplate": "/Gateway/WalletService/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
     }
+
   ],
   "GlobalConfiguration": {
     "BaseUrl": "https://localhost:5555"
