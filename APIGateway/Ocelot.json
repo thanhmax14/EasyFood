@@ -63,16 +63,28 @@
         "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
     },
     {
-        "DownstreamPathTemplate": "/api/Review/{everything}",
-        "DownstreamScheme": "https",
-        "DownstreamHostAndPorts": [
-            {
-                "Host": "localhost",
-                "Port": 7190
-            }
-        ],
-        "UpstreamPathTemplate": "/Gateway/ReviewService/{everything}",
-        "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+      "DownstreamPathTemplate": "/api/Review/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7190
+        }
+      ],
+      "UpstreamPathTemplate": "/Gateway/ReviewService/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Wallet/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7042
+        }
+      ],
+      "UpstreamPathTemplate": "/Gateway/WalletService/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
     }
 
   ],
