@@ -1,4 +1,4 @@
-﻿@model Repository.ViewModels.UsersViewModel
+﻿@model Repository.ViewModels.IndexUserViewModels
 <!DOCTYPE html>
 <html class="no-js" lang="en">
 
@@ -783,7 +783,7 @@
                                             </a>
                                         </li>
                                        
-                                        @if (Model.RequestSeller == "0" || Model.RequestSeller == "1")
+                                        @if (Model.userView.RequestSeller == "0" || Model.userView.RequestSeller == "1")
                                         {
                                             <li class="nav-item">
                                                 <a class="nav-link" id="address-tab" data-bs-toggle="tab" href="#address"
@@ -794,7 +794,7 @@
                                         } else
                                         {
                                             <li class="nav-item">
-                                                <a class="nav-link" id="address-tab" target="_blank" asp-controller="Seller" asp-action="FeedbackList" asp-route-id="@Model.StoreDeatilId"
+                                                <a class="nav-link" id="address-tab" target="_blank" asp-controller="Seller" asp-action="FeedbackList" asp-route-id="@Model.userView.StoreDeatilId"
                                                    role="tab" aria-controls="address" aria-selected="true">
                                                     <i class="fi-rs-marker mr-10"></i>Management Seller
                                                 </a>
@@ -916,7 +916,7 @@
                                          aria-labelledby="address-tab">
                                         <div class="row justify-content-center">
                                             <div class="col-lg-8">
-                                                @if (Model.RequestSeller == "1" || Model.RequestSeller == "0") // Nếu chưa đăng ký seller
+                                                @if (Model.userView.RequestSeller == "1" || Model.userView.RequestSeller == "0") // Nếu chưa đăng ký seller
                                                 {
                                                     <div class="card shadow-sm border-0">
                                                         <div class="card-header bg-warning text-dark text-center">
@@ -930,7 +930,7 @@
                                                         </div>
                                                     </div>
                                                 }
-                                                 else if (Model.RequestSeller == "3") // Nếu đã đăng ký và chờ duyệt
+                                                else if (Model.userView.RequestSeller == "3") // Nếu đã đăng ký và chờ duyệt
                                                  {
                                                    @*   <div class="alert alert-info mt-3" id="approvalMessage">
                                                          <h5>Announcement!</h5>
@@ -970,26 +970,26 @@
                                                     <div class="row">
                                                         <div class="form-group col-md-6">
                                                             <label>UserName <span class="required">*</span></label>
-                                                            <input required class="form-control" id="UserName" name="UserName" type="text" value="@Model.UserName" />
+                                                            <input required class="form-control" id="UserName" name="UserName" type="text" value="@Model.userView.UserName" />
 
                                                         </div>
                                                         <div class="form-group col-md-6">
                                                             <label>Email <span class="required">*</span></label>
-                                                            <input required class="form-control" id="Email" name="Email" type="text" value="@Model.Email" />
+                                                            <input required class="form-control" id="Email" name="Email" type="text" value="@Model.userView.Email" />
                                                         </div>
                                                         <div class="form-group col-md-12">
                                                             <label>Phone Number <span class="required">*</span></label>
-                                                            <input required class="form-control" id="PhoneNumber" name="PhoneNumber" type="text" value="@Model.PhoneNumber" />
+                                                            <input required class="form-control" id="PhoneNumber" name="PhoneNumber" type="text" value="@Model.userView.PhoneNumber" />
 
                                                         </div>
                                                         <div class="form-group col-md-12">
                                                             <label>Address <span class="required">*</span></label>
-                                                            <input required class="form-control" id="Address" name="Address" type="text" value="@Model.Address" />
+                                                            <input required class="form-control" id="Address" name="Address" type="text" value="@Model.userView.Address" />
 
                                                         </div>
                                                         <div class="form-group col-md-12">
                                                             <label>Birthday <span class="required">*</span></label>
-                                                            <input required class="form-control" id="Birthday" name="Birthday" type="date" value="@(Model.Birthday != null ? Model.Birthday.Value.ToString("yyyy-MM-dd") : "")" />
+                                                            <input required class="form-control" id="Birthday" name="Birthday" type="date" value="@(Model.userView.Birthday != null ? Model.userView.Birthday.Value.ToString("yyyy-MM-dd") : "")" />
 
 
                                                         </div>

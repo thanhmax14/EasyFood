@@ -39,9 +39,10 @@ namespace EasyFood.web.Controllers
                 return RedirectToAction("Login", "Home");
             }
             var storeId = await _storeDetailService.FindAsync(s => s.UserID == user.Id);
-            List<ReivewViewModel> list = new List<ReivewViewModel>();
+            var id = storeId.ID;
 
-            string apiUrl = $"https://localhost:5555/Gateway/ReviewService/ViewFeedbackList/{storeId.ID}";
+            string apiUrl = $"https://localhost:5555/Gateway/ReviewService/ViewFeedbackList/{id}";
+            List<ReivewViewModel> list = new List<ReivewViewModel>();
 
             try
             {

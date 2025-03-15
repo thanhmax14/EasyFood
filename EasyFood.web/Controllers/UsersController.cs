@@ -37,7 +37,7 @@ namespace EasyFood.web.Controllers
 
             // Lấy ID của user đăng nhập
             string userId = user.Id;
-            var userViewModel = new UsersViewModel();
+            var list = new IndexUserViewModels();
 
             // Gọi API Gateway để lấy thông tin user theo ID
             string apiUrl = $"https://localhost:5555/Gateway/UsersService/View-Profile/{userId}";
@@ -47,16 +47,16 @@ namespace EasyFood.web.Controllers
                 var response = await client.GetAsync(apiUrl);
                 if (!response.IsSuccessStatusCode)
                 {
-                    return View(userViewModel);
+                    return View(list);
                 }
                 var mes = await response.Content.ReadAsStringAsync();
-                userViewModel = JsonSerializer.Deserialize<UsersViewModel>(mes, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                list.userView = JsonSerializer.Deserialize<UsersViewModel>(mes, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-                return View(userViewModel); 
+                return View(list); 
             }
             catch (Exception)
             {
-                return View(userViewModel);
+                return View(list);
             }
         }
         [HttpPost]
