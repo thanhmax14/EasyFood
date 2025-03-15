@@ -30,7 +30,7 @@ namespace SellerAPI.Controllers
         /// </summary>
         /// <param name="storeId"></param>
         /// <returns></returns>
-        [HttpGet("{storeId}")]
+        [HttpGet("ViewFeedbackList/{storeId}")]
         public async Task<IActionResult> GetReviewByStoreId(Guid storeId)
         {
             // Lấy danh sách sản phẩm thuộc StoreId

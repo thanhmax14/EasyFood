@@ -1,4 +1,6 @@
-﻿<!doctype html>
+﻿@model List<Repository.ViewModels.ReivewViewModel>
+@using System.Text.Json
+<!doctype html>
 <html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg"
     data-sidebar-image="none" data-preloader="disable" data-theme="default" data-theme-colors="default">
 
@@ -287,15 +289,17 @@
                 <script>
                     document.addEventListener("DOMContentLoaded", function () {
                         if (document.getElementById("table-feedback")) {
+                             var reviews = @Html.Raw(JsonSerializer.Serialize(Model));
                             new gridjs.Grid({
                                 columns: [
                                    
                                     { name: "Product Name", width: "150px" },
                                     { name: "User Name", width: "150px" },
                                     { name: "Comment", width: "250px" },
+                                    { name: "Comment Date", width: "150px" },
                                     { name: "Rating", width: "150px" },
                                     { name: "Reply", width: "250px" },
-                                    { name: "Comment Date", width: "150px" },
+                                    
                                     {
                                         name: "Status",
                                         width: "150px",
@@ -350,24 +354,15 @@
                                 pageSize: [10, 20, 30, 40, 50],
                                 sort: true,
                                 search: true,
-                                data: [
-                                    ["ORD001", "Store A", "Jonathan", "Good quality product!", 5, "Thank you!", "2025-03-10", "Active", "Actions"],
-                                    ["ORD002", "Store B", "Harold", "Delivery was late", 3, "We apologize for the delay.", "2025-03-09", "Disabled", "Actions"],
-                                    ["ORD003", "Store C", "Shannon", "Amazing service!", 5, "Glad to hear that!", "2025-03-08", "Active", "Actions"],
-                                    ["ORD004", "Store D", "Robert", "Not as expected", 2, "We're sorry to hear that.", "2025-03-07", "Disabled", "Actions"],
-                                    ["ORD005", "Store E", "Noel", "Great price and quality", 4, "Thanks for your feedback!", "2025-03-06", "Active", "Actions"],
-                                    ["ORD006", "Store F", "Traci", "Customer support was helpful", 5, "Happy to assist!", "2025-03-05", "Active", "Actions"],
-                                    ["ORD007", "Store G", "Kerry", "Received wrong item", 2, "We will contact you soon.", "2025-03-04", "Disabled", "Actions"],
-                                    ["ORD008", "Store H", "Patsy", "Fast shipping!", 5, "Thanks for your support!", "2025-03-03", "Active", "Actions"],
-                                    ["ORD009", "Store I", "Cathy", "Product damaged on arrival", 1, "We'll issue a refund.", "2025-03-02", "Disabled", "Actions"],
-                                    ["ORD010", "Store J", "Tyrone", "Excellent quality", 5, "Enjoy your purchase!", "2025-03-01", "Active", "Actions"],
-                                    ["ORD001", "Store A", "Jonathan", "Good quality product!", 5, "Thank you!", "2025-03-10", "Active", "Actions"],
-                                    ["ORD001", "Store A", "Jonathan", "Good quality product!", 5, "Thank you!", "2025-03-10", "Active", "Actions"],
-                                    ["ORD001", "Store A", "Jonathan", "Good quality product!", 5, "Thank you!", "2025-03-10", "Active", "Actions"],
-                                    ["ORD001", "Store A", "Jonathan", "Good quality product!", 5, "Thank you!", "2025-03-10", "Active", "Actions"],
-                                    ["ORD001", "Store A", "Jonathan", "Good quality product!", 5, "Thank you!", "2025-03-10", "Active", "Actions"],
-                                    ["ORD010", "Store J", "Tyrone", "Excellent quality", 5, "Enjoy your purchase!", "2025-03-01", "Active", "Actions"]
-                                ]
+                                data: reviews.map(review => [
+                                        review.ProductName,
+                                        review.Username,
+                                        review.Cmt,
+                                        new Date(review.Datecmt).toLocaleDateString(),
+                                        review.Rating,
+                                        review.Relay || "No reply",
+                                        review.Status
+                            ])
                             }).render(document.getElementById("table-feedback"));
                         }
                     });
