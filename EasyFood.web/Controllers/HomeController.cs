@@ -1,13 +1,9 @@
 ﻿using BusinessLogic.Services.Carts;
-
-using BusinessLogic.Services.Products;
-using BusinessLogic.Services.StoreDetail;
-
 using BusinessLogic.Services.ProductImages;
 using BusinessLogic.Services.Products;
 using BusinessLogic.Services.ProductVariants;
+using BusinessLogic.Services.StoreDetail;
 using BusinessLogic.Services.Wishlists;
-
 using EasyFood.web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -33,36 +29,30 @@ namespace EasyFood.web.Controllers
         private HttpClient client = null;
         private string _url;
         private readonly ICartService _cart;
-
-        private readonly IStoreDetailService _storeDetailService;
-        private readonly IProductService _productService;
-
-        public HomeController(UserManager<AppUser> userManager, IEmailSender emailSender, HttpClient client, ICartService cart, IStoreDetailService storeDetailService, IProductService productService)
-
         private readonly IWishlistServices _wishlist;
         private readonly IProductService _product;
         private readonly IProductImageService _productimg;
         private readonly IProductVariantService _productvarian;
+        private readonly IStoreDetailService _storeDetailService;
 
-        public HomeController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, IEmailSender emailSender, ICartService cart, IWishlistServices wishlist, IProductService product
+        public HomeController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, IStoreDetailService storeDetailService, IEmailSender emailSender, ICartService cart, IWishlistServices wishlist, IProductService product
 , IProductImageService productimg, IProductVariantService productvarian)
- main
         {
+            _signInManager = signInManager;
             _userManager = userManager;
             _emailSender = emailSender;
-            this.client = client;
-           
+            client = new HttpClient();
+            var contentype = new MediaTypeWithQualityHeaderValue("application/json");
+            client.DefaultRequestHeaders.Accept.Add(contentype);
             _cart = cart;
-
-            _storeDetailService = storeDetailService;
-            _productService = productService;
-
             _wishlist = wishlist;
             _product = product;
             _productimg = productimg;
             _productvarian = productvarian;
-
+            _storeDetailService = storeDetailService;
         }
+
+       
 
         public IActionResult Index()
         {
@@ -92,8 +82,8 @@ namespace EasyFood.web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(string username, string password, bool? rememberMe,string ReturnUrl = null)
-        {  
+        public async Task<IActionResult> Login(string username, string password, bool? rememberMe, string ReturnUrl = null)
+        {
             if (!string.IsNullOrWhiteSpace(ReturnUrl) && Url.IsLocalUrl(ReturnUrl) && ReturnUrl != Url.Action("Login", "Home")
                 && ReturnUrl != Url.Action("Register", "Home") && ReturnUrl != Url.Action("Forgot", "Home")
                 && ReturnUrl != Url.Action("ResetPassword", "Home")
@@ -114,7 +104,7 @@ namespace EasyFood.web.Controllers
 
             string json = JsonSerializer.Serialize(temdata);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-           
+
 
             try
             {
@@ -275,7 +265,7 @@ namespace EasyFood.web.Controllers
                 return Json(new { status = "error", msg = "Lỗi không xác định, vui lòng thử lại." });
             }
         }
-   
+
         public async Task<IActionResult> ListProducts()
 
         {
@@ -290,7 +280,7 @@ namespace EasyFood.web.Controllers
                 }
 
                 var mes = await response.Content.ReadAsStringAsync();
-                 list = JsonSerializer.Deserialize<List<ProductsViewModel>>(mes, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                list = JsonSerializer.Deserialize<List<ProductsViewModel>>(mes, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
                 return View(list);
             }
@@ -300,12 +290,12 @@ namespace EasyFood.web.Controllers
             }
         }
 
-        
+
 
         public async Task<IActionResult> ProductDetail(Guid iD)
         {
-            var FindProduct = await _productService.FindAsync(x => x.ID == iD);
-            if(FindProduct != null)
+            var FindProduct = await _product.FindAsync(x => x.ID == iD);
+            if (FindProduct != null)
             {
                 var FindStore = _storeDetailService.FindAsync(s => s.ID == FindProduct.StoreID);
                 var list = new ProductDetailsViewModel();
@@ -333,7 +323,7 @@ namespace EasyFood.web.Controllers
             return NotFound();
         }
 
-        
+
 
         public async Task<IActionResult> GetAllStore()
         {
@@ -501,7 +491,7 @@ namespace EasyFood.web.Controllers
 
             if (getCart.Any())
             {
-                foreach(var item in getCart)
+                foreach (var item in getCart)
                 {
 
 
@@ -509,11 +499,11 @@ namespace EasyFood.web.Controllers
 
                     listtem.Add(new CartViewModels
                     {
-                          
+
                     });
                 }
             }
-            
+
 
             return View();
         }
@@ -533,7 +523,7 @@ namespace EasyFood.web.Controllers
             {
                 return Json(new { success = false, message = "Product không tồn tại!!" });
             }
-            else if (await this._wishlist.FindAsync(x => x.ProductID == id && x.UserID ==user.Id) !=null)
+            else if (await this._wishlist.FindAsync(x => x.ProductID == id && x.UserID == user.Id) != null)
             {
                 return Json(new { success = false, message = $"{check.Name} đã tồn tại trong danh sách yêu thích.!" });
             }
@@ -547,8 +537,8 @@ namespace EasyFood.web.Controllers
                 };
                 try
                 {
-                  await this._wishlist.AddAsync(tem);
-                  await this._wishlist.SaveChangesAsync();
+                    await this._wishlist.AddAsync(tem);
+                    await this._wishlist.SaveChangesAsync();
                     return Json(new { success = true, message = $"Thêm thành công!" });
                 }
                 catch
@@ -575,13 +565,13 @@ namespace EasyFood.web.Controllers
                 return Json(new { success = false, message = "Product không tồn tại!!" });
             }
             var wshlict = await this._wishlist.FindAsync(x => x.ProductID == id && x.UserID == user.Id);
-            if (wshlict==null)
+            if (wshlict == null)
             {
                 return Json(new { success = false, message = $"{check.Name} không tồn tại trong danh sách yêu thích.!" });
             }
             else
             {
-               
+
                 try
                 {
                     await this._wishlist.DeleteAsync(wshlict);
@@ -604,16 +594,16 @@ namespace EasyFood.web.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
-            var wshlict = await this._wishlist.ListAsync(x => x.UserID == user.Id ,orderBy: q=>q.OrderByDescending(s =>s.CreateDate));
+            var wshlict = await this._wishlist.ListAsync(x => x.UserID == user.Id, orderBy: q => q.OrderByDescending(s => s.CreateDate));
             if (wshlict.Any())
             {
-                foreach(var item in wshlict)
+                foreach (var item in wshlict)
                 {
                     var getProduct = await this._product.FindAsync(p => p.ID == item.ProductID);
                     if (getProduct != null)
                     {
                         var getimg = await this._productimg.ListAsync(u => u.ProductID == getProduct.ID);
-                        var img = "https://nest-frontend-v6.vercel.app/assets/imgs/shop/product-1-1.jpg";                     
+                        var img = "https://nest-frontend-v6.vercel.app/assets/imgs/shop/product-1-1.jpg";
                         if (getimg.Any())
                         {
                             img = getimg.FirstOrDefault().ImageUrl;
@@ -632,7 +622,7 @@ namespace EasyFood.web.Controllers
                             name = getProduct.Name,
                             price = defauPrice,
                             ProductID = getProduct.ID,
-                            vote =100
+                            vote = 100
                         });
                     }
                 }
