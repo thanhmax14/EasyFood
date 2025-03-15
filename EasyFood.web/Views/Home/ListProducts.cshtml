@@ -954,7 +954,7 @@
                                         <div class="product-category">
                                             <a href="shop-grid-right.html">@item.CategoryName</a>
                                         </div>
-                                        <h2><a href="shop-product-right.html">@item.Name</a></h2>
+                                        <h2><a asp-action="ProductDetail" asp-controller="Home" asp-route-id="@item.ID">@item.Name</a></h2>
                                         <div class="product-rate-cover">
                                             <div class="product-rate d-inline-block">
                                                 <div class="product-rating" style="width: 90%"></div>

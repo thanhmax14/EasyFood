@@ -1,8 +1,13 @@
 ﻿using BusinessLogic.Services.Carts;
+
+using BusinessLogic.Services.Products;
+using BusinessLogic.Services.StoreDetail;
+
 using BusinessLogic.Services.ProductImages;
 using BusinessLogic.Services.Products;
 using BusinessLogic.Services.ProductVariants;
 using BusinessLogic.Services.Wishlists;
+
 using EasyFood.web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -28,6 +33,12 @@ namespace EasyFood.web.Controllers
         private HttpClient client = null;
         private string _url;
         private readonly ICartService _cart;
+
+        private readonly IStoreDetailService _storeDetailService;
+        private readonly IProductService _productService;
+
+        public HomeController(UserManager<AppUser> userManager, IEmailSender emailSender, HttpClient client, ICartService cart, IStoreDetailService storeDetailService, IProductService productService)
+
         private readonly IWishlistServices _wishlist;
         private readonly IProductService _product;
         private readonly IProductImageService _productimg;
@@ -35,18 +46,22 @@ namespace EasyFood.web.Controllers
 
         public HomeController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, IEmailSender emailSender, ICartService cart, IWishlistServices wishlist, IProductService product
 , IProductImageService productimg, IProductVariantService productvarian)
+ main
         {
-            _signInManager = signInManager;
             _userManager = userManager;
             _emailSender = emailSender;
-            client = new HttpClient();
-            var contentype = new MediaTypeWithQualityHeaderValue("application/json");
-            client.DefaultRequestHeaders.Accept.Add(contentype);
+            this.client = client;
+           
             _cart = cart;
+
+            _storeDetailService = storeDetailService;
+            _productService = productService;
+
             _wishlist = wishlist;
             _product = product;
             _productimg = productimg;
             _productvarian = productvarian;
+
         }
 
         public IActionResult Index()
@@ -265,7 +280,7 @@ namespace EasyFood.web.Controllers
 
         {
             var list = new List<ProductsViewModel>();
-            this._url = "https://localhost:5555/Gateway/ProductsService";
+            this._url = "https://localhost:5555/Gateway/ProductsService/GetAllProducts";
             try
             {
                 var response = await client.GetAsync(this._url);
@@ -285,28 +300,40 @@ namespace EasyFood.web.Controllers
             }
         }
 
-        public async Task<IActionResult> ProductDetail()
+        
+
+        public async Task<IActionResult> ProductDetail(Guid iD)
         {
-            var list = new List<ProductsViewModel>();
-            this._url = "https://localhost:5555/Gateway/ProductsService";
-            try
+            var FindProduct = await _productService.FindAsync(x => x.ID == iD);
+            if(FindProduct != null)
             {
-                var response = await client.GetAsync(this._url);
-                if (!response.IsSuccessStatusCode)
+                var FindStore = _storeDetailService.FindAsync(s => s.ID == FindProduct.StoreID);
+                var list = new ProductDetailsViewModel();
+                this._url = $"https://localhost:5555/Gateway/ProductsService/GetProductDetails?id={iD}";
+
+
+                try
+                {
+                    var response = await client.GetAsync(this._url);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        return View(list);
+                    }
+
+                    var mes = await response.Content.ReadAsStringAsync();
+                    list = JsonSerializer.Deserialize<ProductDetailsViewModel>(mes, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    return View(list);
+                }
+                catch (Exception ex)
                 {
                     return View(list);
                 }
-
-                var mes = await response.Content.ReadAsStringAsync();
-                list = JsonSerializer.Deserialize<List<ProductsViewModel>>(mes, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                return View(list);
             }
-            catch (Exception ex)
-            {
-                return View(list);
-            }
+            return NotFound();
         }
+
+        
 
         public async Task<IActionResult> GetAllStore()
         {

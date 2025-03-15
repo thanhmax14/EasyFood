@@ -16,11 +16,12 @@ namespace ProductsService.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
+        
         private readonly IProductService _productService;
         private readonly IProductImageService _productImageService;
-        private readonly IProductVariantService  _productVariantService;
+        private readonly IProductVariantService _productVariantService;
         private readonly ICategoryService _categoryService;
-        private readonly IStoreDetailService  _storeDetailService;
+        private readonly IStoreDetailService _storeDetailService;
 
         public ProductsController(IProductService productService, IProductImageService productImageService, IProductVariantService productVariantService, ICategoryService categoryService, IStoreDetailService storeDetailService)
         {
@@ -31,8 +32,8 @@ namespace ProductsService.Controllers
             _storeDetailService = storeDetailService;
         }
 
-        [HttpGet]
-       
+        [HttpGet("GetAllProducts")]
+
         public async Task<IActionResult> GetAll()
         {
             var list = new List<ProductsViewModel>();
@@ -42,7 +43,7 @@ namespace ProductsService.Controllers
             {
                 foreach (var item in products)
                 {
-                    
+
                     var price = await _productVariantService.FindAsync(s => s.ProductID == item.ID);
                     var storeName = await _storeDetailService.FindAsync(x => x.ID == item.StoreID);
                     var categoryName = await _categoryService.FindAsync(c => c.ID == item.CateID);
@@ -73,7 +74,50 @@ namespace ProductsService.Controllers
             }
             return BadRequest(false);
         }
+        [HttpGet("GetProductDetails")]
+        public async Task<IActionResult> ProductDetails(Guid id)
+        {
+            
+            var producct = new ProductDetailsViewModel();
+            var romType = await this._productImageService.ListAsync(u => u.ProductID == id);
+            if (romType.Any())
+            {
+                foreach (var item in romType)
+                {
+                    producct.Img.Add(item.ImageUrl);
+                }
+                
+            }
+            
+            var imgList = await _productImageService.ListAsync(i => i.ProductID == producct.ID);
+            var Listimg = imgList.Select(i => i.ImageUrl).ToList(); // Lấy danh sách ImageUrl
+            var productDetail = await _productService.FindAsync(x => x.ID == id);
+            var ProductSize = await _productVariantService.FindAsync(s => s.ProductID == id);
+            var storeName = await _storeDetailService.FindAsync(t => t.ID == productDetail.StoreID);
+            var categoryName = await _categoryService.FindAsync(c => c.ID == productDetail.CateID);
 
+            producct.ID = productDetail.ID;
+            producct.Name = productDetail.Name;
+            producct.StoreName = storeName.Name;
+            producct.CategoryName = categoryName.Name;
+            producct.Price = ProductSize.Price;
+            producct.ShortDescription = productDetail.ShortDescription;
+            producct.LongDescription = productDetail.LongDescription;
+            producct.CreatedDate = productDetail.CreatedDate;
+            producct.Stocks = ProductSize.Stock;
+            producct.Size = ProductSize.Size;
+            
+            
+            if (productDetail == null)
+            {
+                return BadRequest("Not found Product");
+
+            }
+            else
+            {
+                return Ok(producct);
+            }
+        }
        
 
     }
