@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BusinessLogic.Services.StoreDetail;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +14,19 @@ namespace UserAPI.Controllers
     public class UsersController : ControllerBase
     {
         private readonly UserManager<AppUser> _userManager;
+        private readonly IStoreDetailService _storeDetailService;
 
-        public UsersController(UserManager<AppUser> userManager)
+
+
+       /* public UsersController(UserManager<AppUser> userManager)
         {
             _userManager = userManager;
+        }*/
+
+        public UsersController(UserManager<AppUser> userManager, IStoreDetailService storeDetailService)
+        {
+            _userManager = userManager;
+            _storeDetailService = storeDetailService;
         }
 
         [HttpGet]
@@ -51,25 +61,39 @@ namespace UserAPI.Controllers
         [HttpGet("View-Profile/{id}")]
         public async Task<IActionResult> GetById(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
-            if (user == null)
+            try
             {
-                return BadRequest(new { message = "User ID không hợp lệ." });
+                var user = await _userManager.FindByIdAsync(id);
+                if (user == null)
+                {
+                    return BadRequest(new { message = "User ID không hợp lệ." });
+                }
+
+                var stores = await _storeDetailService.ListAsync(x => x.UserID == id);
+                var storeId = stores?.FirstOrDefault()?.ID ?? Guid.Empty; // Kiểm tra null
+
+                var UserModel = new UsersViewModel
+                {
+                    Birthday = user.Birthday,
+                    Address = user.Address,
+                    img = user.img,
+                    RequestSeller = user.RequestSeller,
+                    isUpdateProfile = user.isUpdateProfile,
+                    ModifyUpdate = user.ModifyUpdate,
+                    PhoneNumber = user.PhoneNumber,
+                    UserName = user.UserName,
+                    Email = user.Email,
+                    StoreDeatilId = storeId
+                };
+
+                return Ok(UserModel);
             }
-            var UserModel = new UsersViewModel
+            catch (Exception ex)
             {
-                Birthday = user.Birthday,
-                Address = user.Address,
-                img = user.img,
-                RequestSeller = user.RequestSeller,
-                isUpdateProfile = user.isUpdateProfile,
-                ModifyUpdate = user.ModifyUpdate,
-                PhoneNumber = user.PhoneNumber,
-                UserName = user.UserName,
-                Email = user.Email,
-            };
-            return Ok(UserModel);
+                return StatusCode(500, new { message = "Lỗi server", error = ex.Message });
+            }
         }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> Edit(string id, [FromBody] UsersViewModel obj)
         {

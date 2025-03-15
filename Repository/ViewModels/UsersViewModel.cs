@@ -25,5 +25,7 @@ namespace Repository.ViewModels
         /*        public bool IsBanByadmin { get; set; } = false;
         */
         public DateTime? ModifyUpdate { get; set; } = DateTime.Now;
+        public Guid StoreDeatilId { get; set; }
+
     }
 }
