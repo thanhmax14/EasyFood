@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using BusinessLogic.Services.BalanceChanges;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Models;
 using Repository.ViewModels;
@@ -13,13 +14,15 @@ namespace EasyFood.web.Controllers
         private readonly UserManager<AppUser> _userManager;
         private HttpClient client = null;
         private string _url;
+        private readonly IBalanceChangeService _balance;
 
-        public UsersController(UserManager<AppUser> userManager)
+        public UsersController(UserManager<AppUser> userManager, IBalanceChangeService balance)
         {
             _userManager = userManager;
             client = new HttpClient();
             var contentype = new MediaTypeWithQualityHeaderValue("application/json");
             client.DefaultRequestHeaders.Accept.Add(contentype);
+            _balance = balance;
         }
         public async Task<IActionResult> Index()
         {
@@ -127,6 +130,14 @@ namespace EasyFood.web.Controllers
             }
         }
 
+        public async Task<IActionResult> Wallet()
+        {
+
+
+
+            return View();
+
+        }
 
     }
 }
