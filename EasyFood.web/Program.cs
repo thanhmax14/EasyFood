@@ -1,12 +1,11 @@
 ﻿
+using AutoMapper;
+using BusinessLogic.Config;
+using BusinessLogic.Mapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Models;
 using Models.DBContext;
-using BusinessLogic.Config;
-using AutoMapper;
-using BusinessLogic.Mapper;
-using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
@@ -63,9 +62,9 @@ builder.Services.Configure<IdentityOptions>(options =>
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Home/Login";
-    options.LogoutPath = "/Home/Logout"; 
+    options.LogoutPath = "/Home/Logout";
     options.AccessDeniedPath = "/Error/404";
-    options.ReturnUrlParameter = "ReturnUrl"; 
+    options.ReturnUrlParameter = "ReturnUrl";
     options.ExpireTimeSpan = TimeSpan.FromDays(14);
     options.SlidingExpiration = true;
 });
@@ -142,7 +141,7 @@ static async Task SeedDataAsync(WebApplication app)
         var User = await userManager.FindByEmailAsync("thanhpqce171732@fpt.edu.vn");
         if (User == null)
         {
-            User = new AppUser { UserName = "thanhmax14", Email = "thanhpqce171732@fpt.edu.vn",EmailConfirmed=true };
+            User = new AppUser { UserName = "thanhmax14", Email = "thanhpqce171732@fpt.edu.vn", EmailConfirmed = true };
             var result = await userManager.CreateAsync(User, "Password123!");
             if (result.Succeeded)
             {
@@ -156,7 +155,7 @@ static async Task SeedDataAsync(WebApplication app)
         var adminUser = await userManager.FindByEmailAsync("admin@gmail.com");
         if (adminUser == null)
         {
-            adminUser = new AppUser { UserName = "admin", Email = "admin@gmail.com" , EmailConfirmed = true };
+            adminUser = new AppUser { UserName = "admin", Email = "admin@gmail.com", EmailConfirmed = true };
             var result = await userManager.CreateAsync(adminUser, "Password123!");
             if (result.Succeeded)
             {
@@ -168,7 +167,7 @@ static async Task SeedDataAsync(WebApplication app)
         var ctvUser = await userManager.FindByEmailAsync("ctv@gmail.com");
         if (ctvUser == null)
         {
-            ctvUser = new AppUser { UserName = "ctv", Email = "ctv@gmail.com" ,EmailConfirmed = true };
+            ctvUser = new AppUser { UserName = "ctv", Email = "ctv@gmail.com", EmailConfirmed = true };
             var result = await userManager.CreateAsync(ctvUser, "Password123!");
             if (result.Succeeded)
             {
