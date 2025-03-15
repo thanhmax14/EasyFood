@@ -47,7 +47,6 @@ namespace EasyFood.web.Controllers
                 {
                     return View(userViewModel);
                 }
-
                 var mes = await response.Content.ReadAsStringAsync();
                 userViewModel = JsonSerializer.Deserialize<UsersViewModel>(mes, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
