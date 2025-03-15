@@ -28,5 +28,7 @@ namespace BusinessLogic.Services.BalanceChanges
             Expression<Func<BalanceChange, bool>> filter = null,
             Func<IQueryable<BalanceChange>, IOrderedQueryable<BalanceChange>> orderBy = null,
             Func<IQueryable<BalanceChange>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<BalanceChange, object>> includeProperties = null);
+
+        Task<decimal> GetBalance(string UserId);
     }
 }
