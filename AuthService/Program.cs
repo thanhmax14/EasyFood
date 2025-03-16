@@ -21,23 +21,9 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options => options.SignIn.Re
     .AddEntityFrameworkStores<EasyFoodDbContext>().AddDefaultTokenProviders(); ;
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
-builder.Services.ConfigureServices();
-builder.Services.ConfigureRepository();
-// Register Repository layer
-builder.Services.AddScoped<Repository.StoreDetails.StoreDetailsRepository>();
-builder.Services.AddScoped<Repository.Categorys.ICategoryRepository, Repository.Categorys.CategoryRepository>();
-builder.Services.AddScoped<Repository.Products.IProductsRepository, Repository.Products.ProductsRepository>();
-builder.Services.AddScoped<Repository.Categorys.CategoryRepository>();
-builder.Services.AddScoped<Repository.Products.ProductsRepository>();
-builder.Services.AddScoped<Repository.ProductImage.ProductImageRepository>();
-builder.Services.AddScoped<Repository.ProductImage.IProductImageRepository, Repository.ProductImage.ProductImageRepository>();
+builder.Services.ConfigureRepository(); // Đăng ký Repository trước
+builder.Services.ConfigureServices();  // Sau đó đăng ký Service
 
-// Register Service layer
-builder.Services.AddScoped<BusinessLogic.Services.Categorys.ICategoryService, BusinessLogic.Services.Categorys.CategoryService>();
-builder.Services.AddScoped<BusinessLogic.Services.Products.IProductService, BusinessLogic.Services.Products.ProductService>();
-builder.Services.AddScoped<BusinessLogic.Services.StoreDetail.IStoreDetailService, BusinessLogic.Services.StoreDetail.StoreDetailService>();
-builder.Services.AddScoped<BusinessLogic.Services.Categorys.CategoryService>();
-builder.Services.AddScoped<BusinessLogic.Services.Products.ProductService>();
 builder.Services.AddHttpClient();
 
 builder.Services.AddDistributedMemoryCache();

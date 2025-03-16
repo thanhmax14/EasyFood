@@ -39,6 +39,12 @@ namespace BusinessLogic.Config
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IWishlistRepository, WishlistRepository>();
             services.AddScoped<IOrdersRepository, OrdersRepository>();
+            services.AddScoped<Repository.StoreDetails.StoreDetailsRepository>();
+            services.AddScoped<Repository.Categorys.CategoryRepository>();
+            services.AddScoped<Repository.Products.ProductsRepository>();
+            services.AddScoped<Repository.ProductImage.ProductImageRepository>();
+
+
         }
 
 

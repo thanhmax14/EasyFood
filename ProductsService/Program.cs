@@ -29,8 +29,8 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options => options.SignIn.Re
     .AddEntityFrameworkStores<EasyFoodDbContext>().AddDefaultTokenProviders(); ;
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
-builder.Services.ConfigureServices();
-builder.Services.ConfigureRepository();
+builder.Services.ConfigureRepository(); // Đăng ký Repository trước
+builder.Services.ConfigureServices();  // Sau đó đăng ký Service
 
 
 builder.Services.AddDistributedMemoryCache();
