@@ -65,50 +65,82 @@ namespace SellerAPI.Controllers
             return Ok(result);
         }
 
-        /// <summary>
-        /// Lấy feedback theo UserID của role user
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <returns></returns>
-        [HttpGet("user/{userId}")]
-        public async Task<IActionResult> GetReviewByUserId(string userId)
+        [HttpGet("ViewFeedbackById/{reviewId}")]
+        public async Task<IActionResult> GetReviewByReviewId(Guid reviewId)
         {
-            // Lấy danh sách review theo UserID
-            var reviews = await _reviewService.ListAsync(r => r.UserID == userId);
+            // Tìm review theo ReviewId
+            var review = await _reviewService.ListAsync(r => r.ID == reviewId);
+            var reviewData = review.FirstOrDefault(); // Lấy 1 review
 
-            if (reviews == null || !reviews.Any())
+            if (reviewData == null)
             {
-                return NotFound("Không có đánh giá nào của người dùng này.");
+                return NotFound(new { message = "Không tìm thấy đánh giá." });
             }
 
-            var productIds = reviews.Select(r => r.ProductID).ToList();
+            // Lấy thông tin người dùng và sản phẩm liên quan
+            var user = await _userManager.FindByIdAsync(reviewData.UserID);
+            var product = await _productService.GetAsyncById(reviewData.ProductID);
 
-            // Lấy danh sách sản phẩm tương ứng với ProductID trong review
-            var products = await _productService.ListAsync(p => productIds.Contains(p.ID));
-
-            var result = new List<ReivewViewModel>();
-
-            foreach (var review in reviews)
+            // Tạo ViewModel trả về
+            var reviewModel = new ReivewViewModel
             {
-                var product = products.FirstOrDefault(p => p.ID == review.ProductID);
+                ID = reviewData.ID,
+                Username = user?.UserName,
+                ProductName = product?.Name,
+                Rating = reviewData.Rating,
+                Cmt = reviewData.Cmt,
+                Datecmt = reviewData.Datecmt,
+                Relay = reviewData.Relay,
+                Status = reviewData.Status,
+            };
 
-                var reviewModel = new ReivewViewModel
-                {
-                    Cmt = review.Cmt,
-                    Relay = review.Relay,
-                    Datecmt = review.Datecmt,
-                    Status = review.Status,
-                    Rating = review.Rating,
-                    Username = userId.ToString(), // Nếu cần lấy UserName, bạn có thể gọi lại _userManager
-                    ProductName = product?.Name ?? "Không xác định",
-                    StoreId = product?.StoreID ?? Guid.Empty // Lấy StoreID từ Product
-                };
-
-                result.Add(reviewModel);
-            }
-
-            return Ok(result);
+            return Ok(reviewModel);
         }
+
+
+        [HttpPut("UpdateReply/{id}")]
+        public async Task<IActionResult> UpdateReply(Guid id, [FromBody] ReivewViewModel obj)
+        {
+            if (obj == null || string.IsNullOrWhiteSpace(obj.Relay))
+            {
+                return BadRequest(new { message = "Dữ liệu không hợp lệ." });
+            }
+
+            try
+            {
+                var review = await _reviewService.GetAsyncById(id);
+
+                if (review == null)
+                {
+                    return NotFound(new ErroMess { success = false, msg = "khong tim thay danh gia" });
+                }
+
+                // Cập nhật phản hồi
+                review.Relay = obj.Relay;
+                review.DateRelay = DateTime.UtcNow;
+
+                // Lưu thay đổi
+                await _reviewService.UpdateAsync(review);
+                await _reviewService.SaveChangesAsync();
+
+
+                return Ok(
+                    new ErroMess { success = true, msg = "Cập nhật phản hồi thành công" }
+                    );
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ErroMess { msg = ex.Message });
+            }
+
+
+        }
+
+
+
+
+
+
 
     }
 }

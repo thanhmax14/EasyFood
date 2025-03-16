@@ -315,9 +315,20 @@
                                         name: "Actions",
                                         width: "100px",
                                         formatter: (_, row) => {
-                                            let status = row.cells[6].data; // Lấy giá trị cột Status (index 7)
+                                            let status = row.cells[6].data; // Lấy giá trị cột Status (index 6)
                                             let actionText = status === "Active" ? "Hide" : "Show";
                                             let actionIcon = status === "Active" ? "ri-eye-off-fill" : "ri-eye-fill";
+
+                                            // Lấy giá trị của cột Reply (index 5)
+                                            let reply = row.cells[5].data;
+
+                                            // Nếu Reply đã có dữ liệu, ẩn nút Reply
+                                            let replyButton = reply !== "No reply" ? "" : `
+                                                <li>
+                                                    <a class="dropdown-item edit-item-btn" href="#showModal" data-bs-toggle="modal">
+                                                        <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Reply
+                                                    </a>
+                                                </li>`;
 
                                             return gridjs.html(`
                                                 <div class="dropdown">
@@ -325,16 +336,7 @@
                                                         <i class="ri-more-fill align-middle"></i>
                                                     </button>
                                                     <ul class="dropdown-menu dropdown-menu-end">
-                                                        <li>
-                                                            <button class="dropdown-item" onclick="location.href = 'apps-tickets-details.html';">
-                                                                <i class="ri-eye-fill align-bottom me-2 text-muted"></i> View
-                                                            </button>
-                                                        </li>
-                                                        <li>
-                                                            <a class="dropdown-item edit-item-btn" href="#showModal" data-bs-toggle="modal">
-                                                                <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit
-                                                            </a>
-                                                        </li>
+                                                        ${replyButton}
                                                         <li>
                                                             <a class="dropdown-item remove-item-btn" data-bs-toggle="modal" href="#deleteOrder">
                                                                 <i class="${actionIcon} align-bottom me-2 text-muted"></i> ${actionText}
@@ -361,7 +363,7 @@
                                         new Date(review.Datecmt).toLocaleDateString(),
                                         review.Rating,
                                         review.Relay || "No reply",
-                                        review.Status
+                                        review.Status == 0 ? "Active" : "Deactive" // Chuyển đổi status từ số sang chuỗi
                             ])
                             }).render(document.getElementById("table-feedback"));
                         }
