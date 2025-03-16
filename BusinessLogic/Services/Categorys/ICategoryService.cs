@@ -1,4 +1,5 @@
 ﻿using Models;
+using Repository.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +29,7 @@ namespace BusinessLogic.Services.Categorys
             Expression<Func<Categories, bool>> filter = null,
             Func<IQueryable<Categories>, IOrderedQueryable<Categories>> orderBy = null,
             Func<IQueryable<Categories>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<Categories, object>> includeProperties = null);
-
+        Task<IEnumerable<CategoryViewModel>> GetAllAsync();
 
     }
 }

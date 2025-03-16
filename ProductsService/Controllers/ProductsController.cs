@@ -66,7 +66,7 @@ namespace ProductsService.Controllers
                         ModifiedDate = item.ModifiedDate,
                         Name = item.Name,
                         ShortDescription = item.ShortDescription,
-                        StoreID = item.StoreID,
+                        StoreId = item.StoreID,
                         Img = Listimg // Gán danh sách ảnh cho sản phẩm
                     });
                 }
