@@ -8,6 +8,7 @@ namespace Repository.ViewModels
 {
     public class CartItem
     {
+        
         public Guid ProductID { get; set; }
         public int quantity { get; set; } = 0;
 
