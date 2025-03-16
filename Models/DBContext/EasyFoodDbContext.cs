@@ -30,6 +30,7 @@ namespace Models.DBContext
         public DbSet<FavoriteRecipe> FavoriteRecipes { get; set; }
         public DbSet<RecipeReview> RecipeReviews { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<Voucher> Vouchers { get; set; }
         
 
 
@@ -150,7 +151,14 @@ namespace Models.DBContext
            .WithMany(h => h.FavoriteRecipes)
            .HasForeignKey(h => h.UserID).OnDelete(DeleteBehavior.NoAction);
 
-           
+            builder.Entity<Order>()
+           .HasOne(h => h.Voucher)
+           .WithMany(h => h.Orders)
+           .HasForeignKey(h => h.VoucherID).OnDelete(DeleteBehavior.NoAction);
+
+
+
+
         }
 
 
@@ -162,7 +170,7 @@ namespace Models.DBContext
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-      => optionsBuilder.UseSqlServer("Server=tcp:easyfood.database.windows.net,1433;Initial Catalog=EasyFood;Persist Security Info=False;User ID=easyfood;Password=Xinchao123@;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+      => optionsBuilder.UseSqlServer("Server=DESKTOP-1E1A6I4;Database =EasyFoods;uid=sa;pwd=Thanh;encrypt=true;trustServerCertificate=true;");
 
 
 }

@@ -22,13 +22,9 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options => options.SignIn.Re
     .AddEntityFrameworkStores<EasyFoodDbContext>().AddDefaultTokenProviders(); ;
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
-builder.Services.ConfigureServices();
-builder.Services.ConfigureRepository();
+builder.Services.ConfigureRepository(); // Đăng ký Repository trước
+builder.Services.ConfigureServices();  // Sau đó đăng ký Service
 builder.Services.AddAutoMapper(typeof(MappingProfile));
-builder.Services.AddScoped<Repository.StoreDetails.StoreDetailsRepository>();
-builder.Services.AddScoped<BusinessLogic.Services.StoreDetail.IStoreDetailService, BusinessLogic.Services.StoreDetail.StoreDetailService>();
-
-
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {

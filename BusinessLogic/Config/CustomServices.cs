@@ -42,6 +42,8 @@ namespace BusinessLogic.Config
             services.AddScoped<ManageTransaction>();
             services.AddScoped<IOrdersServices, OrderServices>();
             services.AddHttpContextAccessor();
+            services.AddScoped<BusinessLogic.Services.Categorys.CategoryService>();
+            services.AddScoped<BusinessLogic.Services.Products.ProductService>();
 
 
             var mailSettings = new MailSettings
