@@ -11,8 +11,12 @@ namespace Repository.ViewModels
         public Guid ProductID { get; set; }
         public int quantity { get; set; } = 0;
         public string? img { get; set; }
+        public string? ProductName { get; set; }
         public float vote { get; set; }
-        public float price { get; set; } = 0;
-        public float Subtotal { get; set; }
+        public decimal price { get; set; } = 0;
+        public decimal Subtotal { get; set; }
+        public int Stock { get; set; }
+        public string UserID { get; set; }
+
     }
 }

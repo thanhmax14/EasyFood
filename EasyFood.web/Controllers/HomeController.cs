@@ -14,10 +14,12 @@ using Microsoft.AspNetCore.Mvc;
 using Models;
 using Net.payOS;
 using Net.payOS.Types;
+using Org.BouncyCastle.Pqc.Crypto.Lms;
 using Repository.ViewModels;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http.Headers;
+using System.Runtime.InteropServices;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
@@ -494,7 +496,7 @@ namespace EasyFood.web.Controllers
         }
 
 
-        public async Task<IActionResult> Cart()
+       /* public async Task<IActionResult> Cart()
         {
             var getCart = this._cart.GetCartFromSession();
             var listtem = new List<CartViewModels>();
@@ -516,7 +518,7 @@ namespace EasyFood.web.Controllers
 
 
             return View();
-        }
+        }*/
 
         [HttpPost]
         [ValidateAntiForgeryToken]
