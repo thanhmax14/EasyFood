@@ -11,9 +11,9 @@ namespace Models.DBContext
 {
     public class EasyFoodDbContext:IdentityDbContext<AppUser>
     {
-        public EasyFoodDbContext(DbContextOptions<EasyFoodDbContext> options) : base(options)
+      /*  public EasyFoodDbContext(DbContextOptions<EasyFoodDbContext> options) : base(options)
         {
-        }
+        }*/
 
         public DbSet<BalanceChange> BalanceChanges { get; set; }
         public DbSet<Categories> Categories { get; set; }
@@ -170,7 +170,7 @@ namespace Models.DBContext
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-      => optionsBuilder.UseSqlServer("Server=DESKTOP-1E1A6I4;Database =EasyFoods;uid=sa;pwd=Thanh;encrypt=true;trustServerCertificate=true;");
+      => optionsBuilder.UseSqlServer("Server=tcp:easyfood.database.windows.net,1433;Initial Catalog=EasyFood;Persist Security Info=False;User ID=easyfood;Password=Xinchao123@;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
 
 
 }
