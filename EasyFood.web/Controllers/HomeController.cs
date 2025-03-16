@@ -707,6 +707,71 @@ namespace EasyFood.web.Controllers
 
             return View(tem);
         }
+        [HttpPost]
+        public async Task<IActionResult> CheckQuantity([FromBody] CartItem obj)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            string apiUrl = $"https://localhost:5555/Gateway/UsersService/UpdateCart/{user.Id}";
+            var requestData = new
+            {
 
+                ProductId = obj.ProductID,
+                Quantity = obj.quantity // ❌ Lỗi model.Quantity đã được sửa
+            };
+
+            try
+            {
+                var jsonContent = JsonSerializer.Serialize(requestData);
+                var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+                var response = await client.PostAsync(apiUrl, content);
+                if (response.IsSuccessStatusCode)
+                {
+                    return Json(new { success = true, message = "Add to quantity to success!" });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Add to quantity to  fail!" });
+                }
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { success = false, message = "Lỗi server.", error = ex.Message });
+            }
+        }
+        public async Task<IActionResult> Cart()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            string apiUrl = $"https://localhost:5555/Gateway/UsersService/ViewCartDetail/{user.Id}";
+            List<CartViewModels> cartItems = new List<CartViewModels>();
+            try
+            {
+                var response = await client.GetAsync(apiUrl);
+                if (!response.IsSuccessStatusCode)
+                {
+                    return View(cartItems);
+                }
+                var mes = await response.Content.ReadAsStringAsync();
+                cartItems = JsonSerializer.Deserialize<List<CartViewModels>>(mes, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                });
+                return View(cartItems);
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500, new { message = "Lỗi server", error = ex.Message });
+            }
+
+        }
     }
 }
