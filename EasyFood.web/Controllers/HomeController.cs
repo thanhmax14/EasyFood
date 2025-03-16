@@ -1,4 +1,6 @@
-﻿using BusinessLogic.Services.Carts;
+﻿using BusinessLogic.Services.BalanceChanges;
+using BusinessLogic.Services.Carts;
+using BusinessLogic.Services.Orders;
 using BusinessLogic.Services.ProductImages;
 using BusinessLogic.Services.Products;
 using BusinessLogic.Services.ProductVariants;
@@ -10,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Models;
+using Net.payOS;
 using Net.payOS.Types;
 using Repository.ViewModels;
 using System.Collections.Generic;
@@ -34,9 +37,13 @@ namespace EasyFood.web.Controllers
         private readonly IProductImageService _productimg;
         private readonly IProductVariantService _productvarian;
         private readonly IStoreDetailService _storeDetailService;
+        private readonly IBalanceChangeService _balance;
+        private readonly IOrdersServices _order;
+        private readonly PayOS _payos;
+
 
         public HomeController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, IStoreDetailService storeDetailService, IEmailSender emailSender, ICartService cart, IWishlistServices wishlist, IProductService product
-, IProductImageService productimg, IProductVariantService productvarian)
+, IProductImageService productimg, IProductVariantService productvarian, IBalanceChangeService balance, IOrdersServices order, PayOS payos)
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -50,9 +57,12 @@ namespace EasyFood.web.Controllers
             _productimg = productimg;
             _productvarian = productvarian;
             _storeDetailService = storeDetailService;
+            _balance = balance;
+            _order = order;
+            _payos = payos;
         }
 
-       
+
 
         public IActionResult Index()
         {
@@ -634,5 +644,67 @@ namespace EasyFood.web.Controllers
         {
             return View();
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Invoice(string id)
+        {
+            var tem = new InvoiceViewModels();
+
+            if(int.TryParse(id, out var orderCode))
+            {
+                var flagBalance = await this._balance.FindAsync(u => u.orderCode == orderCode);
+                if(flagBalance != null)
+                {
+                    var getUser = await this._userManager.FindByIdAsync(flagBalance.UserID);
+                    if (getUser == null)
+                    {
+                        return RedirectToAction("NotFoundPage", "Home");
+                    }
+                    if (!flagBalance.IsComplele)
+                    {
+                        return RedirectToAction("NotFoundPage", "Home");
+                    }
+                    if (flagBalance.Method == "deposit")
+                    {
+                        tem.orderCoce = id;
+                        tem.invoiceDate = flagBalance.StartTime;
+                        tem.DueDate = flagBalance.DueTime;
+                        tem.NameUse =  getUser.FirstName +" "+getUser.LastName;
+                        tem.paymentMethod = "Online Banking";
+                        tem.status = flagBalance.Status;
+                        tem.emailUser = getUser.Email;
+                        tem.phoneUser = getUser.PhoneNumber;
+                        tem.tax = 0;
+                        tem.AddressUse = getUser.Address;
+                        tem.itemList.Add(new ItemInvoice {
+                        nameItem= $"Deposit to {getUser.UserName}",
+                        amount = flagBalance.MoneyChange,
+                        quantity=1,
+                        unitPrice = flagBalance.MoneyChange
+                        });
+                        tem.invoiceDate = flagBalance.StartTime;
+                    }
+
+
+                   
+
+
+                }
+               /* else
+                {
+                    var flagOrder = await this._order.FindAsync(u => u.orderCode == orderCode);
+                }*/
+
+
+
+            }
+            else
+            {
+
+            }
+
+            return View(tem);
+        }
+
     }
 }

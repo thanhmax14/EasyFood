@@ -21,6 +21,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Repository.Wishlists;
+using Repository.OrdersRepository;
 
 namespace BusinessLogic.Config
 {
@@ -37,6 +38,7 @@ namespace BusinessLogic.Config
             services.AddScoped<IReviewRepository, ReviewRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IWishlistRepository, WishlistRepository>();
+            services.AddScoped<IOrdersRepository, OrdersRepository>();
         }
 
 

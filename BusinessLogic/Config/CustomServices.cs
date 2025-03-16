@@ -22,6 +22,7 @@ using static BusinessLogic.EmailServices.EmailService;
 using BusinessLogic.Services.Wishlists;
 using BusinessLogic.Hash;
 using Repository.BalanceChange;
+using BusinessLogic.Services.Orders;
 
 namespace BusinessLogic.Config
 {
@@ -39,6 +40,9 @@ namespace BusinessLogic.Config
             services.AddScoped<IReviewService, ReviewService>();
             services.AddScoped<IWishlistServices, WishlistServices>();
             services.AddScoped<ManageTransaction>();
+            services.AddScoped<IOrdersServices, OrderServices>();
+            services.AddHttpContextAccessor();
+
 
             var mailSettings = new MailSettings
             {

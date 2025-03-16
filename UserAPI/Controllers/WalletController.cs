@@ -50,8 +50,7 @@ namespace UserAPI.Controllers
                 return StatusCode(500, new ErroMess { msg= ex.Message });
             }
         }
-        [HttpPost]
-
+        [HttpPost("CreatePayment")]
         public async Task<IActionResult> CreatePayment([FromBody] DepositViewModel model)
         {
            
@@ -81,8 +80,8 @@ namespace UserAPI.Controllers
 
                     ItemData item = new ItemData($"Thực hiện nạp tiền vào tài khoản {getUser.UserName}:", 1, int.Parse(model.number + ""));
                     List<ItemData> items = new List<ItemData> { item };
-                    PaymentData paymentData = new PaymentData(orderCode, int.Parse(model.number + ""), "", items, model.CalleURL,
-                       model.ReturnUrl
+                    PaymentData paymentData = new PaymentData(orderCode, int.Parse(model.number + ""), "", items, $"{model.CalleURL}/{orderCode}",
+                       $"{model.ReturnUrl}/{orderCode}"
                     , null, null, null, null, null, expirationTimestamp
                        );
                     CreatePaymentResult createPayment = await this._payos.createPaymentLink(paymentData);
@@ -99,7 +98,7 @@ namespace UserAPI.Controllers
                             Status = "progressing",
                             Method = "deposit",
                             orderCode = orderCode,
-                            Time = DateTime.Now,
+                            StartTime = DateTime.Now,
                             UserID = getUser.Id,
    
                         };
@@ -138,14 +137,14 @@ namespace UserAPI.Controllers
                                     if (user != null)
                                     {
                                         var tongtien = await _balance.GetBalance(user.Id) + data.amount;
-                                        getBalance.Description = $"Thực hiện nạp tiền vào tài khoản,Ngày khởi tạo {getBalance.Time},[{url}]";
+                                        getBalance.Description = $"Thực hiện nạp tiền vào tài khoản,[{url}]";
                                         getBalance.Status = "done";
                                         getBalance.MoneyBeforeChange = await _balance.GetBalance(user.Id);
                                         getBalance.MoneyAfterChange = tongtien;
                                         getBalance.MoneyChange =data.amount;
                                         getBalance.DisPlay = true;
                                         getBalance.IsComplele = true;
-                                        getBalance.Time= DateTime.Now;
+                                        getBalance.DueTime= DateTime.Now;
                                     }
                             await _balance.UpdateAsync(getBalance);
                         });

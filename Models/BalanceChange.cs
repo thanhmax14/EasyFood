@@ -15,7 +15,8 @@ namespace Models
         public decimal MoneyBeforeChange { get; set; } = 0;
         public decimal MoneyChange { get; set; } = 0;
         public decimal MoneyAfterChange { get; set; } = 0;
-        public DateTime? Time { get; set; }
+        public DateTime? StartTime { get; set; }
+        public DateTime? DueTime { get; set; }
         public string? Description { get; set; }
         [ForeignKey("AppUser")]
         public string UserID { get; set; }
