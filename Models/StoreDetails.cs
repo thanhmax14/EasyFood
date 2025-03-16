@@ -14,7 +14,7 @@ namespace Models
             public Guid ID { get; set; } = Guid.NewGuid();
 
             [ForeignKey("AppUser")]
-            public string UserID { get; set; }
+            public string? UserID { get; set; }
 
             public string Name { get; set; } = default!;
             public DateTime CreatedDate { get; set; } = DateTime.Now;

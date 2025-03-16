@@ -1,4 +1,5 @@
 ﻿using Models;
+using Repository.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,5 +29,8 @@ namespace BusinessLogic.Services.Products
             Expression<Func<Product, bool>> filter = null,
             Func<IQueryable<Product>, IOrderedQueryable<Product>> orderBy = null,
             Func<IQueryable<Product>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<Product, object>> includeProperties = null);
+        Task<bool>  CreateProductAsync(ProductListViewModel model, string userId, List<ProductImageViewModel> images);
+        Task<Guid> GetCurrentStoreIDAsync(string userId);
+        Task<List<ProductListViewModel>> GetAllProductsAsync(Guid storeId);
     }
 }

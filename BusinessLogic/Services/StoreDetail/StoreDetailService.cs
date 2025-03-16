@@ -76,9 +76,8 @@ namespace BusinessLogic.Services.StoreDetail
         public async Task<IEnumerable<StoreDetails>> GetAllStoresAsync()
         {
             var stores = await _repositorys.GetAllStoresAsync();
-            return stores.Where(s => s.Status.ToLower() == "approved");
+            return stores.Where(s => s.Status.ToLower() == "approved" && s.IsActive);
         }
-
 
         public async Task<StoreDetails?> GetStoreByIdAsync(Guid storeId)
         {
