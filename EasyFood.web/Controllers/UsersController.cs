@@ -18,13 +18,14 @@ namespace EasyFood.web.Controllers
         private readonly IBalanceChangeService _balance;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UsersController(UserManager<AppUser> userManager, IBalanceChangeService balance)
+        public UsersController(UserManager<AppUser> userManager, IBalanceChangeService balance, IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             client = new HttpClient();
             var contentype = new MediaTypeWithQualityHeaderValue("application/json");
             client.DefaultRequestHeaders.Accept.Add(contentype);
             _balance = balance;
+            _httpContextAccessor = httpContextAccessor;
         }
         public async Task<IActionResult> Index()
         {
@@ -133,14 +134,14 @@ namespace EasyFood.web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddBalance(long amount)
+        public async Task<IActionResult> AddBalance(long number)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
                 return Json(new { notAuth = true, message = "Bạn phải đăng nhập thể thực hiện hành động này!" });
             }
-            if (amount < 100000)
+            if (number < 100000)
             {
                 return Json(new ErroMess { msg = "Nạp tối thiểu 100,000 VND" });
             }
@@ -149,22 +150,23 @@ namespace EasyFood.web.Controllers
             this._url = "https://localhost:5555/Gateway/WalletService/CreatePayment";
             var temdata = new DepositViewModel
             {
-                number = amount,
-                CalleURL = $"{baseUrl}",
-                ReturnUrl = $"{baseUrl}",
+                number = number,
+                CalleURL = $"{baseUrl}/home/invoice",
+                ReturnUrl = $"{baseUrl}/home/invoice",
                 UserID = user.Id
             };
 
             string json = JsonSerializer.Serialize(temdata);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var options = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase, 
-                PropertyNameCaseInsensitive = true
-            };
+           
             try
             {
                 var response = await client.PostAsync($"{this._url}", content);
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    PropertyNameCaseInsensitive = true
+                };
                 var mes = await response.Content.ReadAsStringAsync();
                 var dataRepone = JsonSerializer.Deserialize<ErroMess>(mes, options);
                 if (response.IsSuccessStatusCode)

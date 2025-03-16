@@ -9,5 +9,6 @@ namespace Repository.ViewModels
     public class IndexUserViewModels
     {
         public UsersViewModel userView { get; set; }
+
     }
 }
