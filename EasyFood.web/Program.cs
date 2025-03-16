@@ -23,24 +23,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.ConfigureRepository();
 builder.Services.ConfigureServices();  
 builder.Services.AddAutoMapper(typeof(MappingProfile));
-// Register Repository layer
-builder.Services.AddScoped<Repository.StoreDetails.StoreDetailsRepository>();
-builder.Services.AddScoped<Repository.Categorys.ICategoryRepository, Repository.Categorys.CategoryRepository>();
-builder.Services.AddScoped<Repository.Products.IProductsRepository, Repository.Products.ProductsRepository>();
-builder.Services.AddScoped<Repository.Categorys.CategoryRepository>();
-builder.Services.AddScoped<Repository.Products.ProductsRepository>();
-builder.Services.AddScoped<Repository.ProductImage.ProductImageRepository>();
-builder.Services.AddScoped<Repository.ProductImage.IProductImageRepository, Repository.ProductImage.ProductImageRepository>();
 
-// Register Service layer
-builder.Services.AddScoped<BusinessLogic.Services.Categorys.ICategoryService, BusinessLogic.Services.Categorys.CategoryService>();
-builder.Services.AddScoped<BusinessLogic.Services.Products.IProductService, BusinessLogic.Services.Products.ProductService>();
-builder.Services.AddScoped<BusinessLogic.Services.StoreDetail.IStoreDetailService, BusinessLogic.Services.StoreDetail.StoreDetailService>();
-builder.Services.AddScoped<BusinessLogic.Services.Categorys.CategoryService>();
-builder.Services.AddScoped<BusinessLogic.Services.Products.ProductService>();
 builder.Services.AddHttpClient();
-
-
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
