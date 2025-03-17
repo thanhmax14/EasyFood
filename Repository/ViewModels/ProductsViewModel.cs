@@ -29,7 +29,7 @@ namespace Repository.ViewModels
         public List<string> Img { get; set; } = new List<string>();
         public Guid CateID { get; set; }
        
-        public string? StoreID { get; set; }
+        
         public List<ProductImageViewModel> Images { get; set; } // Danh sách hình ảnh (1 ảnh chính, 4 ảnh phụ)
         public ProductsViewModel()
         {

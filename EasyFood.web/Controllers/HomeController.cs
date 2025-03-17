@@ -66,9 +66,27 @@ namespace EasyFood.web.Controllers
 
 
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var list = new List<ProductsViewModel>();
+            this._url = "https://localhost:5555/Gateway/ProductsService/GetAllProducts";
+            try
+            {
+                var response = await client.GetAsync(this._url);
+                if (!response.IsSuccessStatusCode)
+                {
+                    return View(list);
+                }
+
+                var mes = await response.Content.ReadAsStringAsync();
+                list = JsonSerializer.Deserialize<List<ProductsViewModel>>(mes, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                return View(list);
+            }
+            catch (Exception ex)
+            {
+                return View(list);
+            }
         }
         [HttpGet]
         public IActionResult Login(string ReturnUrl = null)
