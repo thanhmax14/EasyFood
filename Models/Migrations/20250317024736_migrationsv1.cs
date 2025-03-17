@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Models.Migrations
 {
     /// <inheritdoc />
-    public partial class migrations : Migration
+    public partial class migrationsv1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -79,6 +79,29 @@ namespace Models.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Vouchers",
+                columns: table => new
+                {
+                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DiscountAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    DiscountType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Scope = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MaxUsage = table.Column<int>(type: "int", nullable: false),
+                    CurrentUsage = table.Column<int>(type: "int", nullable: false),
+                    MinOrderValue = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Vouchers", x => x.ID);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "RoleClaims",
                 columns: table => new
                 {
@@ -107,43 +130,21 @@ namespace Models.Migrations
                     MoneyBeforeChange = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     MoneyChange = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     MoneyAfterChange = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Time = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DueTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserID = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DisPlay = table.Column<bool>(type: "bit", nullable: false)
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Method = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DisPlay = table.Column<bool>(type: "bit", nullable: false),
+                    orderCode = table.Column<int>(type: "int", nullable: true),
+                    IsComplele = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_BalanceChanges", x => x.ID);
                     table.ForeignKey(
                         name: "FK_BalanceChanges_Users_UserID",
-                        column: x => x.UserID,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Orders",
-                columns: table => new
-                {
-                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    OrderCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
-                    TotalsPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    MethodPayment = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    StatusPayment = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UserID = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Orders", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_Orders_Users_UserID",
                         column: x => x.UserID,
                         principalTable: "Users",
                         principalColumn: "Id");
@@ -288,6 +289,38 @@ namespace Models.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Orders",
+                columns: table => new
+                {
+                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    OrderCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    TotalsPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    MethodPayment = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StatusPayment = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UserID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    VoucherID = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Orders", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Orders_Users_UserID",
+                        column: x => x.UserID,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Orders_Vouchers_VoucherID",
+                        column: x => x.VoucherID,
+                        principalTable: "Vouchers",
+                        principalColumn: "ID");
                 });
 
             migrationBuilder.CreateTable(
@@ -476,6 +509,37 @@ namespace Models.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Reviews",
+                columns: table => new
+                {
+                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Cmt = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Datecmt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Relay = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DateRelay = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Status = table.Column<bool>(type: "bit", nullable: false),
+                    Rating = table.Column<int>(type: "int", nullable: false),
+                    UserID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProductID = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reviews", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Reviews_Products_ProductID",
+                        column: x => x.ProductID,
+                        principalTable: "Products",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Reviews_Users_UserID",
+                        column: x => x.UserID,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Wishlists",
                 columns: table => new
                 {
@@ -567,6 +631,11 @@ namespace Models.Migrations
                 column: "UserID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Orders_VoucherID",
+                table: "Orders",
+                column: "VoucherID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ProductImages_ProductID",
                 table: "ProductImages",
                 column: "ProductID");
@@ -604,6 +673,16 @@ namespace Models.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Recipes_UserID",
                 table: "Recipes",
+                column: "UserID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reviews_ProductID",
+                table: "Reviews",
+                column: "ProductID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reviews_UserID",
+                table: "Reviews",
                 column: "UserID");
 
             migrationBuilder.CreateIndex(
@@ -687,6 +766,9 @@ namespace Models.Migrations
                 name: "RecipeReviews");
 
             migrationBuilder.DropTable(
+                name: "Reviews");
+
+            migrationBuilder.DropTable(
                 name: "RoleClaims");
 
             migrationBuilder.DropTable(
@@ -718,6 +800,9 @@ namespace Models.Migrations
 
             migrationBuilder.DropTable(
                 name: "Products");
+
+            migrationBuilder.DropTable(
+                name: "Vouchers");
 
             migrationBuilder.DropTable(
                 name: "Categories");

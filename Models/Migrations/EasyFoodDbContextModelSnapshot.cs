@@ -469,10 +469,6 @@ namespace Models.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<Guid?>("VoucherID")
-                        .IsRequired()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("VoucherID1")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("ID");
@@ -480,8 +476,6 @@ namespace Models.Migrations
                     b.HasIndex("UserID");
 
                     b.HasIndex("VoucherID");
-
-                    b.HasIndex("VoucherID1");
 
                     b.ToTable("Orders");
                 });
@@ -1000,14 +994,9 @@ namespace Models.Migrations
                         .IsRequired();
 
                     b.HasOne("Models.Voucher", "Voucher")
-                        .WithMany()
-                        .HasForeignKey("VoucherID")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .IsRequired();
-
-                    b.HasOne("Models.Voucher", null)
                         .WithMany("Orders")
-                        .HasForeignKey("VoucherID1");
+                        .HasForeignKey("VoucherID")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("AppUser");
 

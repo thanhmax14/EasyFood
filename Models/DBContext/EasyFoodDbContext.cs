@@ -11,9 +11,9 @@ namespace Models.DBContext
 {
     public class EasyFoodDbContext:IdentityDbContext<AppUser>
     {
-        public EasyFoodDbContext(DbContextOptions<EasyFoodDbContext> options) : base(options)
+       /* public EasyFoodDbContext(DbContextOptions<EasyFoodDbContext> options) : base(options)
         {
-        }
+        }*/
 
         public DbSet<BalanceChange> BalanceChanges { get; set; }
         public DbSet<Categories> Categories { get; set; }
@@ -154,7 +154,7 @@ namespace Models.DBContext
             builder.Entity<Order>()
            .HasOne(h => h.Voucher)
            .WithMany(h => h.Orders)
-           .HasForeignKey(h => h.VoucherID).OnDelete(DeleteBehavior.NoAction);
+           .HasForeignKey(h => h.VoucherID).OnDelete(DeleteBehavior.NoAction).IsRequired(false);
 
 
 
