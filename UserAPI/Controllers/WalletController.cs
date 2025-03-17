@@ -3,6 +3,7 @@ using BusinessLogic.Services.BalanceChanges;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Models;
 using Net.payOS;
 using Net.payOS.Types;
@@ -30,7 +31,7 @@ namespace UserAPI.Controllers
         }
 
         [HttpGet("{userID}")]
-        public async Task<IActionResult> GetWalletByUser(string userID)
+        public async Task<IActionResult> GetBalanceByUser(string userID)
         {
             if (string.IsNullOrWhiteSpace(userID))
             {
@@ -50,6 +51,7 @@ namespace UserAPI.Controllers
                 return StatusCode(500, new ErroMess { msg= ex.Message });
             }
         }
+        [ApiExplorerSettings(IgnoreApi = true)]
         [HttpPost("CreatePayment")]
         public async Task<IActionResult> CreatePayment([FromBody] DepositViewModel model)
         {
@@ -88,7 +90,7 @@ namespace UserAPI.Controllers
                     var url = $"https://pay.payos.vn/web/{createPayment.paymentLinkId}/";
                     await this._managetrans.ExecuteInTransactionAsync(async () =>
                     {
-
+                        var statime = DateTime.Now;
                         var temDongTien = new BalanceChange
                         {
                             MoneyBeforeChange = tien,
@@ -98,7 +100,9 @@ namespace UserAPI.Controllers
                             Status = "progressing",
                             Method = "deposit",
                             orderCode = orderCode,
-                            StartTime = DateTime.Now,
+                            StartTime = statime,
+                            DueTime= statime,
+
                             UserID = getUser.Id,
    
                         };
@@ -117,7 +121,8 @@ namespace UserAPI.Controllers
                 }
             }
         }
-     
+
+        [ApiExplorerSettings(IgnoreApi = true)]
         [HttpPost("webhook-url")]
         public async Task<IActionResult> ReceivePaymentAsync([FromBody] WebhookType webhook)
         {
@@ -188,5 +193,62 @@ namespace UserAPI.Controllers
             }
 
         }
+
+        [HttpGet("GetWallet/{userid}")]
+        public async Task<IActionResult> GetWallet(string userid)
+        {
+            var list = new List<BalanceListViewModels>();
+            if (string.IsNullOrWhiteSpace(userid))
+            {
+                return BadRequest(new ErroMess { msg = "Vui lòng nhập userID" });
+            }
+
+            try
+            {
+                var getUser = await this._userManager.FindByIdAsync(userid);
+                if (getUser == null)
+                    return BadRequest(new ErroMess { msg = "Người dùng không tồn tại trong hệ thống" });
+                else
+                {
+                    var getListBalance = await this._balance.ListAsync(
+                    u => u.DisPlay,
+                    orderBy: x => x.OrderByDescending(query => query.DueTime.HasValue)  // Ưu tiên bản ghi có DueTime
+                                    .ThenByDescending(query => query.DueTime)           // Sắp xếp giảm dần theo DueTime
+                                    .ThenByDescending(query => query.StartTime)         // Nếu DueTime = NULL, dùng StartTime
+                );
+
+                    if (getListBalance.Any())
+                    {
+                        var count = 0;
+                         foreach(var item in getListBalance)
+                        {
+                            count++;
+                            var getInvoce = RegexAll.ExtractPayosLink(item.Description);
+                            if (getInvoce == null)
+                                getInvoce = item.Description;
+
+                            list.Add(new BalanceListViewModels
+                            {
+                                No = count,
+                                After = item.MoneyAfterChange,
+                                Before = item.MoneyBeforeChange,
+                                Change = item.MoneyChange,
+                                Date =item.StartTime ??DateTime.Now,
+                                Invoice= getInvoce,
+                                Status= item.Status,
+                                Types =item.Method
+                            });
+                        }
+                    }
+                    return Ok(list);
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ErroMess { msg = ex.Message });
+            }
+        }
+
+
     }
 }
