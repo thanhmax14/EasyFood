@@ -21,7 +21,7 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options => options.SignIn.Re
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
 builder.Services.ConfigureRepository();
-builder.Services.ConfigureServices();  
+builder.Services.ConfigureServices();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddHttpClient();
