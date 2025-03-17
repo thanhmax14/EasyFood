@@ -1,4 +1,5 @@
-﻿@model Repository.ViewModels.IndexUserViewModels
+﻿@using System.Text.Json
+@model Repository.ViewModels.IndexUserViewModels
 <!DOCTYPE html>
 <html class="no-js" lang="en">
 
@@ -1011,26 +1012,57 @@
 </body>
 
 </html>
-<script>
+@* <script>
     document.addEventListener("DOMContentLoaded", function () {
         const container = document.getElementById("Exampletable");
-
+        var list = @Html.Raw(JsonSerializer.Serialize(Model.Balance));
 
         container.innerHTML = "";
 
         new gridjs.Grid({
             columns: [
-                { name: "NO.", width: "90px" },
-                { name: "Before", width: "110px" },
-                { name: "Change", width: "110px", formatter: (e) => gridjs.html(`<a href="#">${e}</a>`) },
-                { name: "After", width: "110px" },
-                { name: "Type", width: "100px" },
-                { name: "Status", width: "110px", formatter: (e) => gridjs.html(`<a href="#">${e}</a>`) },
-                { name: "Date", width: "150px", formatter: (e) => gridjs.html(`<a href="#">${e}</a>`) },
+                { name: "NO.", width: "90px" , formatter: (e) => gridjs.html(`<p>${e}</p>`) },
+                { name: "Before", width: "110px", formatter: (e) => gridjs.html(`<p>${e}</p>`) },
+                {
+                    name: "Before",
+                    width: "110px",
+                    formatter: (e) => {
+                        const color = e < 0 ? "red" : "green";
+                        return gridjs.html(`<p style="color:${color}">${e}</p>`)
+                    }
+                },
+                { name: "After", width: "110px", formatter: (e) => gridjs.html(`<p>${e}</p>`) },
+                { name: "Type", width: "100px", formatter: (e) => gridjs.html(`<p>${e}</p>`) },
+                {
+                    name: "Status",
+                    width: "130px",
+                    formatter: (e) => {
+                        let color = "#C3A73A";
+
+                        if (e.toLowerCase() === "done") {
+                            color = "green";
+                        } else if (e.toLowerCase() === "cancel") {
+                            color = "#C10103";
+                        }
+
+                        return gridjs.html(`<p style="color:${color}; font-weight:bold;">${e}</p>`);
+                    }
+                },
+
+                {
+                    name: "Type",
+                    width: "100px",
+                    formatter: (e) => {
+                        const date = new Date(e);
+                        const formatted = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+                        return gridjs.html(`<p>${formatted}</p>`);
+                    }
+                },
                 {
                     name: "Invoice",
                     width: "150px",
-                    formatter: () => gridjs.html("<a href='#' class='text-reset text-decoration-underline'>Details</a>")
+                    formatter: (e) => gridjs.html(`<a href="${e}" target="_blank" class="text-reset text-decoration-underline">Details</a>`)
+
                 }
             ],
             pagination: {
@@ -1041,13 +1073,166 @@
             pageSize: [5, 10, 20, 50],
             sort: true,
             search: true,
-            data: [
-                ["01", "100000", "50000", "150000", "Deposit", "Sucsess", "2025-03-16 15:24:18.8624318"],
-
-            ]
+            data: list.map(u => [
+                u.No,
+                u.Before,
+                u.Change,
+                u.After,
+                u.Types,
+                u.Status,
+                u.Date,
+                u.Invoice
+            ])
         }).render(document.getElementById("Exampletable"));
     });
 
+</script>
+ *@
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const container = document.getElementById("Exampletable");
+        var list = @Html.Raw(JsonSerializer.Serialize(Model.Balance));
+        let gridInstance = null;
+        let isInteracting = false; // Biến để theo dõi trạng thái tương tác
+
+        // Hàm khởi tạo bảng
+        function initializeGrid(data) {
+            if (!container.dataset.gridInitialized) {
+                container.innerHTML = "";
+                gridInstance = new gridjs.Grid({
+                    columns: [
+                        { name: "NO.", width: "90px", formatter: (e) => gridjs.html(`<p>${e}</p>`) },
+                        { name: "Before", width: "110px", formatter: (e) => gridjs.html(`<p>${e}</p>`) },
+                        {
+                            name: "Change", // Đổi tên để tránh trùng "Before"
+                            width: "110px",
+                            formatter: (e) => {
+                                const color = e < 0 ? "red" : "green";
+                                return gridjs.html(`<p style="color:${color}">${e}</p>`);
+                            }
+                        },
+                        { name: "After", width: "110px", formatter: (e) => gridjs.html(`<p>${e}</p>`) },
+                        { name: "Type", width: "100px", formatter: (e) => gridjs.html(`<p>${e}</p>`) },
+                        {
+                            name: "Status",
+                            width: "130px",
+                            formatter: (e) => {
+                                let color = "#C3A73A";
+                                const status = e ? e.toLowerCase() : ""; // Tránh lỗi undefined
+                                if (status === "done") {
+                                    color = "green";
+                                } else if (status === "cancel") {
+                                    color = "#C10103";
+                                }
+                                return gridjs.html(`<p style="color:${color}; font-weight:bold;">${e || "N/A"}</p>`);
+                            }
+                        },
+                        {
+                            name: "Date", // Đổi tên để tránh trùng "Type"
+                            width: "100px",
+                            formatter: (e) => {
+                                const date = new Date(e);
+                                const formatted = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+                                return gridjs.html(`<p>${formatted}</p>`);
+                            }
+                        },
+                        {
+                            name: "Invoice",
+                            width: "150px",
+                            formatter: (e) => gridjs.html(`<a href="${e}" target="_blank" class="text-reset text-decoration-underline">Details</a>`)
+                        }
+                    ],
+                    pagination: {
+                        enabled: true,
+                        limit: 5,
+                        summary: true
+                    },
+                    pageSize: [5, 10, 20, 50],
+                    sort: true,
+                    search: true,
+                    data: data.map(u => [
+                        u.No,
+                        u.Before,
+                        u.Change,
+                        u.After,
+                        u.Types,
+                        u.Status,
+                        u.Date,
+                        u.Invoice
+                    ])
+                }).render(container);
+
+                container.dataset.gridInitialized = "true";
+
+                // Phát hiện tương tác với bảng
+                container.addEventListener("click", () => isInteracting = true); // Nhấp chuột
+                container.addEventListener("input", () => isInteracting = true); // Nhập liệu (tìm kiếm)
+                // Thêm tương tác với nút phân trang
+                const paginationButtons = container.querySelectorAll(".gridjs-pagination .gridjs-pages button");
+                paginationButtons.forEach(button => {
+                    button.addEventListener("click", () => {
+                        isInteracting = true;
+                        console.log("Pagination button clicked, stopping updates"); // Debug
+                    });
+                });
+
+                // Thêm tương tác với nút sắp xếp (sort)
+                const sortButtons = container.querySelectorAll(".gridjs-sort");
+                sortButtons.forEach(button => {
+                    button.addEventListener("click", () => {
+                        isInteracting = true;
+                        console.log("Sort button clicked, stopping updates"); // Debug
+                    });
+                });
+
+
+
+                container.addEventListener("mouseleave", () => isInteracting = false); // Rời chuột khỏi bảng
+                container.addEventListener("blur", () => isInteracting = false, true); // Mất focus
+
+            }
+        }
+
+        // Khởi tạo bảng lần đầu
+        initializeGrid(list);
+
+        // Hàm lấy dữ liệu mới qua AJAX
+        function fetchUpdatedData() {
+            if (!isInteracting) { // Chỉ cập nhật khi không tương tác
+                fetch('/Users/UpdateBalance', { // Thay bằng URL endpoint thực tế
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(newData => {
+                        if (gridInstance) {
+                            gridInstance.updateConfig({
+                                data: newData.map(u => [
+                                    u.no,
+                                    u.before,
+                                    u.change,
+                                    u.after,
+                                    u.types,
+                                    u.status,
+                                    u.date,
+                                    u.invoice
+                                ])
+                            }).forceRender(); // Cập nhật dữ liệu mà không reload toàn bộ
+                        }
+                    })
+                    .catch(error => console.error('Error fetching data:', error));
+            }
+        }
+
+        // Cập nhật dữ liệu mỗi 5 giây
+        setInterval(fetchUpdatedData, 5000);
+
+        // Gọi lần đầu tiên ngay lập tức (tuỳ chọn)
+        fetchUpdatedData();
+    });
 </script>
 
 <script type="text/javascript">
