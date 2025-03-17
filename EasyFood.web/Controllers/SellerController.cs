@@ -64,6 +64,79 @@ namespace EasyFood.web.Controllers
 
         }
 
+        //load du lieu len reply page
+        [HttpGet]
+        public async Task<IActionResult> ReplyFeedback(Guid reviewId)
+        {
+            // Tìm review theo ReviewId
+            var review = await _reviewService.ListAsync(r => r.ID == reviewId);
+            var reviewData = review.FirstOrDefault();
+
+            if (reviewData == null)
+            {
+                return Json(new { success = false, message = "Không tìm thấy đánh giá." });
+            }
+
+            // Lấy thông tin người dùng và sản phẩm liên quan
+            var user = await _userManager.FindByIdAsync(reviewData.UserID);
+            var product = await _productService.GetAsyncById(reviewData.ProductID);
+
+            // Tạo ViewModel để hiển thị trong View
+            var reviewModel = new ReivewViewModel
+            {
+                ID = reviewData.ID,
+                Username = user?.UserName,
+                ProductName = product?.Name,
+                Rating = reviewData.Rating,
+                Cmt = reviewData.Cmt,
+                Datecmt = reviewData.Datecmt,
+                Relay = reviewData.Relay,
+                Status = reviewData.Status
+            };
+
+            return View(reviewModel);
+        }
+
+        //[HttpPost]
+        //public async Task<IActionResult> UpdateByAdmin([FromBody] AdminViewModel obj1, string id)
+        //{
+        //    if (obj1 == null || string.IsNullOrEmpty(obj1.Email))
+        //    {
+        //        return Json(new { success = false, message = "Dữ liệu không hợp lệ!" });
+        //    }
+
+        //    var admin = await _userManager.GetUserAsync(User);
+        //    if (admin == null)
+        //    {
+        //        return Json(new { success = false, message = "Bạn chưa đăng nhập!" });
+        //    }
+        //    if (!await _userManager.IsInRoleAsync(admin, "Admin"))
+        //    {
+        //        return Json(new { success = false, message = "Bạn không có quyền cập nhật!" });
+        //    }
+
+        //    string apiURL = $"https://localhost:5555/Gateway/ManagementSellerService/Admin-Update/{obj1.Email}";
+
+        //    try
+        //    {
+        //        var jsonContent = JsonSerializer.Serialize(obj1);
+        //        var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+        //        var response = await client.PutAsync(apiURL, content);
+
+        //        if (response.IsSuccessStatusCode)
+        //        {
+        //            return Json(new { success = true, message = "Cập nhật thành công!" });
+        //        }
+        //        else
+        //        {
+        //            return Json(new { success = false, message = "Cập nhật thất bại!" });
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Json(new { success = false, message = "Lỗi kết nối API Gateway! " + ex.Message });
+        //    }
+        //}
 
     }
 }
