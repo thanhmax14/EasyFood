@@ -1,4 +1,5 @@
-﻿@model List<Repository.ViewModels.ReivewViewModel>
+﻿@model Repository.ViewModels.ReivewViewModel
+
 @using System.Text.Json
 <!doctype html>
 <html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg"
@@ -277,13 +278,16 @@
 
                             <div class="card-body">
                                 <div class="live-preview">
-                                    <form asp-action="ReplyFeedback" method="post">
+                                    <form asp-action="ReplyFeedback" asp-controller="Seller" method="post">
                                         <input type="hidden" asp-for="ID" />
-
+                                        <input type="hidden" asp-for="UserID" />
+                                        <input type="hidden" asp-for="ProductID" />
+                                      
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="mb-3">
                                                     <label for="ProductNameinput" class="form-label">Product Name</label>
+                                                    @* <input readonly class="form-control" id="ProductName" name="ProductName" type="text" value="@Model." /> *@
                                                     <input type="text" class="form-control"
                                                            id="ProductNameinput"
                                                            asp-for="ProductName"
@@ -351,7 +355,6 @@
         </div>
         <!-- End Page-content -->
     </div>
-
     <!-- end main content-->
     </div>
     <!-- END layout-wrapper -->
