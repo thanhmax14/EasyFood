@@ -16,6 +16,7 @@ builder.Services.AddScoped<IStoreDetailsRepository, StoreDetailsRepository>();
 builder.Services.AddScoped<StoreDetailService, StoreDetailService>();
 builder.Services.AddScoped<IStoreDetailService, StoreDetailService>();
 
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

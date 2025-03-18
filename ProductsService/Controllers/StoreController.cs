@@ -16,7 +16,7 @@ namespace ProductsService.Controllers
             _storeDetailService = storeDetailService;
         }
 
-        [HttpGet]
+        [HttpGet("GetAllStores")]
         public async Task<IActionResult> GetallStore()
         {
 
@@ -45,5 +45,10 @@ namespace ProductsService.Controllers
             }
             return BadRequest(false);
         }
+
+   
+
+
+
     }
 }
