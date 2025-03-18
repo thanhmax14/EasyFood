@@ -137,45 +137,12 @@ namespace SellerAPI.Controllers
 
         }
 
-        [HttpPut("HiddenFeedback/{id}")]
-        public async Task<IActionResult> HiddenFeedback(Guid id, [FromBody] ReivewViewModel obj)
-        {
-            if (obj == null || string.IsNullOrWhiteSpace(obj.Relay))
-            {
-                return NotFound(new ErroMess { success = false, msg = "du lieu khong hop le" });
-            }
 
-            try
-            {
-                var review = await _reviewService.GetAsyncById(id);
-
-                if (review == null)
-                {
-                    return NotFound(new ErroMess { success = false, msg = "khong tim thay danh gia" });
-                }
-
-
-                review.Status = true;
-                await _reviewService.UpdateAsync(review);
-                await _reviewService.SaveChangesAsync();
-
-                return Ok(
-                    new ErroMess { success = true, msg = "Cập nhật phản hồi thành công" }
-                    );
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new ErroMess { msg = ex.Message });
-            }
-        }
 
         [HttpPut("ShowFeedback/{id}")]
-        public async Task<IActionResult> ShowFeedback(Guid id, [FromBody] ReivewViewModel obj)
+        public async Task<IActionResult> ShowFeedback(Guid id)
         {
-            if (obj == null || string.IsNullOrWhiteSpace(obj.Relay))
-            {
-                return NotFound(new ErroMess { success = false, msg = "du lieu khong hop le" });
-            }
+
 
             try
             {
@@ -200,7 +167,33 @@ namespace SellerAPI.Controllers
                 return StatusCode(500, new ErroMess { msg = ex.Message });
             }
         }
+        [HttpPut("HiddenFeedback/{id}")]
+        public async Task<IActionResult> HiddenFeedback(Guid id)
+        {
 
+            try
+            {
+                var review = await _reviewService.GetAsyncById(id);
+
+                if (review == null)
+                {
+                    return NotFound(new ErroMess { success = false, msg = "khong tim thay danh gia" });
+                }
+
+
+                review.Status = true;
+                await _reviewService.UpdateAsync(review);
+                await _reviewService.SaveChangesAsync();
+
+                return Ok(
+                    new ErroMess { success = true, msg = "Cập nhật phản hồi thành công" }
+                    );
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ErroMess { msg = ex.Message });
+            }
+        }
 
 
 

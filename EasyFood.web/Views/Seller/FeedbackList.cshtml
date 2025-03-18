@@ -308,54 +308,57 @@
                                     { name: "Comment Date", width: "150px" },
                                     { name: "Rating", width: "150px" },
                                     { name: "Reply", width: "250px" },
-                                    {
-                                        name: "Status",
-                                        width: "150px",
-                                        formatter: (cell) => {
-                                            let statusClass = {
-                                                "Active": "bg-success-subtle text-success",
-                                                "Disabled": "bg-danger-subtle text-danger"
-                                            }[cell] || "bg-secondary-subtle text-secondary";
-                                            return gridjs.html(`<span class="badge ${statusClass}">${cell}</span>`);
-                                        }
-                                        
-                                    },
-                                    {
-                                        name: "Actions",
-                                        width: "100px",
-                                            formatter: (_, row) => {
-                                            let status = row.cells[7].data; // Trạng thái Feedback (Active/Deactive)
-                                            let feedbackId = row.cells[0].data; // Lấy ID của Feedback
-                                            let reply = row.cells[6].data; // Lấy nội dung Reply
-                                            let url = `/Seller/ReplyFeedback/${feedbackId}`; // Tạo URL động
+                                                        {
+                        name: "Status",
+                        width: "150px",
+                        formatter: (cell, row) => {
+                            let statusClass = {
+                                "Active": "bg-success-subtle text-success",
+                                "Disabled": "bg-danger-subtle text-danger"
+                            }[cell] || "bg-secondary-subtle text-secondary";
 
-                                            let actionText = status === "Active" ? "Hide" : "Show";
-                                            let actionIcon = status === "Active" ? "ri-eye-off-fill" : "ri-eye-fill";
+                            return gridjs.html(`<span id="row-${row.cells[0].data}" class="badge ${statusClass}">${cell}</span>`);
+                        }
+                    }
+                    ,
+                                        {
+                        name: "Actions",
+                        width: "100px",
+                        formatter: (_, row) => {
+                            let status = row.cells[7].data; // Trạng thái Feedback (Active/Deactive)
+                            let feedbackId = row.cells[0].data; // Lấy ID của Feedback
+                            let reply = row.cells[6].data; // Lấy nội dung Reply
+                            let url = `/Seller/ReplyFeedback/${feedbackId}`; // Tạo URL động
 
-                                            let replyButton = reply !== "No reply" ? "" : `
-                                                <li>
-                                                    <a class="dropdown-item" target="_blank" href="${url}">
-                                                        <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Reply
-                                                    </a>
-                                                </li>`;
+                            let actionText = status === "Active" ? "Hide" : "Show";
+                            let actionIcon = status === "Active" ? "ri-eye-off-fill" : "ri-eye-fill";
 
-                                            return gridjs.html(`
-                                                <div class="dropdown">
-                                                    <button class="btn btn-soft-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                        <i class="ri-more-fill align-middle"></i>
-                                                    </button>
-                                                    <ul class="dropdown-menu dropdown-menu-end">
-                                                        ${replyButton}
-                                                        <li>
-                                                            <button class="dropdown-item toggle-feedback-btn" onclick="showFeedback('${feedbackId}')" >
-                                                                <i class="${actionIcon} align-bottom me-2 text-muted"></i> ${actionText}
-                                                            </button>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            `);
-                                        }
-                                    }
+                            let replyButton = reply !== "No reply" ? "" : `
+                                <li>
+                                    <a class="dropdown-item" target="_blank" href="${url}">
+                                        <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Reply
+                                    </a>
+                                </li>`;
+
+                            return gridjs.html(`
+                                <div class="dropdown">
+                                    <button class="btn btn-soft-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="ri-more-fill align-middle"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        ${replyButton}
+                                        <li>
+                                            <button class="dropdown-item toggle-feedback-btn"
+                                                data-feedbackid="${feedbackId}"
+                                                data-status="${status}">
+                                                <i class="${actionIcon} align-bottom me-2 text-muted"></i> ${actionText}
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            `);
+                        }
+                    }
                                 ],
                                 pagination: {
                                     enabled: true,
@@ -393,119 +396,133 @@
                         }
                     });
 
-                    function showFeedback(feedbackId) {
-                           var token = $("input[name='__RequestVerificationToken']").val();
+                     function showFeedback(feedbackId) {
+                        var token = $("input[name='__RequestVerificationToken']").val();
+                        var id = feedbackId;
 
-						   var id = feedbackId;
-                            console.log("2222222");
-                             console.log("2222222");
-                            console.log(feedbackId);  
-                            
-                        Swal.fire({
-                            title: "Bạn có chắc chắn?",
-                            text: "Bạn muốn xóa khỏi danh sách yêu thích?",
-                            icon: "warning",
-                            showCancelButton: true,
-                            confirmButtonText: "Có, xóa!",
-                            cancelButtonText: "Hủy"
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                 console.log("2222211111111122");
-                                 console.log(id);
-                                           $.ajax({
-                        url: "@Url.Action("Show", "Seller")",
-                        method: "POST",
-                        dataType: "JSON",
-                        data: {
-                            id: id,
-                            __RequestVerificationToken: token
-                        },
-                        success: function (response) {
-                               if (response.success) {
-                        new Notify({
-                            status: 'success',
-                            title: 'Thành công!',
-                            text: response.msg || 'Gửi thành công!',
-                            effect: 'fade',
-                            speed: 300,
-                            showIcon: true,
-                            showCloseButton: true,
-                            autoclose: true,
-                            autotimeout: 3000,
-                            position: 'right top'
-                        });
+                        console.log("Debug - feedbackId:", feedbackId);
 
-                    } else {
-                        new Notify({
-                            status: 'error',
-                            title: 'Thất Bại',
-                            text: response.msg || 'Gửi thất bại!',
-                            effect: 'fade',
-                            speed: 300,
-                            showIcon: true,
-                            showCloseButton: true,
-                            autoclose: true,
-                            autotimeout: 3000,
-                            position: 'right top'
-                        });
+                        $.ajax({
+                                    url: "/Seller/Show",
+                                    method: "POST",
+                                    dataType: "JSON",
+                                    data: {
+                                        id: feedbackId,
+                                        __RequestVerificationToken: token
+                                    },
+                                    success: function (response) {
+                                        if (response.success) {
+
+                                            new Notify({
+                                                status: 'success',
+                                                title: 'Thành công!',
+                                                text: response.msg || 'Gửi thành công!',
+                                                effect: 'fade',
+                                                speed: 300,
+                                                showIcon: true,
+                                                showCloseButton: true,
+                                                autoclose: true,
+                                                autotimeout: 3000,
+                                                position: 'right top'
+                                            });
+                                                setTimeout(function () {
+                                                window.location.reload();
+                                                }, 1500);
+                                        } else {
+                                            new Notify({
+                                                status: 'error',
+                                                title: 'Thất Bại',
+                                                text: response.msg || 'Gửi thất bại!',
+                                                effect: 'fade',
+                                                speed: 300,
+                                                showIcon: true,
+                                                showCloseButton: true,
+                                                autoclose: true,
+                                                autotimeout: 3000,
+                                                position: 'right top'
+                                            });
+                                        }
+                                    },
+                                    error: function () {
+                                        new Notify({
+                                            status: 'error',
+                                            title: 'Thất Bại',
+                                            text: 'Gửi thất bại!',
+                                            effect: 'fade',
+                                            speed: 300,
+                                            showIcon: true,
+                                            showCloseButton: true,
+                                            autoclose: true,
+                                            autotimeout: 3000,
+                                            position: 'right top'
+                                        });
+                                    }
+                                });
+                     
                     }
-                            
-                        },
-                        error: function () {
-                            new Notify({
-                            status: 'error',
-                            title: 'Thất Bại',
-                            text:  'Gửi thất bại!',
-                            effect: 'fade',
-                            speed: 300,
-                            showIcon: true,
-                            showCloseButton: true,
-                            autoclose: true,
-                            autotimeout: 3000,
-                            position: 'right top'
-                        });
-                           
-                        }
-                    });
-                            }
-                        });
-                    
-                    }
+
 
                     function hideFeedback(feedbackId) {
+                       var token = $("input[name='__RequestVerificationToken']").val();
+                        var id = feedbackId;
+
+                        console.log("Debug - feedbackId:", feedbackId);
+
                         $.ajax({
-                            url: "/Seller/Hidden",
-                            type: "POST",
-                            contentType: "application/json",
-                            data: JSON.stringify({ ID: feedbackId }),
-                            success: function (response) {
-                                if (response.success) {
-                                    Swal.fire({
-                                        icon: "success",
-                                        title: "Thành công!",
-                                        text: response.message,
-                                        confirmButtonText: "OK"
-                                    }).then(() => {
-                                        location.reload();
-                                    });
-                                } else {
-                                    Swal.fire({
-                                        icon: "error",
-                                        title: "Lỗi!",
-                                        text: response.message,
-                                        confirmButtonText: "OK"
-                                    });
-                                }
-                            },
-                            error: function () {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Lỗi!",
-                                    text: "Có lỗi xảy ra khi gửi yêu cầu!",
-                                    confirmButtonText: "OK"
+                                    url: "/Seller/Hidden",
+                                    method: "POST",
+                                    dataType: "JSON",
+                                    data: {
+                                        id: feedbackId,
+                                        __RequestVerificationToken: token
+                                    },
+                                    success: function (response) {
+                                        if (response.success) {
+                                            new Notify({
+                                                status: 'success',
+                                                title: 'Thành công!',
+                                                text: response.msg || 'Gửi thành công!',
+                                                effect: 'fade',
+                                                speed: 300,
+                                                showIcon: true,
+                                                showCloseButton: true,
+                                                autoclose: true,
+                                                autotimeout: 3000,
+                                                position: 'right top'
+                                            });
+                                                setTimeout(function () {
+                                                window.location.reload();
+                                                }, 1500);
+                                        } else {
+                                            new Notify({
+                                                status: 'error',
+                                                title: 'Thất Bại',
+                                                text: response.msg || 'Gửi thất bại!',
+                                                effect: 'fade',
+                                                speed: 300,
+                                                showIcon: true,
+                                                showCloseButton: true,
+                                                autoclose: true,
+                                                autotimeout: 3000,
+                                                position: 'right top'
+                                            });
+                                        }
+                                    },
+                                    error: function () {
+                                        new Notify({
+                                            status: 'error',
+                                            title: 'Thất Bại',
+                                            text: 'Gửi thất bại!',
+                                            effect: 'fade',
+                                            speed: 300,
+                                            showIcon: true,
+                                            showCloseButton: true,
+                                            autoclose: true,
+                                            autotimeout: 3000,
+                                            position: 'right top'
+                                        });
+                                    }
                                 });
-                            }
-                        });
                     }
 
                 </script>
