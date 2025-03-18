@@ -30,5 +30,6 @@ namespace BusinessLogic.Services.BalanceChanges
             Func<IQueryable<BalanceChange>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<BalanceChange, object>> includeProperties = null);
 
         Task<decimal> GetBalance(string UserId);
+        Task<bool>CheckMoney(string userID, decimal Money);
     }
 }

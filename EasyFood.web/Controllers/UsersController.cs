@@ -1,7 +1,9 @@
-﻿using BusinessLogic.Services.BalanceChanges;
+﻿using Azure;
+using BusinessLogic.Services.BalanceChanges;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Models;
+using Net.payOS.Types;
 using Repository.ViewModels;
 using System.Collections.Generic;
 using System.Net.Http.Headers;
@@ -63,7 +65,7 @@ namespace EasyFood.web.Controllers
                 };
                 var dataRepone = JsonSerializer.Deserialize<List<BalanceListViewModels>>(messBalance, options);
                 list.Balance = dataRepone;
-
+                list.BalanceUser = await this._balance.GetBalance(user.Id);
 
                 return View(list); 
             }
@@ -226,6 +228,81 @@ namespace EasyFood.web.Controllers
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Withdraw(long number,string code, string numAccount, string nameAcc)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return Json(new ErroMess { msg = "Bạn chưa đăng nhập!!" });
+            }
+            if (number < 500000)
+                return Json(new ErroMess { msg = "Rút tối thiểu 500,000 VND" });
+            if (number % 1 != 0)
+                return Json(new ErroMess { msg = "Số tiền phải là số nguyên, không được có phần thập phân." });
 
+            if(string.IsNullOrWhiteSpace(code)) return Json(new ErroMess { msg = "Vui lòng chọn lại số tài khoản" });
+            if(string.IsNullOrWhiteSpace(numAccount)) return Json(new ErroMess { msg = "Vui lòng nhập số tài khoản" });
+            if(string.IsNullOrWhiteSpace(nameAcc)) return Json(new ErroMess { msg = "Vui lòng nhập tên tài khoản" });
+
+            try
+            {
+                var messErro = new ErroMess();
+                this._url = "https://api.vietqr.io/v2/banks";
+                var responce = await this.client.GetAsync(_url);
+              
+                responce.EnsureSuccessStatusCode();
+
+                string json = await responce.Content.ReadAsStringAsync();
+                using (JsonDocument doc = JsonDocument.Parse(json))
+                {
+                    var root = doc.RootElement;
+                    if (root.TryGetProperty("data", out JsonElement banks))
+                    {
+                        foreach (JsonElement bank in banks.EnumerateArray())
+                        {
+                            if (bank.TryGetProperty("code", out JsonElement codeElement) &&
+                                codeElement.GetString().Equals(code, StringComparison.OrdinalIgnoreCase))
+                            {
+                                var temModels = new WithdrawViewModels
+                                {
+                                    UserID = user.Id,
+                                    AccountName = nameAcc,
+                                    accountNumber = numAccount,
+                                    amount = number,
+                                    BankName = bank.GetProperty("shortName").GetString()
+                                };
+
+                                this._url = $"https://localhost:5555/Gateway/WalletService/WithdrawPayment";
+                                string jsonData = JsonSerializer.Serialize(temModels);
+                                var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+                                var response = await client.PostAsync($"{this._url}", content);
+                                var options = new JsonSerializerOptions
+                                {
+                                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                                    PropertyNameCaseInsensitive = true
+                                };
+                                var mes = await response.Content.ReadAsStringAsync();
+                                messErro = JsonSerializer.Deserialize<ErroMess>(mes, options);
+                                if (response.IsSuccessStatusCode)
+                                {
+                                    return Json(messErro);
+                                }
+                                return Json(messErro);
+
+                            }
+                        }
+                    }
+                    return Json(new ErroMess { msg = "Đã xảy ra lỗi, hãy thử lại hoặc liên hệ admin!!" });
+                }
+            }
+            catch(Exception ex)
+            {
+                return Json(new ErroMess { msg = "Đã xảy ra lỗi, hãy thử lại hoặc liên hệ admin!!" });
+            }
+
+
+        }
     }
 }

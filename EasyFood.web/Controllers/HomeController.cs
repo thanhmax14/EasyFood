@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Services.BalanceChanges;
+﻿using BusinessLogic.Hash;
+using BusinessLogic.Services.BalanceChanges;
 using BusinessLogic.Services.Carts;
 using BusinessLogic.Services.Orders;
 using BusinessLogic.Services.ProductImages;
@@ -16,6 +17,7 @@ using Net.payOS;
 using Net.payOS.Types;
 using Org.BouncyCastle.Pqc.Crypto.Lms;
 using Repository.ViewModels;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http.Headers;
@@ -668,6 +670,7 @@ namespace EasyFood.web.Controllers
         [HttpGet]
         public async Task<IActionResult> Invoice(string id)
         {
+         await Task.Delay(3000);
             var tem = new InvoiceViewModels();
 
             if(int.TryParse(id, out var orderCode))
@@ -682,7 +685,49 @@ namespace EasyFood.web.Controllers
                     }
                     if (!flagBalance.IsComplele)
                     {
-                        return RedirectToAction("NotFoundPage", "Home");
+                        var checkORder = await this._payos.getPaymentLinkInformation(orderCode);
+                        var status = checkORder.status.ToUpper();                     
+                        switch (status)
+                        {
+                            case "CANCELLED":
+                                flagBalance.DueTime = DateTime.Now;
+                                flagBalance.Status = status;
+                                flagBalance.IsComplele = true;
+                                break;
+                            case "PENDING":
+                                flagBalance.DueTime = DateTime.Now;
+                                flagBalance.Status = status;
+                                break;
+                            case "EXPIRED":
+                                flagBalance.DueTime = DateTime.Now;
+                                flagBalance.Status = status;
+                                break;
+                            case "UNDERPAID":
+                                flagBalance.DueTime = DateTime.Now;
+                                flagBalance.Status = status;
+                                break;
+                            case "PROCESSING":
+                                flagBalance.DueTime = DateTime.Now;
+                                flagBalance.Status = status;
+                                break;
+                            case "FAILED":
+                                flagBalance.DueTime = DateTime.Now;
+                                flagBalance.Status = status;
+                                break;                          
+                            default:
+                                break;
+
+                             
+                        }
+                        await this._balance.UpdateAsync(flagBalance);
+                        try
+                        {
+                            await this._balance.SaveChangesAsync();
+                        }
+                        catch
+                        {
+                            return RedirectToAction("NotFoundPage", "Home");
+                        }
                     }
                     if (flagBalance.Method == "deposit")
                     {
@@ -704,18 +749,7 @@ namespace EasyFood.web.Controllers
                         });
                         tem.invoiceDate = flagBalance.StartTime;
                     }
-
-
-                   
-
-
                 }
-               /* else
-                {
-                    var flagOrder = await this._order.FindAsync(u => u.orderCode == orderCode);
-                }*/
-
-
 
             }
             else
