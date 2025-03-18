@@ -9,7 +9,24 @@ namespace BusinessLogic.Hash
 {
     public static class RegexAll
     {
-     public  static string? ExtractPayosLink(string? text)
+        public static bool ContainsAmpersand(string input)
+        {
+            try
+            {
+                if (input == null)
+                    return false;
+
+                return input.Contains("&");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi: {ex.Message}");
+                return false; 
+            }
+        }
+
+
+        public static string? ExtractPayosLink(string? text)
         {
             try
             {

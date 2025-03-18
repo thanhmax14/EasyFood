@@ -16,6 +16,7 @@ namespace Repository.ViewModels
         }
         public UsersViewModel userView { get; set; }
         public List<BalanceListViewModels> Balance { get; set; }
+        public decimal BalanceUser { get; set; } = 0;
 
     }
 }
