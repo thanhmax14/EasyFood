@@ -171,31 +171,20 @@ namespace EasyFood.web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Show(string id)
         {
-            var model = new ReivewViewModel
-            {
-                Status = true,
-                UserID = id,
-                ID = Guid.Parse(id),
-                Cmt = "1",
-                Datecmt = DateTime.Now,
-                Relay = "1",
-                DateRelay = DateTime.Now,
-                Rating = 5,
-
-            };
-
-
             string apiUrl = $"https://localhost:5555/Gateway/ReviewService/ShowFeedback/{id}";
+
+            if (!Guid.TryParse(id, out Guid guidId))
+            {
+                return BadRequest(new ErroMess { success = false, msg = "ID không hợp lệ" });
+            }
+
             try
             {
                 using var client = new HttpClient();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                var jsonContent = JsonSerializer.Serialize(model);
-                var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
-
-
-                var response = await client.PutAsync(apiUrl, content);
+                // Không gửi body nếu API không yêu cầu
+                var response = await client.PutAsync(apiUrl, null);
 
                 var options = new JsonSerializerOptions
                 {
@@ -203,39 +192,34 @@ namespace EasyFood.web.Controllers
                     PropertyNameCaseInsensitive = true
                 };
                 var mes = await response.Content.ReadAsStringAsync();
-                var dataRepone = JsonSerializer.Deserialize<ErroMess>(mes, options);
-                if (response.IsSuccessStatusCode)
-                {
-                    return Json(dataRepone);
-                }
-                return Json(dataRepone);
+                var dataResponse = JsonSerializer.Deserialize<ErroMess>(mes, options);
+
+                return response.IsSuccessStatusCode ? Json(dataResponse) : Json(dataResponse);
             }
             catch (Exception)
             {
-
                 return StatusCode(500, new ErroMess { success = false, msg = "Lỗi kết nối API Gateway!" });
             }
         }
+
         [HttpPost]
-        public async Task<IActionResult> HiddenFeedback([FromBody] ReivewViewModel model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Hidden(string id)
         {
-            if (model == null || string.IsNullOrWhiteSpace(model.Relay))
+            string apiUrl = $"https://localhost:5555/Gateway/ReviewService/HiddenFeedback/{id}";
+
+            if (!Guid.TryParse(id, out Guid guidId))
             {
-                return Json(new { success = false, message = "Dữ liệu không hợp lệ!" });
+                return BadRequest(new ErroMess { success = false, msg = "ID không hợp lệ" });
             }
 
-
-            string apiUrl = $"https://localhost:5555/Gateway/ReviewService/HiddenFeedback/{model.ID}";
             try
             {
                 using var client = new HttpClient();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                var jsonContent = JsonSerializer.Serialize(model);
-                var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
-
-
-                var response = await client.PutAsync(apiUrl, content);
+                // Không gửi body nếu API không yêu cầu
+                var response = await client.PutAsync(apiUrl, null);
 
                 var options = new JsonSerializerOptions
                 {
@@ -243,16 +227,12 @@ namespace EasyFood.web.Controllers
                     PropertyNameCaseInsensitive = true
                 };
                 var mes = await response.Content.ReadAsStringAsync();
-                var dataRepone = JsonSerializer.Deserialize<ErroMess>(mes, options);
-                if (response.IsSuccessStatusCode)
-                {
-                    return Json(dataRepone);
-                }
-                return Json(dataRepone);
+                var dataResponse = JsonSerializer.Deserialize<ErroMess>(mes, options);
+
+                return response.IsSuccessStatusCode ? Json(dataResponse) : Json(dataResponse);
             }
             catch (Exception)
             {
-
                 return StatusCode(500, new ErroMess { success = false, msg = "Lỗi kết nối API Gateway!" });
             }
         }
