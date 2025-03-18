@@ -64,79 +64,197 @@ namespace EasyFood.web.Controllers
 
         }
 
-        //load du lieu len reply page
-        [HttpGet]
-        public async Task<IActionResult> ReplyFeedback(Guid reviewId)
+
+        public async Task<IActionResult> ReplyFeedback(string id)
         {
-            // Tìm review theo ReviewId
-            var review = await _reviewService.ListAsync(r => r.ID == reviewId);
-            var reviewData = review.FirstOrDefault();
-
-            if (reviewData == null)
+            try
             {
-                return Json(new { success = false, message = "Không tìm thấy đánh giá." });
+                // Kiểm tra id có hợp lệ không
+                if (!Guid.TryParse(id, out Guid reviewId))
+                {
+                    return Json(new { success = false, message = "ID không hợp lệ." });
+                }
+
+                // Tìm review theo ReviewId
+                var review = await _reviewService.FindAsync(r => r.ID == reviewId);
+
+                if (review == null)
+                {
+                    return Json(new { success = false, message = "Không tìm thấy đánh giá." });
+                }
+
+                // Lấy thông tin người dùng
+                var user = await _userManager.FindByIdAsync(review.UserID);
+                if (user == null)
+                {
+                    return Json(new { success = false, message = "Người dùng không tồn tại." });
+                }
+
+                // Lấy thông tin sản phẩm
+                var product = await _productService.GetAsyncById(review.ProductID);
+                if (product == null)
+                {
+                    return Json(new { success = false, message = "Sản phẩm không tồn tại." });
+                }
+
+                // Tạo ViewModel để hiển thị trong View
+                var reviewModel = new ReivewViewModel
+                {
+                    ID = review.ID,
+                    Username = user.UserName,
+                    ProductName = product.Name,
+                    Rating = review.Rating,
+                    Cmt = review.Cmt,
+                    Datecmt = review.Datecmt,
+                    Relay = review.Relay,
+                    Status = review.Status,
+                    UserID = review.UserID,
+                    ProductID = review.ProductID
+                };
+
+                return View(reviewModel);
             }
-
-            // Lấy thông tin người dùng và sản phẩm liên quan
-            var user = await _userManager.FindByIdAsync(reviewData.UserID);
-            var product = await _productService.GetAsyncById(reviewData.ProductID);
-
-            // Tạo ViewModel để hiển thị trong View
-            var reviewModel = new ReivewViewModel
+            catch (Exception ex)
             {
-                ID = reviewData.ID,
-                Username = user?.UserName,
-                ProductName = product?.Name,
-                Rating = reviewData.Rating,
-                Cmt = reviewData.Cmt,
-                Datecmt = reviewData.Datecmt,
-                Relay = reviewData.Relay,
-                Status = reviewData.Status
-            };
+                // Ghi log lỗi để debug sau này
+                Console.WriteLine($"Lỗi: {ex.Message}");
 
-            return View(reviewModel);
+                // Trả về lỗi JSON để tránh chết chương trình
+                return Json(new { success = false, message = "Có lỗi xảy ra, vui lòng thử lại sau." });
+            }
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> UpdateByAdmin([FromBody] AdminViewModel obj1, string id)
-        //{
-        //    if (obj1 == null || string.IsNullOrEmpty(obj1.Email))
-        //    {
-        //        return Json(new { success = false, message = "Dữ liệu không hợp lệ!" });
-        //    }
 
-        //    var admin = await _userManager.GetUserAsync(User);
-        //    if (admin == null)
-        //    {
-        //        return Json(new { success = false, message = "Bạn chưa đăng nhập!" });
-        //    }
-        //    if (!await _userManager.IsInRoleAsync(admin, "Admin"))
-        //    {
-        //        return Json(new { success = false, message = "Bạn không có quyền cập nhật!" });
-        //    }
+        [HttpPost]
+        public async Task<IActionResult> ReplyFeedback(ReivewViewModel model)
+        {
+            if (model == null || string.IsNullOrWhiteSpace(model.Relay))
+            {
+                return Json(new { success = false, message = "Dữ liệu không hợp lệ!" });
+            }
 
-        //    string apiURL = $"https://localhost:5555/Gateway/ManagementSellerService/Admin-Update/{obj1.Email}";
+            try
+            {
 
-        //    try
-        //    {
-        //        var jsonContent = JsonSerializer.Serialize(obj1);
-        //        var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
-        //        var response = await client.PutAsync(apiURL, content);
+                string apiUrl = $"https://localhost:5555/Gateway/ReviewService/UpdateReply/{model.ID}";
 
-        //        if (response.IsSuccessStatusCode)
-        //        {
-        //            return Json(new { success = true, message = "Cập nhật thành công!" });
-        //        }
-        //        else
-        //        {
-        //            return Json(new { success = false, message = "Cập nhật thất bại!" });
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Json(new { success = false, message = "Lỗi kết nối API Gateway! " + ex.Message });
-        //    }
-        //}
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
+                var jsonContent = JsonSerializer.Serialize(model);
+                var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+
+
+                var response = await client.PutAsync(apiUrl, content);
+
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    PropertyNameCaseInsensitive = true
+                };
+                var mes = await response.Content.ReadAsStringAsync();
+                var dataRepone = JsonSerializer.Deserialize<ErroMess>(mes, options);
+                if (response.IsSuccessStatusCode)
+                {
+                    return Redirect("/Seller/FeedbackList");
+                }
+                return Json(dataRepone);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = "Lỗi kết nối API Gateway! " + ex.Message });
+            }
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Show(string id)
+        {
+            var model = new ReivewViewModel
+            {
+                Status = true,
+                UserID = id,
+                ID = Guid.Parse(id),
+                Cmt = "1",
+                Datecmt = DateTime.Now,
+                Relay = "1",
+                DateRelay = DateTime.Now,
+                Rating = 5,
+
+            };
+
+
+            string apiUrl = $"https://localhost:5555/Gateway/ReviewService/ShowFeedback/{id}";
+            try
+            {
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                var jsonContent = JsonSerializer.Serialize(model);
+                var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+
+
+                var response = await client.PutAsync(apiUrl, content);
+
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    PropertyNameCaseInsensitive = true
+                };
+                var mes = await response.Content.ReadAsStringAsync();
+                var dataRepone = JsonSerializer.Deserialize<ErroMess>(mes, options);
+                if (response.IsSuccessStatusCode)
+                {
+                    return Json(dataRepone);
+                }
+                return Json(dataRepone);
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(500, new ErroMess { success = false, msg = "Lỗi kết nối API Gateway!" });
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> HiddenFeedback([FromBody] ReivewViewModel model)
+        {
+            if (model == null || string.IsNullOrWhiteSpace(model.Relay))
+            {
+                return Json(new { success = false, message = "Dữ liệu không hợp lệ!" });
+            }
+
+
+            string apiUrl = $"https://localhost:5555/Gateway/ReviewService/HiddenFeedback/{model.ID}";
+            try
+            {
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                var jsonContent = JsonSerializer.Serialize(model);
+                var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+
+
+                var response = await client.PutAsync(apiUrl, content);
+
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    PropertyNameCaseInsensitive = true
+                };
+                var mes = await response.Content.ReadAsStringAsync();
+                var dataRepone = JsonSerializer.Deserialize<ErroMess>(mes, options);
+                if (response.IsSuccessStatusCode)
+                {
+                    return Json(dataRepone);
+                }
+                return Json(dataRepone);
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(500, new ErroMess { success = false, msg = "Lỗi kết nối API Gateway!" });
+            }
+        }
     }
 }

@@ -49,6 +49,7 @@ namespace SellerAPI.Controllers
 
                 var reviewModel = new ReivewViewModel
                 {
+                    ID = review.ID,
                     Cmt = review.Cmt,
                     Relay = review.Relay,
                     Datecmt = review.Datecmt,
@@ -136,7 +137,69 @@ namespace SellerAPI.Controllers
 
         }
 
+        [HttpPut("HiddenFeedback/{id}")]
+        public async Task<IActionResult> HiddenFeedback(Guid id, [FromBody] ReivewViewModel obj)
+        {
+            if (obj == null || string.IsNullOrWhiteSpace(obj.Relay))
+            {
+                return NotFound(new ErroMess { success = false, msg = "du lieu khong hop le" });
+            }
 
+            try
+            {
+                var review = await _reviewService.GetAsyncById(id);
+
+                if (review == null)
+                {
+                    return NotFound(new ErroMess { success = false, msg = "khong tim thay danh gia" });
+                }
+
+
+                review.Status = true;
+                await _reviewService.UpdateAsync(review);
+                await _reviewService.SaveChangesAsync();
+
+                return Ok(
+                    new ErroMess { success = true, msg = "Cập nhật phản hồi thành công" }
+                    );
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ErroMess { msg = ex.Message });
+            }
+        }
+
+        [HttpPut("ShowFeedback/{id}")]
+        public async Task<IActionResult> ShowFeedback(Guid id, [FromBody] ReivewViewModel obj)
+        {
+            if (obj == null || string.IsNullOrWhiteSpace(obj.Relay))
+            {
+                return NotFound(new ErroMess { success = false, msg = "du lieu khong hop le" });
+            }
+
+            try
+            {
+                var review = await _reviewService.GetAsyncById(id);
+
+                if (review == null)
+                {
+                    return NotFound(new ErroMess { success = false, msg = "khong tim thay danh gia" });
+                }
+
+
+                review.Status = false;
+                await _reviewService.UpdateAsync(review);
+                await _reviewService.SaveChangesAsync();
+
+                return Ok(
+                    new ErroMess { success = true, msg = "Cập nhật phản hồi thành công" }
+                    );
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ErroMess { msg = ex.Message });
+            }
+        }
 
 
 
