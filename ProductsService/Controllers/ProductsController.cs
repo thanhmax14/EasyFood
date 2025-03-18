@@ -45,11 +45,14 @@ namespace ProductsService.Controllers
                 {
 
                     var price = await _productVariantService.FindAsync(s => s.ProductID == item.ID);
+
                     var storeName = await _storeDetailService.FindAsync(x => x.ID == item.StoreID);
                     var categoryName = await _categoryService.FindAsync(c => c.ID == item.CateID);
                     // Tạo danh sách hình ảnh riêng cho từng sản phẩm
                     var imgList = await _productImageService.ListAsync(i => i.ProductID == item.ID);
-                    var Listimg = imgList.Select(i => i.ImageUrl).ToList(); // Lấy danh sách ImageUrl
+
+                    var Listimg = imgList.Select(i => i.ImageUrl).ToList(); // Chuyển đổi sang ProductImageViewModel
+
 
                     list.Add(new ProductsViewModel
                     {
@@ -67,7 +70,8 @@ namespace ProductsService.Controllers
                         Name = item.Name,
                         ShortDescription = item.ShortDescription,
                         StoreId = item.StoreID,
-                        Img = Listimg // Gán danh sách ảnh cho sản phẩm
+                        Img = Listimg // Gán danh sách URL hình ảnh cho sản phẩm
+
                     });
                 }
                 return Ok(list);
