@@ -262,26 +262,26 @@
                                             </div>
                                         </td>
                                         <td class="price" data-title="Price">
-                                            <h4 class="text-body">@item.price </h4>
+                                            <h4 class="text-body" id="price-@item.ProductID">@item.price</h4>
                                         </td>
+
                                         <td class="text-center detail-info" data-title="Stock">
                                             <div class="detail-extralink mr-15">
                                                 <div class="detail-qty border radius">
-                                                    <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
-                                                    <input type="text" name="quantity"  class="qty-val" value="@item.quantity"  data-id="@item.ProductID" data-stock="@item.Stock" min="1">
+                                                    <a href="#" class="qty-down" data-id="@item.ProductID"><i class="fi-rs-angle-small-down"></i></a>
+                                                    <input type="text" name="quantity" class="qty-val" value="@item.quantity" data-id="@item.ProductID" data-stock="@item.Stock" min="1">
                                                     <a href="#" class="qty-up" data-id="@item.ProductID"><i class="fi-rs-angle-small-up"></i></a>
                                                 </div>
                                             </div>
                                         </td>
                                         <td class="price" data-title="Price">
-                                            <h4 class="text-brand">@item.Subtotal</h4>
+                                            <h4 class="text-brand" id="subtotal-@item.ProductID">@item.Subtotal</h4>
                                         </td>
+
                                         <td class="action text-center" data-title="Remove"><a href="#" class="text-body"><i class="fi-rs-trash"></i></a></td>
                                     </tr>
                                 }
                               
-
-
                             </tbody>
                         </table>
                     </div>
@@ -848,58 +848,78 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-     $(document).ready(function () {
-    $(".qty-up, .qty-down").click(function (e) {
-        e.preventDefault();
+        $(document).ready(function () {
+            $(".qty-up, .qty-down").click(function (e) {
+                e.preventDefault();
 
-        var productId = $(this).data("id").toString(); 
-        var inputField = $("input[data-id='" + productId + "']");
-        var currentQty = parseInt(inputField.val()) || 0;  // ✅ Nếu không lấy được thì mặc định là 0
-        var stockQty = parseInt(inputField.attr("data-stock")) || 0; // ✅ Nếu không lấy được thì mặc định là 0
-        var isIncrease = $(this).hasClass("qty-up");
+                var button = $(this);
+                var productId = button.data("id").toString();
+                var inputField = $("input[data-id='" + productId + "']");
+                var currentQty = parseInt(inputField.val()) || 0;
+                var stockQty = parseInt(inputField.attr("data-stock")) || 0;
+                var isIncrease = button.hasClass("qty-up");
+                var newQty = isIncrease ? currentQty + 1 : currentQty - 1;
 
-        console.log("📌 ProductID:", productId);
-        console.log("📌 Current Quantity:", currentQty);
-        console.log("📌 Stock Quantity:", stockQty);
+                console.log("📌 ProductID:", productId);
+                console.log("📌 Current Quantity:", currentQty);
+                console.log("📌 Stock Quantity:", stockQty);
 
-        var newQty = isIncrease ? currentQty + 1 : currentQty - 1;
-
-        if (isIncrease && currentQty >= stockQty) {
-            alert("Số lượng trong kho chỉ còn " + stockQty + ". Không thể tăng thêm.");
-            return;
-        }
-        if (!isIncrease && currentQty <= 1) {
-            alert("Số lượng tối thiểu là 1. Không thể giảm.");
-            return;
-        }
-
-        // ✅ Gửi Ajax cập nhật giỏ hàng
-        $.ajax({
-            url: "/Home/CheckQuantity",
-            type: "POST",
-            contentType: "application/json", 
-            data: JSON.stringify({
-                ProductID: productId,  
-                quantity: newQty
-            }),
-            success: function (response) {
-                console.log("✅ Response từ Server:", response);
-
-                if (response.success) {
-                    inputField.val(newQty);
-                    $("#subtotal-" + productId).text(response.subtotal);
-                } else {
-                    alert("Cập nhật thất bại: " + response.message);
+                // 🔥 Nếu số lượng đạt giới hạn kho, tắt nút tăng
+                if (isIncrease && currentQty >= stockQty) {
+                    alert("⚠️ Số lượng đặt hàng đã đạt giới hạn kho (" + stockQty + ")");
+                    inputField.val(stockQty);
+                    $(".qty-up[data-id='" + productId + "']").attr("disabled", "disabled"); // 🔥 Tắt nút tăng
+                    return;
                 }
-            },
-            error: function () {
-                alert("Lỗi server, vui lòng thử lại!");
-            }
+
+                if (!isIncrease && currentQty <= 1) {
+                    alert("⚠️ Số lượng tối thiểu là 1.");
+                    return;
+                }
+
+                // ✅ Nếu hợp lệ, gửi Ajax
+                button.prop("disabled", true);
+
+                $.ajax({
+                    url: "/Home/CheckQuantity",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        ProductID: productId,
+                        quantity: newQty
+                    }),
+                    success: function (response) {
+                        console.log("✅ Response từ Server:", response);
+
+                        if (response.success) {
+                            inputField.val(newQty);
+
+                            // 🔥 Kiểm tra nếu số lượng đạt stock thì disable nút tăng
+                            if (newQty >= stockQty) {
+                                $(".qty-up[data-id='" + productId + "']").attr("disabled", "disabled");
+                                alert("⚠️ Đã đạt giới hạn kho! Không thể tăng thêm.");
+                            } else {
+                                $(".qty-up[data-id='" + productId + "']").removeAttr("disabled");
+                            }
+
+                            var unitPrice = parseFloat($("#price-" + productId).text());
+                            var newSubtotal = newQty * unitPrice;
+                            $("#subtotal-" + productId).text(newSubtotal.toFixed(2));
+                        } else {
+                            inputField.val(currentQty);
+                            alert("⚠️ Cập nhật thất bại: " + response.message);
+                        }
+                    },
+                    error: function () {
+                        alert("⚠️ Lỗi server, vui lòng thử lại!");
+                    },
+                    complete: function () {
+                        button.prop("disabled", false);
+                    }
+                });
+            });
+
         });
-    });
-});
-
-
 
     </script>
 

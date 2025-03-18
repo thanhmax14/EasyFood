@@ -264,6 +264,7 @@ namespace UserAPI.Controllers
             }
             carItem.Quantity = obj.quantity;
             await _cartService.UpdateAsync(carItem);
+            await _cartService.SaveChangesAsync();
             var product = await _productService.FindAsync(x => x.ID == obj.ProductID);
             var Productvar = await _productVariantService.FindAsync(x => x.ProductID == product.ID);
             decimal subtotal = carItem.Quantity * (Productvar?.Price ?? 0);
