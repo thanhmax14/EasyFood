@@ -43,6 +43,7 @@ namespace EasyFood.web.Controllers
         private readonly IStoreDetailService _storeDetailService;
         private readonly IBalanceChangeService _balance;
         private readonly IOrdersServices _order;
+
         private readonly PayOS _payos;
 
 
@@ -355,12 +356,14 @@ namespace EasyFood.web.Controllers
             return NotFound();
         }
 
+ 
+
 
 
         public async Task<IActionResult> GetAllStore()
         {
             var list = new List<StoreViewModel>();
-            this._url = "https://localhost:5555/Gateway/StoreDetailService";
+            this._url = "https://localhost:5555/Gateway/StoreDetailService/GetAllStores";
             try
             {
                 var response = await client.GetAsync(this._url);
@@ -378,6 +381,42 @@ namespace EasyFood.web.Controllers
                     return View(list);
                 }
             }
+        }
+
+        public async Task<IActionResult> GetStoreDetail(Guid iD)
+        {
+
+            var FindStore = await _storeDetailService.FindAsync(x => x.ID == iD);
+
+            if (FindStore != null)
+            {
+                var list = new StoreDetailsViewModels();
+                this._url = $"https://localhost:5555/Gateway/StoreDetailService/GetStoreDetail?id={iD}";
+
+                try
+                {
+                    var response = await client.GetAsync(this._url);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        return View(list);
+                    }
+
+                    var mes = await response.Content.ReadAsStringAsync();
+                    list = JsonSerializer.Deserialize<StoreDetailsViewModels>(mes, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    return View(list);
+                }
+                catch (Exception ex)
+                {
+                    return View(list);
+                }
+            }
+          
+
+           
+
+
+            return NotFound();
         }
 
 
