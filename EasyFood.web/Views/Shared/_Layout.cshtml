@@ -12,5 +12,29 @@
     <link rel="stylesheet" href="~/assets/cute-alert/style.css" />
     <link href="~/assets/sweetalert2/default.css" rel="stylesheet" />
     <script src="~/assets/simple-notify/simple-notify.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            function getBalance() {
+                $.ajax({
+                    url: '/Home/GetBalance',
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.msg) {
+                            $("#balance-display").text(response.msg);
+                        }else{
+                            console.error(response.msg);
+                        }
+                    },
+                    error: function () {
+                        console.error("Lỗi khi lấy số dư.");
+                    }
+                });
+            }
+            getBalance();
+            setInterval(getBalance, 5000);
+        });
+
+    </script>
 </body>
 </html>

@@ -103,6 +103,7 @@ namespace UserAPI.Controllers
                             orderCode = orderCode,
                             StartTime = statime,
                             DueTime = statime,
+                            checkDone = false,
 
                             UserID = getUser.Id,
 
@@ -151,6 +152,7 @@ namespace UserAPI.Controllers
                                 getBalance.DisPlay = true;
                                 getBalance.IsComplele = true;
                                 getBalance.DueTime = DateTime.Now;
+                                getBalance.checkDone = true;
                             }
                             await _balance.UpdateAsync(getBalance);
                         });
@@ -212,11 +214,12 @@ namespace UserAPI.Controllers
                 else
                 {
                     var getListBalance = await this._balance.ListAsync(
-                    u => u.DisPlay,
-                    orderBy: x => x.OrderByDescending(query => query.DueTime.HasValue)  // Ưu tiên bản ghi có DueTime
-                                    .ThenByDescending(query => query.DueTime)           // Sắp xếp giảm dần theo DueTime
-                                    .ThenByDescending(query => query.StartTime)         // Nếu DueTime = NULL, dùng StartTime
-                );
+                   u => u.DisPlay && getUser.Id==u.UserID,
+                   orderBy: x => x.OrderByDescending(query => query.DueTime.HasValue)  // Ưu tiên bản ghi có DueTime
+                                   .ThenByDescending(query => query.DueTime)           // Sắp xếp giảm dần theo DueTime
+                                   .ThenByDescending(query => query.StartTime)         // Nếu DueTime = NULL, dùng StartTime
+               );
+
 
                     if (getListBalance.Any())
                     {
@@ -227,23 +230,15 @@ namespace UserAPI.Controllers
                             var getInvoce = RegexAll.ExtractPayosLink(item.Description);
                             if (getInvoce == null)
                                 getInvoce = item.Description;
-
-                            var statusNew = item.Status;
-                            if (RegexAll.ContainsAmpersand(item.Description))
-                            {
-                                getInvoce = "";
-                                statusNew = "PROCESSING";
-                            }
-                            
                             list.Add(new BalanceListViewModels
                             {
                                 No = count,
                                 After = item.MoneyAfterChange,
                                 Before = item.MoneyBeforeChange,
                                 Change = item.MoneyChange,
-                                Date = item.StartTime ?? DateTime.Now,
+                                Date = item.DueTime ?? DateTime.Now,
                                 Invoice = getInvoce,
-                                Status = statusNew,
+                                Status = item.Status,
                                 Types = item.Method
                             });
                         }
@@ -279,11 +274,12 @@ namespace UserAPI.Controllers
                     MoneyChange = -model.amount,
                     MoneyAfterChange = (getbalance - model.amount),
                     Description = $"{model.AccountName}&{model.accountNumber}&{model.BankName}&{model.amount}",
-                    Status = "Success",
+                    Status = "PROCESSING",
                     Method = "Withdraw",
                     StartTime = statime,
                     DueTime = statime,
                     UserID = checkUser.Id,
+                    checkDone=true,
                 };
                 try
                 {
