@@ -1,0 +1,47 @@
+﻿@model List<Repository.ViewModels.CartViewModels>
+
+<div class="header-action-icon-2">
+    <a class="mini-cart-icon" href="shop-cart.html">
+        <img alt="Nest" src="~/assets/imgs/theme/icons/icon-cart.svg" />
+        <span class="pro-count blue">@(Model?.Count ?? 0)</span>
+    </a>
+    <a href="shop-cart.html"><span class="lable">Cart</span></a>
+
+    <div class="cart-dropdown-wrap cart-dropdown-hm2">
+        @if (Model == null || !Model.Any())
+        {
+            <p class="text-center" style="color: red;">Giỏ hàng trống</p>
+        }
+        else
+        {
+            <ul>
+                @foreach (var item in Model)
+                {
+                    <li>
+                        <div class="shopping-cart-img">
+                            <a href="shop-product-right.html">
+                                <img alt="Nest" src="~/assets/imgs/shop/thumbnail-3.jpg" />
+                            </a>
+                        </div>
+                        <div class="shopping-cart-title">
+                            <h4><a href="shop-product-right.html">@item.ProductName</a></h4>
+                            <h4><span>@item.quantity × </span>@item.price</h4>
+                        </div>
+                        <div class="shopping-cart-delete">
+                            <a href="#"><i class="fi-rs-cross-small"></i></a>
+                        </div>
+                    </li>
+                }
+            </ul>
+            <div class="shopping-cart-footer">
+                <div class="shopping-cart-total">
+                    <h4>Total <span>$@(Model?.Sum(x => x.quantity * x.price) ?? 0)</span></h4>
+                </div>
+                <div class="shopping-cart-button">
+                    <a asp-action="Cart" asp-controller="Home" class="outline">View cart</a>
+                    <a>Checkout</a>
+                </div>
+            </div>
+        }
+    </div>
+</div>

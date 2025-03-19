@@ -855,5 +855,123 @@ namespace EasyFood.web.Controllers
             var balance = await this._balance.GetBalance(user.Id);
             return Json(new ErroMess { success =true, msg = $"{balance}" });
         }
+        public async Task<IActionResult> DeleteCart([FromBody] CartItem obj)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if(user == null)
+            {
+                return RedirectToAction("Home", "Login");
+            }
+            string apiUrl = $"https://localhost:5555/Gateway/UsersService/DeleteCart/{obj.ProductID}";
+            try
+            {
+                var jsonContent = JsonSerializer.Serialize(obj);
+                var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+                var response = await client.PostAsync(apiUrl, content);
+                if (response.IsSuccessStatusCode)
+                {
+                    return Json(new { success = true, message = "Delete to product to success!" });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Delete to product to  fail!" });
+                }
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { success = false, message = "Lỗi server.", error = ex.Message });
+            }
+        }
+        public async Task<IActionResult> AddToCart([FromBody] CartViewModels obj)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            // 🔍 Check if the product exists
+            var productVarian = await _productvarian.FindAsync(x => x.ProductID == obj.ProductID);
+            if (productVarian == null)
+            {
+                return Json(new { success = false, message = "Product does not exist!" });
+            }
+
+            // 🔥 Check stock quantity before adding to cart
+            if (obj.quantity > productVarian.Stock)
+            {
+                return Json(new { success = false, message = $"Quantity exceeds stock! Only {productVarian.Stock} items left." });
+            }
+
+            // 🛒 Send request to add to cart if valid
+            string apiUrl = $"https://localhost:5555/Gateway/UsersService/AddCart";
+            var requestData = new
+            {
+                UserID = user.Id,
+                ProductId = obj.ProductID,
+                Quantity = obj.quantity
+            };
+
+            try
+            {
+                var jsonContent = JsonSerializer.Serialize(requestData);
+                var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+                var response = await client.PostAsync(apiUrl, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Json(new { success = true, message = "Added to cart successfully!" });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Quantity exceeds available stock!" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Server error.", error = ex.Message });
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> CartPart()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return PartialView("_Cart", new List<CartViewModels>()); // Trả về giỏ hàng trống
+            }
+
+            string apiUrl = $"https://localhost:5555/Gateway/UsersService/ViewCartDetail/{user.Id}";
+            List<CartViewModels> cartItems = new List<CartViewModels>();
+
+            try
+            {
+                var response = await client.GetAsync(apiUrl);
+                if (!response.IsSuccessStatusCode)
+                {
+                    return PartialView("_Cart", new List<CartViewModels>());
+                }
+
+                var mes = await response.Content.ReadAsStringAsync();
+                cartItems = JsonSerializer.Deserialize<List<CartViewModels>>(mes, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                });
+
+                return PartialView("_Cart", cartItems ?? new List<CartViewModels>());
+            }
+            catch (Exception ex)
+            {
+                return PartialView("_Cart", new List<CartViewModels>());
+            }
+        }
+
+
+
+
     }
+
+
 }
+
