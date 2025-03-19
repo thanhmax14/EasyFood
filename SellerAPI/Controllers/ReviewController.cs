@@ -118,7 +118,7 @@ namespace SellerAPI.Controllers
 
                 // Cập nhật phản hồi
                 review.Relay = obj.Relay;
-                review.DateRelay = DateTime.UtcNow;
+                review.DateRelay = DateTime.Now;
 
                 // Lưu thay đổi
                 await _reviewService.UpdateAsync(review);

@@ -1,17 +1,12 @@
 ﻿using BusinessLogic.Hash;
 using BusinessLogic.Services.BalanceChanges;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Models;
 using Net.payOS;
 using Net.payOS.Types;
 using Repository.BalanceChange;
 using Repository.ViewModels;
-using System;
-using System.Transactions;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace UserAPI.Controllers
 {
@@ -214,7 +209,7 @@ namespace UserAPI.Controllers
                 else
                 {
                     var getListBalance = await this._balance.ListAsync(
-                   u => u.DisPlay && getUser.Id==u.UserID,
+                   u => u.DisPlay && getUser.Id == u.UserID,
                    orderBy: x => x.OrderByDescending(query => query.DueTime.HasValue)  // Ưu tiên bản ghi có DueTime
                                    .ThenByDescending(query => query.DueTime)           // Sắp xếp giảm dần theo DueTime
                                    .ThenByDescending(query => query.StartTime)         // Nếu DueTime = NULL, dùng StartTime
@@ -279,7 +274,7 @@ namespace UserAPI.Controllers
                     StartTime = statime,
                     DueTime = statime,
                     UserID = checkUser.Id,
-                    checkDone=true,
+                    checkDone = true,
                 };
                 try
                 {
@@ -296,7 +291,7 @@ namespace UserAPI.Controllers
                 return BadRequest(new ErroMess { msg = "Số dư của bạn không đủ!" });
             }
 
-            return Ok(new ErroMess {success=true, msg = "Thành Công" });
+            return Ok(new ErroMess { success = true, msg = "Thành Công" });
         }
 
     }

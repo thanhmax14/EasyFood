@@ -1,15 +1,11 @@
-﻿using Azure;
+﻿using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 using BusinessLogic.Services.BalanceChanges;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Models;
-using Net.payOS.Types;
 using Repository.ViewModels;
-using System.Collections.Generic;
-using System.Net.Http.Headers;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Text.Json;
 
 namespace EasyFood.web.Controllers
 {
@@ -67,7 +63,7 @@ namespace EasyFood.web.Controllers
                 list.Balance = dataRepone;
                 list.BalanceUser = await this._balance.GetBalance(user.Id);
 
-                return View(list); 
+                return View(list);
             }
             catch (Exception)
             {
@@ -172,7 +168,7 @@ namespace EasyFood.web.Controllers
 
             string json = JsonSerializer.Serialize(temdata);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-           
+
             try
             {
                 var response = await client.PostAsync($"{this._url}", content);
@@ -184,14 +180,14 @@ namespace EasyFood.web.Controllers
                 var mes = await response.Content.ReadAsStringAsync();
                 var dataRepone = JsonSerializer.Deserialize<ErroMess>(mes, options);
                 if (response.IsSuccessStatusCode)
-                { 
+                {
                     return Json(dataRepone);
                 }
                 return Json(dataRepone);
             }
             catch (Exception ex)
             {
-                return Json(new { success=false, msg = "Lỗi không xác định, vui lòng thử lại." });
+                return Json(new { success = false, msg = "Lỗi không xác định, vui lòng thử lại." });
             }
         }
 
@@ -206,9 +202,9 @@ namespace EasyFood.web.Controllers
             var urlBalace = $"https://localhost:5555/Gateway/WalletService/GetWallet";
             try
             {
-       
+
                 var responceBalance = await this.client.GetAsync($"{urlBalace}/{user.Id}");
-                if  (!responceBalance.IsSuccessStatusCode)
+                if (!responceBalance.IsSuccessStatusCode)
                 {
                     return BadRequest("Lỗi Hệ Thống");
                 }
@@ -219,7 +215,7 @@ namespace EasyFood.web.Controllers
                     PropertyNameCaseInsensitive = true
                 };
                 var dataRepone = JsonSerializer.Deserialize<List<BalanceListViewModels>>(messBalance, options);
-           
+
                 return Json(dataRepone);
             }
             catch (Exception)
@@ -230,7 +226,7 @@ namespace EasyFood.web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Withdraw(long number,string code, string numAccount, string nameAcc)
+        public async Task<IActionResult> Withdraw(long number, string code, string numAccount, string nameAcc)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -242,16 +238,16 @@ namespace EasyFood.web.Controllers
             if (number % 1 != 0)
                 return Json(new ErroMess { msg = "Số tiền phải là số nguyên, không được có phần thập phân." });
 
-            if(string.IsNullOrWhiteSpace(code)) return Json(new ErroMess { msg = "Vui lòng chọn lại số tài khoản" });
-            if(string.IsNullOrWhiteSpace(numAccount)) return Json(new ErroMess { msg = "Vui lòng nhập số tài khoản" });
-            if(string.IsNullOrWhiteSpace(nameAcc)) return Json(new ErroMess { msg = "Vui lòng nhập tên tài khoản" });
+            if (string.IsNullOrWhiteSpace(code)) return Json(new ErroMess { msg = "Vui lòng chọn lại số tài khoản" });
+            if (string.IsNullOrWhiteSpace(numAccount)) return Json(new ErroMess { msg = "Vui lòng nhập số tài khoản" });
+            if (string.IsNullOrWhiteSpace(nameAcc)) return Json(new ErroMess { msg = "Vui lòng nhập tên tài khoản" });
 
             try
             {
                 var messErro = new ErroMess();
                 this._url = "https://api.vietqr.io/v2/banks";
                 var responce = await this.client.GetAsync(_url);
-              
+
                 responce.EnsureSuccessStatusCode();
 
                 string json = await responce.Content.ReadAsStringAsync();
@@ -297,7 +293,7 @@ namespace EasyFood.web.Controllers
                     return Json(new ErroMess { msg = "Đã xảy ra lỗi, hãy thử lại hoặc liên hệ admin!!" });
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Json(new ErroMess { msg = "Đã xảy ra lỗi, hãy thử lại hoặc liên hệ admin!!" });
             }

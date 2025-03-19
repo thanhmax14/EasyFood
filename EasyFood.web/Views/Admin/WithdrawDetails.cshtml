@@ -315,7 +315,7 @@
 
                                 <div class="live-preview">
                                     <form id="withdrawForm" asp-controller="Admin" method="post">
-                                        <input type="hidden" asp-for="ID" />
+                                        <input type="hidden" asp-for="ID" id="idsave" />
                                         <input type="hidden" asp-for="UserID" />
                                         <input type="hidden" asp-for="Method" />
                                         <input type="hidden" asp-for="MoneyChange" />
@@ -374,8 +374,8 @@
 
                                                     @if (Model.Status == "PROCESSING")
                                                     {
-                                                        <button type="submit" class="btn btn-success me-2" onclick="submitForm('AcceptWithdraw')">Accept</button>
-                                                        <button type="submit" class="btn btn-danger" onclick="submitForm('RejectWithdraw')">Reject</button>
+                                                        <button type="button" class="btn btn-success me-2" id="btnAccept">Accept</button>
+                                                        <button type="button" class="btn btn-danger" id="btnReject">Reject</button>
                                                     }
                                                 </div>
                                             </div>
@@ -463,10 +463,166 @@
 
     <!-- App js -->
     <script src="~/assetsAdmin/js/app.js"></script>
-
+    <!-- App js -->
+    <script src="~/assetsAdmin/js/app.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="~/assets/cute-alert/cute-alert.js"></script>
+    <script src="~/assets/sweetalert2/sweetalert2.js"></script>
+    <link rel="stylesheet" href="~/assets/cute-alert/style.css" />
+    <link href="~/assets/sweetalert2/default.css" rel="stylesheet" />
+    <script src="~/assets/simple-notify/simple-notify.min.js"></script>
 </body>
 
 
 <!-- Mirrored from themesbrand.com/velzon/html/master/forms-layouts.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 26 Feb 2025 12:22:12 GMT -->
 
 </html>
+
+<script type="text/javascript">
+
+    $("#btnAccept").on("click", function () {
+        var $btn = $(this);
+        $btn.html('<i class="fa fa-spinner fa-spin"></i> Đang xử lý...').prop('disabled', true);
+
+        // Gọi Swal trước, nếu xác nhận thì mới gửi request
+        Swal.fire({
+            title: "Bạn có chắc chắn?",
+            text: "Bạn muốn chấp nhận rút tiền",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Có, xóa!",
+            cancelButtonText: "Hủy"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                sendAcceptRequest($btn);
+            } else {
+                $btn.html('Accept').prop('disabled', false);
+            }
+        });
+    });
+
+    function sendAcceptRequest($btn) {
+        $.ajax({
+            url: "/Admin/AcceptWithdraw",
+            type: "POST",
+            data: { id: $("#idsave").val() },
+            headers: {
+                "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val()
+            },
+            success: function (response) {
+                if (response.success) {
+                    $("#btnAccept").remove();
+                    $("#btnReject").remove();
+                    $("#StatusInput").val("Success");
+               
+                    new Notify({
+                        status: 'success',
+                        title: 'Thành công!',
+                        text: response.msg || 'Gửi thành công!',
+                        effect: 'fade',
+                        speed: 300,
+                        showIcon: true,
+                        showCloseButton: true,
+                        autoclose: true,
+                        autotimeout: 3000,
+                        position: 'right top'
+                    });
+                } else {
+                    new Notify({
+                        status: 'error',
+                        title: 'Thất Bại',
+                        text: response.msg || 'Gửi thất bại!',
+                        effect: 'fade',
+                        speed: 300,
+                        showIcon: true,
+                        showCloseButton: true,
+                        autoclose: true,
+                        autotimeout: 3000,
+                        position: 'right top'
+                    });
+                }
+                $btn.html('Accept').prop('disabled', false);
+            },
+            error: function () {
+                Swal.fire('Thất bại', "Đã xảy ra lỗi", 'error');
+                $btn.html('Accept').prop('disabled', false);
+            }
+        });
+    }
+
+
+</script>
+
+<script type="text/javascript">
+
+    $("#btnReject").on("click", function () {
+        var $btn = $(this);
+        $btn.html('<i class="fa fa-spinner fa-spin"></i> Đang xử lý...').prop('disabled', true);
+
+        // Gọi Swal trước, nếu xác nhận thì mới gửi request
+        Swal.fire({
+            title: "Bạn có chắc chắn?",
+            text: "Bạn muốn từ chối rút tiền",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Có, xóa!",
+            cancelButtonText: "Hủy"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                sendRejectRequest($btn);
+            } else {
+                $btn.html('Reject').prop('disabled', false);
+            }
+        });
+    });
+
+    function sendRejectRequest($btn) {
+        $.ajax({
+            url: "/Admin/RejectWithdraw",
+            type: "POST",
+            data: { id: $("#idsave").val() },
+            headers: {
+                "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val()
+            },
+            success: function (response) {
+                if (response.success) {
+                    $("#btnReject").remove();
+                 $("#btnAccept").remove();
+                 $("#StatusInput").val("CANCELLED");
+                    new Notify({
+                        status: 'success',
+                        title: 'Thành công!',
+                        text: response.msg || 'Gửi thành công!',
+                        effect: 'fade',
+                        speed: 300,
+                        showIcon: true,
+                        showCloseButton: true,
+                        autoclose: true,
+                        autotimeout: 3000,
+                        position: 'right top'
+                    });
+                } else {
+                    new Notify({
+                        status: 'error',
+                        title: 'Thất Bại',
+                        text: response.msg || 'Gửi thất bại!',
+                        effect: 'fade',
+                        speed: 300,
+                        showIcon: true,
+                        showCloseButton: true,
+                        autoclose: true,
+                        autotimeout: 3000,
+                        position: 'right top'
+                    });
+                }
+                $btn.html('Reject').prop('disabled', false);
+            },
+            error: function () {
+                Swal.fire('Thất bại', "Đã xảy ra lỗi", 'error');
+                $btn.html('Reject').prop('disabled', false);
+            }
+        });
+    }
+
+
+</script>
