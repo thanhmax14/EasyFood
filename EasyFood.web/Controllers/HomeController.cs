@@ -1,4 +1,4 @@
-﻿using BusinessLogic.Hash;
+﻿   using BusinessLogic.Hash;
 using BusinessLogic.Services.BalanceChanges;
 using BusinessLogic.Services.Carts;
 using BusinessLogic.Services.Orders;
@@ -670,7 +670,7 @@ namespace EasyFood.web.Controllers
         [HttpGet]
         public async Task<IActionResult> Invoice(string id)
         {
-         await Task.Delay(3000);
+       /*  await Task.Delay(3000);*/
             var tem = new InvoiceViewModels();
 
             if(int.TryParse(id, out var orderCode))
@@ -728,8 +728,26 @@ namespace EasyFood.web.Controllers
                         {
                             return RedirectToAction("NotFoundPage", "Home");
                         }
+                        tem.orderCoce = id;
+                        tem.invoiceDate = flagBalance.StartTime;
+                        tem.DueDate = flagBalance.DueTime;
+                        tem.NameUse = getUser.FirstName + " " + getUser.LastName;
+                        tem.paymentMethod = "Online Banking";
+                        tem.status = flagBalance.Status;
+                        tem.emailUser = getUser.Email;
+                        tem.phoneUser = getUser.PhoneNumber;
+                        tem.tax = 0;
+                        tem.AddressUse = getUser.Address;
+                        tem.itemList.Add(new ItemInvoice
+                        {
+                            nameItem = $"Deposit to {getUser.UserName}",
+                            amount = flagBalance.MoneyChange,
+                            quantity = 1,
+                            unitPrice = flagBalance.MoneyChange
+                        });
+                        tem.invoiceDate = flagBalance.StartTime;
                     }
-                    if (flagBalance.Method == "deposit")
+                    if (flagBalance.Method.Equals("Deposit", StringComparison.OrdinalIgnoreCase))
                     {
                         tem.orderCoce = id;
                         tem.invoiceDate = flagBalance.StartTime;
@@ -824,6 +842,18 @@ namespace EasyFood.web.Controllers
                 return StatusCode(500, new { message = "Lỗi server", error = ex.Message });
             }
 
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetBalance()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return Json(new ErroMess { msg= "Bạn phải đăng nhập thể thực hiện hành động này!" });
+            }
+            var balance = await this._balance.GetBalance(user.Id);
+            return Json(new ErroMess { success =true, msg = $"{balance}" });
         }
     }
 }
