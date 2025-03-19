@@ -496,7 +496,7 @@
                                                 <span class="old-price">@item.Price</span>
                                             </div>
                                             <div class="add-cart">
-                                                <a class="add" href="shop-cart.html">
+                                                <a class="add" href="javascript:void(0);" onclick="AddToCart('@item.ID')">
                                                     <i class="fi-rs-shopping-cart mr-5"></i>Add
                                                 </a>
                                             </div>
@@ -2130,6 +2130,67 @@
             </div>
         </div>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script>
+    function AddToCart(productId) {
+        $.ajax({
+            url: "/Home/AddToCart",  // API to handle adding to cart
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({ ProductID: productId, quantity: 1 }),
+            success: function (response) {
+                if (response.success) {
+                    new Notify({
+                        status: 'success',
+                        title: 'Success!',
+                        text: response.message,
+                        effect: 'fade',
+                        speed: 300,
+                        showIcon: true,
+                        showCloseButton: true,
+                        autoclose: true,
+                        autotimeout: 3000,
+                        position: 'right top',
+                    });
+                } else {
+                    new Notify({
+                        status: 'error',
+                        title: 'Error!',
+                        text: response.message,
+                        effect: 'fade',
+                        speed: 300,
+                        showIcon: true,
+                        showCloseButton: true,
+                        autoclose: true,
+                        autotimeout: 3000,
+                        position: 'right top',
+                    });
+                }
+            },
+            error: function () {
+                new Notify({
+                    status: 'error',
+                    title: 'Server Error!',
+                    text: "An error occurred, please try again.",
+                    effect: 'fade',
+                    speed: 300,
+                    showIcon: true,
+                    showCloseButton: true,
+                    autoclose: true,
+                    autotimeout: 3000,
+                    position: 'right top',
+                });
+            }
+        });
+    }
+</script>
+ 
+
+  
+
+
+    <script src="https://cdn.jsdelivr.net/npm/notify-js@3/notify.min.js"></script>
+
     <!-- Vendor JS-->
     <script src="~/assets/js/vendor/modernizr-3.6.0.min.js"></script>
     <script src="~/assets/js/vendor/jquery-3.6.0.min.js"></script>

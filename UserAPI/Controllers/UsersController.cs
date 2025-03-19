@@ -219,41 +219,61 @@ namespace UserAPI.Controllers
         }
 
         [HttpPost("AddCart")]
-        public async Task<IActionResult> AddCart(Guid productId, int quantity, CartItem obj)
+        public async Task<IActionResult> AddCart([FromBody] CartViewModels obj)
         {
             try
             {
-                var user = await _userManager.GetUserAsync(User);
-                var product = await _productService.FindAsync(x => x.ID == productId);
-                if(product == null)
+                var user = await _userManager.FindByIdAsync(obj.UserID);
+                if (user == null)
+                {
+                    return Unauthorized(new { message = "User not authenticated" });
+                }
+                var productVarian = await _productVariantService.FindAsync(x => x.ProductID == obj.ProductID);
+
+                var product = await _productService.FindAsync(x => x.ID == obj.ProductID);
+
+                if (product == null)
                 {
                     return BadRequest(new { message = "Product not found" });
                 }
-                var cartItem = await _cartService.FindAsync(x => x.UserID == user.Id && x.ProductID == productId);
+
+                var cartItem = await _cartService.FindAsync(x => x.UserID == user.Id && x.ProductID == obj.ProductID);
+                int currentQuantity = cartItem?.Quantity ?? 0;
+                int newTotalQuantity = currentQuantity + obj.quantity;
+
+                // 🚨 Kiểm tra nếu tổng số lượng vượt quá stock
+                if (newTotalQuantity > productVarian.Stock)
+                {
+                    return BadRequest(new { message = $"Số lượng vượt quá tồn kho! Chỉ còn {productVarian.Stock} sản phẩm." });
+                }
                 if (cartItem != null)
                 {
-                    cartItem.Quantity += quantity;
+                    cartItem.Quantity += obj.quantity;
                     await _cartService.UpdateAsync(cartItem);
-                } else
+                    await _cartService.SaveChangesAsync();
+                }
+                else
                 {
                     var newCart = new Cart
                     {
-                        UserID = user.Id,  // Gán ID người dùng
-                        ProductID = productId,
-                        Quantity = quantity
+                        ID = Guid.NewGuid(),
+                        CreateDate = DateTime.Now,
+                        UserID = user.Id,
+                        ProductID = obj.ProductID,
+                        Quantity = obj.quantity
                     };
                     await _cartService.AddAsync(newCart);
+                    await _cartService.SaveChangesAsync();
                 }
-                return Ok("Add Cart Success!");
 
+                return Ok(new { success = true, message = "Add Cart Success!" });
             }
             catch (Exception ex)
             {
-
-                return StatusCode(500, $"Lỗi server: {ex.Message}");
-
+                return StatusCode(500, new { success = false, message = $"Lỗi server: {ex.Message}" });
             }
         }
+
         [HttpPost("UpdateCart/{id}")]
         public async Task<IActionResult> UpdateCart([FromBody] CartItem obj)
         {
@@ -266,12 +286,31 @@ namespace UserAPI.Controllers
             await _cartService.UpdateAsync(carItem);
             await _cartService.SaveChangesAsync();
             var product = await _productService.FindAsync(x => x.ID == obj.ProductID);
-            var Productvar = await _productVariantService.FindAsync(x => x.ProductID == product.ID);
-            decimal subtotal = carItem.Quantity * (Productvar?.Price ?? 0);
-            return Ok(new { success = true, subtotal = subtotal });
-
+          /*  var Productvar = await _productVariantService.FindAsync(x => x.ProductID == product.ID);
+            decimal subtotal = carItem.Quantity * (Productvar?.Price ?? 0);*/
+            return Ok(new { success = true });
         }
+        [HttpPost("DeleteCart/{id}")]
+        public async Task<IActionResult> DeleteCart(Guid id)
+        {
+            try
+            {
+                var cartItem = await _cartService.FindAsync(z => z.ProductID == id);
+                if (cartItem == null)
+                {
+                    return BadRequest(new { message = "ProductId not found" });
+                }
 
+                await _cartService.DeleteAsync(cartItem);
+                await _cartService.SaveChangesAsync();
+
+                return Ok(new { message = "Product deleted successfully" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while deleting the product.", error = ex.Message });
+            }
+        }
 
     }
 }
