@@ -317,8 +317,101 @@ namespace EasyFood.web.Controllers
                 return View(withdrawList);
             }
         }
+        public async Task<IActionResult> WithdrawDetails(string id)
+        {
+            try
+            {
+                // Kiểm tra ID có hợp lệ không
+                if (!Guid.TryParse(id, out Guid withdrawId))
+                {
+                    return Json(new ErroMess { success = false, msg = "ID không hợp lệ." });
+                }
+
+                // Tìm thông tin rút tiền theo ID
+                var withdraw = await _balance.FindAsync(w => w.ID == withdrawId);
+
+                if (withdraw == null)
+                {
+                    return Json(new ErroMess { success = false, msg = "Không tìm thấy yêu cầu rút tiền." });
+                }
+
+                // Lấy thông tin người dùng
+                var user = await _userManager.FindByIdAsync(withdraw.UserID);
+                if (user == null)
+                {
+                    return Json(new ErroMess { success = false, msg = "Người dùng không tồn tại." });
+                }
+
+                // Tạo ViewModel để hiển thị trong View
+                var withdrawModel = new WithdrawAdminListViewModel
+                {
+                    ID = withdraw.ID,
+                    UserName = user.UserName,
+                    MoneyChange = withdraw.MoneyChange,
+                    StartTime = withdraw.StartTime,
+                    DueTime = withdraw.DueTime,
+                    Description = withdraw.Description,
+                    Status = withdraw.Status,
+                    Method = withdraw.Method,
+                    UserID = withdraw.UserID
+                };
+
+                return View(withdrawModel);
+            }
+            catch (Exception ex)
+            {
+                // Ghi log lỗi để debug sau này
+                Console.WriteLine($"Lỗi: {ex.Message}");
+
+                // Trả về lỗi JSON để tránh chết chương trình
+                return Json(new ErroMess { success = false, msg = "Có lỗi xảy ra, vui lòng thử lại sau." });
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> AcceptWithdraw(WithdrawAdminListViewModel model)
+        {
+            try
+            {
+
+                string apiUrl = $"https://localhost:5555/Gateway/WithdrawService/AcceptWithdraw/{model.ID}";
+
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                var jsonContent = JsonSerializer.Serialize(model);
+                var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+
+
+                var response = await client.PutAsync(apiUrl, content);
+
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    PropertyNameCaseInsensitive = true
+                };
+                var mes = await response.Content.ReadAsStringAsync();
+                var dataRepone = JsonSerializer.Deserialize<ErroMess>(mes, options);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Redirect("/Admin/WithdrawList");
+                }
+
+                return Json(dataRepone);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = "Lỗi kết nối API Gateway! " + ex.Message });
+            }
+        }
+
+
+
+
+
 
     }
-
 }
+
+
 

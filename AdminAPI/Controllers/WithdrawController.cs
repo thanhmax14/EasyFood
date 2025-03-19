@@ -50,8 +50,8 @@ namespace AdminAPI.Controllers
                     UserID = balance.UserID,
                     Status = balance.Status,
                     Method = balance.Method,
-                    DisPlay = balance.DisPlay,
                     UserName = user?.UserName
+
                 };
 
                 result.Add(withdrawModel);
@@ -59,6 +59,36 @@ namespace AdminAPI.Controllers
 
             return Ok(result);
         }
+        [HttpPut("AcceptWithdraw/{id}")]
+        public async Task<IActionResult> AcceptWithdraw(Guid id, [FromBody] WithdrawAdminListViewModel obj)
+        {
+            if (obj == null)
+            {
+                return BadRequest(new { message = "Dữ liệu không hợp lệ." });
+            }
 
+            try
+            {
+                var withdraw = await _balance.FindAsync(w => w.ID == id);
+                if (withdraw == null)
+                {
+                    return NotFound(new { success = false, msg = "Không tìm thấy yêu cầu rút tiền." });
+                }
+
+                // ✅ Cập nhật trạng thái và thời gian xử lý
+                withdraw.Status = "Success";
+                withdraw.DueTime = DateTime.UtcNow;
+
+                // ✅ Lưu thay đổi vào DB
+                await _balance.UpdateAsync(withdraw);
+                await _balance.SaveChangesAsync();
+
+                return Ok(new { success = true, msg = "Xác nhận rút tiền thành công!" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, msg = "Lỗi: " + ex.Message });
+            }
+        }
     }
 }
