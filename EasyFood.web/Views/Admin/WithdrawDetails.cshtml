@@ -1,4 +1,5 @@
-﻿@model List<Repository.ViewModels.WithdrawAdminListViewModel>
+﻿@model Repository.ViewModels.WithdrawAdminListViewModel
+
 @using System.Text.Json
 <!doctype html>
 <html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg"
@@ -30,7 +31,6 @@
     <link href="~/assetsAdmin/css/app.min.css" rel="stylesheet" type="text/css" />
     <!-- custom Css-->
     <link href="~/assetsAdmin/css/custom.min.css" rel="stylesheet" type="text/css" />
-    <link href="~/assets/simple-notify/simple-notify.css" rel="stylesheet" />
 
 </head>
 
@@ -279,6 +279,7 @@
     <!-- ============================================================== -->
     <!-- Start right Content here -->
     <!-- ============================================================== -->
+
     <div class="main-content">
 
         <div class="page-content">
@@ -288,12 +289,12 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-galaxy-transparent">
-                            <h4 class="mb-sm-0">Feedback List</h4>
+                            <h4 class="mb-sm-0">Withdraw Details</h4>
 
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
                                     <li class="breadcrumb-item"><a href="feedbackList.html">Tables</a></li>
-                                    <li class="breadcrumb-item active">Feedback List</li>
+                                    <li class="breadcrumb-item active">Withdraw Details</li>
                                 </ol>
                             </div>
 
@@ -303,119 +304,129 @@
                 <!-- end page title -->
 
                 <div class="row">
-                    <div class="col-lg-12">
+                    <div class="col-xxl-12">
                         <div class="card">
-                            <div class="card-header">
-                                <h4 class="card-title mb-0 flex-grow-1">Feedback List</h4>
+                            <div class="card-header align-items-center d-flex">
+                                <h4 class="card-title mb-0 flex-grow-1">Withdraw Details</h4>
+
                             </div><!-- end card header -->
 
                             <div class="card-body">
-                                <div id="table-withdraw"></div>
-                            </div><!-- end card-body -->
 
-                        </div><!-- end card -->
-                    </div>
-                    <!-- end col -->
+                                <div class="live-preview">
+                                    <form id="withdrawForm" asp-controller="Admin" method="post">
+                                        <input type="hidden" asp-for="ID" />
+                                        <input type="hidden" asp-for="UserID" />
+                                        <input type="hidden" asp-for="Method" />
+                                        <input type="hidden" asp-for="MoneyChange" />
+
+                                        <div class="row">
+                                            <!-- User Name -->
+                                            <div class="col-md-12">
+                                                <div class="mb-3">
+                                                    <label for="UserNameInput" class="form-label">User Name</label>
+                                                    <input type="text" class="form-control" id="UserNameInput" asp-for="UserName" readonly>
+                                                </div>
+                                            </div>
+
+                                            <!-- Các trường khác -->
+                                            <div class="col-md-4">
+                                                <div class="mb-3">
+                                                    <label for="TransactionDateInput" class="form-label">Transaction Date</label>
+                                                    <input type="text" class="form-control" id="TransactionDateInput" asp-for="StartTime" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="mb-3">
+                                                    <label for="AmountInput" class="form-label">Amount</label>
+                                                    <input type="text" class="form-control" id="AmountInput" asp-for="Amount" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="mb-3">
+                                                    <label for="StatusInput" class="form-label">Status</label>
+                                                    <input type="text" class="form-control" id="StatusInput" asp-for="Status" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="mb-3">
+                                                    <label for="BankNameInput" class="form-label">Bank Name</label>
+                                                    <input type="text" class="form-control" id="BankNameInput" asp-for="BankName" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="mb-3">
+                                                    <label for="BankNumberInput" class="form-label">Bank Number</label>
+                                                    <input type="text" class="form-control" id="BankNumberInput" asp-for="BankAccount" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="mb-3">
+                                                    <label for="RecipientInput" class="form-label">Recipient</label>
+                                                    <input type="text" class="form-control" id="RecipientInput" asp-for="Recipient" readonly>
+                                                </div>
+                                            </div>
+
+                                            <!-- Nút điều hướng -->
+                                            <div class="col-md-12">
+                                                <div class="text-end mt-3">
+                                                    <a href="/admin/WithdrawList" class="btn btn-secondary me-2">Back to List</a>
+
+                                                    @if (Model.Status == "PROCESSING")
+                                                    {
+                                                        <button type="submit" class="btn btn-success me-2" onclick="submitForm('AcceptWithdraw')">Accept</button>
+                                                        <button type="submit" class="btn btn-danger" onclick="submitForm('RejectWithdraw')">Reject</button>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <script>
+                                        function submitForm(action) {
+                                            var form = document.getElementById("withdrawForm");
+                                            form.action = "/Admin/" + action;
+                                            form.submit();
+                                        }
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+                    </div> <!-- end col -->
                 </div>
-                <!-- end row -->
+                <!--end row-->
 
 
-                <script>
-                    document.addEventListener("DOMContentLoaded", function () {
-                        var withdraws = @Html.Raw(JsonSerializer.Serialize(Model, new JsonSerializerOptions { PropertyNamingPolicy = null }));
 
-                        if (document.getElementById("table-withdraw")) {
-                            new gridjs.Grid({
-                                columns: [
-                                    { name: "ID", hidden: true },
-                                    { name: "No" },
-                                    { name: "User Name" },
-                                    { name: "Amount" },
-                                    { name: "Transaction Date" },
-                                    {
-                                        name: "Status",
-                                        width: "150px",
-                                        formatter: (cell) => {
-                                            let statusClass = {
-                                                "PROCESSING": "bg-warning-subtle text-warning", // Đang xử lý
-                                                "Success": "bg-success-subtle text-success",   // Thành công
-                                                "CANCELLED": "bg-danger-subtle text-danger"   // Đã hủy
-                                            }[cell] || "bg-secondary-subtle text-secondary"; // Mặc định
-
-                                            return gridjs.html(`<span class="badge ${statusClass}">${cell}</span>`);
-                                        },
-                                        sort: {
-                                            compare: (a, b) => {
-                                                const order = { "PROCESSING": 1, "Success": 2, "CANCELLED": 3 };
-                                                return (order[a] || 4) - (order[b] || 4);
-                                            }
-                                        }
-                                    },
-                                    {
-                                        name: "Actions",
-                                        width: "150px",
-                                        formatter: (_, row) => {
-                                            let WithdrawId = row.cells[0].data; // Lấy ID của giao dịch
-                                            let url = `/admin/WithdrawDetails/${WithdrawId}`; // URL động
-
-                                                               return gridjs.html(`
-                        <a class="btn btn-sm btn-light" href="${url}" ">Details</a>
-                    `);
-
-                                        }
-                                    }
-                                ],
-                                pagination: {
-                                    enabled: true,
-                                    limit: 10,
-                                    summary: true
-                                },
-                                pageSize: [10, 20, 30, 40, 50],
-                                sort: true,
-                                search: true,
-                                                    data: withdraws.map(withdraw => [
-                        withdraw.ID, // ID
-                        withdraw.No, // No
-                        withdraw.UserName, // UserName từ ViewModel
-                        `$${withdraw.MoneyChange.toFixed(2)}`, // Định dạng tiền tệ
-                        new Date(withdraw.StartTime).toLocaleDateString(), // Ngày giao dịch
-                        (() => {
-                            switch (withdraw.Status) {
-                                case "PROCESSING": return "PROCESSING";
-                                case "Success": return "Success";
-                                case "CANCELLED": return "CANCELLED";
-                                default: return "Unknown";
-                            }
-                        })() // Gọi ngay hàm xử lý
-                    ])
-                            }).render(document.getElementById("table-withdraw"));
+            </div> <!-- container-fluid -->
 
 
-                        }
-                    });
-                </script>
 
-            </div>
-            <!-- container-fluid -->
         </div>
         <!-- End Page-content -->
-        <!-- <footer class="footer">
+
+
+
+
+
+
+
+        <footer class="footer">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-sm-6">
-                        <script>document.write(new Date().getFullYear())</script> © Velzon.
+                        <script>document.write(new Date().getFullYear())</script> © EasyFood.
                     </div>
                     <div class="col-sm-6">
                         <div class="text-sm-end d-none d-sm-block">
-                            Design & Develop by Themesbrand
+                            Design & Develop by EasyFood
                         </div>
                     </div>
                 </div>
             </div>
-        </footer> -->
+        </footer>
     </div>
     <!-- end main content-->
-    </div>
+
     <!-- END layout-wrapper -->
     <!--start back-to-top-->
     <button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
@@ -452,12 +463,7 @@
 
     <!-- App js -->
     <script src="~/assetsAdmin/js/app.js"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-    <script src="~/assets/cute-alert/cute-alert.js"></script>
-    <script src="~/assets/sweetalert2/sweetalert2.js"></script>
-    <link rel="stylesheet" href="~/assets/cute-alert/style.css" />
-    <link href="~/assets/sweetalert2/default.css" rel="stylesheet" />
-    <script src="~/assets/simple-notify/simple-notify.min.js"></script>
+
 </body>
 
 
