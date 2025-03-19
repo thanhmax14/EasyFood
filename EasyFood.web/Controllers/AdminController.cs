@@ -368,22 +368,22 @@ namespace EasyFood.web.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> AcceptWithdraw(WithdrawAdminListViewModel model)
+        public async Task<IActionResult> AcceptWithdraw(string id)
         {
+            if (string.IsNullOrWhiteSpace(id) || !Guid.TryParse(id, out Guid guidId))
+                return BadRequest(new ErroMess { msg = "ID không hợp lệ!" });
+            var flag = await _balance.FindAsync(p => p.ID == guidId);
+            if (flag == null)
+                return NotFound(new ErroMess { msg = "Không tìm thấy yêu cầu rút tiền!" });
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound(new ErroMess { msg = "Bạn phải đăng nhập thể thực hiện hành động này!" });
+            }
+            this.url = $"https://localhost:5555/Gateway/WithdrawService/AcceptWithdraw";
             try
             {
-
-                string apiUrl = $"https://localhost:5555/Gateway/WithdrawService/AcceptWithdraw/{model.ID}";
-
-                using var client = new HttpClient();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                var jsonContent = JsonSerializer.Serialize(model);
-                var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
-
-
-                var response = await client.PutAsync(apiUrl, content);
-
+                var response = await client.GetAsync($"{this.url}/{id}");
                 var options = new JsonSerializerOptions
                 {
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -391,22 +391,55 @@ namespace EasyFood.web.Controllers
                 };
                 var mes = await response.Content.ReadAsStringAsync();
                 var dataRepone = JsonSerializer.Deserialize<ErroMess>(mes, options);
-
                 if (response.IsSuccessStatusCode)
                 {
-                    return Redirect("/Admin/WithdrawList");
+                    return Json(dataRepone);
                 }
-
                 return Json(dataRepone);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { success = false, message = "Lỗi kết nối API Gateway! " + ex.Message });
+                return Json(new { success = false, msg = "Lỗi không xác định, vui lòng thử lại." });
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RejectWithdraw(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id) || !Guid.TryParse(id, out Guid guidId))
+                return BadRequest(new ErroMess { msg = "ID không hợp lệ!" });
+            var flag = await _balance.FindAsync(p => p.ID == guidId);
+            if (flag == null)
+                return NotFound(new ErroMess { msg = "Không tìm thấy yêu cầu rút tiền!" });
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound(new ErroMess { msg = "Bạn phải đăng nhập thể thực hiện hành động này!" });
+            }
+            this.url = "https://localhost:5555/Gateway/WithdrawService/RejectWithdraw";
+            try
+            {
+                var response = await client.GetAsync($"{this.url}/{id}");
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    PropertyNameCaseInsensitive = true
+                };
+                var mes = await response.Content.ReadAsStringAsync();
+                var dataRepone = JsonSerializer.Deserialize<ErroMess>(mes, options);
+                if (response.IsSuccessStatusCode)
+                {
+                    return Json(dataRepone);
+                }
+                return Json(dataRepone);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, msg = "Lỗi không xác định, vui lòng thử lại." });
+            }
 
-
+        }
 
 
 
