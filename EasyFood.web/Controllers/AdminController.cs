@@ -1,7 +1,6 @@
 ﻿using System.Net.Http.Headers;
-using System.Runtime.InteropServices;
 using System.Text.Json;
-using Microsoft.AspNetCore.Authorization;
+using BusinessLogic.Services.BalanceChanges;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Models;
@@ -9,15 +8,17 @@ using Repository.ViewModels;
 
 namespace EasyFood.web.Controllers
 {
-    
+
     public class AdminController : Controller
     {
+        private readonly IBalanceChangeService _balance; // xử lý withdaw
         private readonly UserManager<AppUser> _userManager;
         private HttpClient client = null;
         private string url;
-        public AdminController(UserManager<AppUser> userManager)
+        public AdminController(UserManager<AppUser> userManager, IBalanceChangeService balance)
         {
             _userManager = userManager;
+            _balance = balance;
             client = new HttpClient();
             var contentype = new MediaTypeWithQualityHeaderValue("application/json");
             client.DefaultRequestHeaders.Accept.Add(contentype);
@@ -62,11 +63,11 @@ namespace EasyFood.web.Controllers
         public async Task<IActionResult> ManagementSeller()
         {
             var admin = await _userManager.GetUserAsync(User);
-            if(admin == null)
+            if (admin == null)
             {
                 return RedirectToAction("Login", "Home");
             }
-            if(!await _userManager.IsInRoleAsync(admin, "Admin"))
+            if (!await _userManager.IsInRoleAsync(admin, "Admin"))
             {
                 return RedirectToAction("Login", "Home");
             }
@@ -75,7 +76,7 @@ namespace EasyFood.web.Controllers
             try
             {
                 var respone = await client.GetAsync(apiURL);
-                if(!respone.IsSuccessStatusCode)
+                if (!respone.IsSuccessStatusCode)
                 {
                     return View(usersViews);
                 }
@@ -93,21 +94,24 @@ namespace EasyFood.web.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> AcceptSeller([FromBody] UsersViewModel obj) {
-            var admin = await _userManager.GetUserAsync (User);
-            if(admin == null || !await _userManager.IsInRoleAsync(admin, "Admin"))
+        public async Task<IActionResult> AcceptSeller([FromBody] UsersViewModel obj)
+        {
+            var admin = await _userManager.GetUserAsync(User);
+            if (admin == null || !await _userManager.IsInRoleAsync(admin, "Admin"))
             {
                 return RedirectToAction("Login", "Home");
             }
-             string apiURL = $"https://localhost:5555/Gateway/ManagementSellerService/Accept-seller/{obj.Email}";
+            string apiURL = $"https://localhost:5555/Gateway/ManagementSellerService/Accept-seller/{obj.Email}";
             try
             {
                 var jsonContent = JsonSerializer.Serialize(obj);
-                var content = new StringContent(jsonContent,System.Text.Encoding.UTF8, "application/json");
+                var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
                 var respone = await client.PostAsync(apiURL, content);
-                if (respone.IsSuccessStatusCode) {
+                if (respone.IsSuccessStatusCode)
+                {
                     return Json(new { success = true, message = "Cập nhật thành công" });
-                } else
+                }
+                else
                 {
                     return Json(new { success = false, message = "Cập nhật thất bại" });
                 }
@@ -132,11 +136,12 @@ namespace EasyFood.web.Controllers
             {
                 var jsonContent = JsonSerializer.Serialize(obj);
                 var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
-                var response = await client.PostAsync(apiURL,content);
-                if(response.IsSuccessStatusCode)
+                var response = await client.PostAsync(apiURL, content);
+                if (response.IsSuccessStatusCode)
                 {
                     return Json(new { success = true, message = "Cập nhật thành công" });
-                }else
+                }
+                else
                 {
                     return Json(new { success = true, message = "Cập nhật thất bại" });
                 }
@@ -282,6 +287,36 @@ namespace EasyFood.web.Controllers
             }
         }
 
+        public async Task<IActionResult> WithdrawList()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            string apiUrl = "https://localhost:5555/Gateway/WithdrawService/GetWithdraw";
+            List<WithdrawAdminListViewModel> withdrawList = new List<WithdrawAdminListViewModel>();
+
+            try
+            {
+                var response = await client.GetAsync(apiUrl);
+                if (!response.IsSuccessStatusCode)
+                {
+                    return View(withdrawList);
+                }
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                withdrawList = JsonSerializer.Deserialize<List<WithdrawAdminListViewModel>>(responseContent,
+                                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                return View(withdrawList);
+            }
+            catch (Exception)
+            {
+                return View(withdrawList);
+            }
+        }
 
     }
 
