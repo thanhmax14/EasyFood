@@ -186,8 +186,8 @@ namespace Repository.StoreDetails
                     ID = s.ID,
                     UserID = s.UserID,
                     Name = s.Name,
-                    CreatedDate = s.CreatedDate,
-                    ModifiedDate = s.ModifiedDate,
+                    CreatedDate = s.CreatedDate.Date,
+                    ModifiedDate = s.ModifiedDate, // Kiểm tra null trước khi lấy ngày
                     LongDescriptions = s.LongDescriptions,
                     ShortDescriptions = s.ShortDescriptions,
                     Address = s.Address,

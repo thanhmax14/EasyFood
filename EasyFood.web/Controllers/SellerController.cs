@@ -155,26 +155,26 @@ namespace EasyFood.web.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Lấy UserId của người đăng nhập
             if (userId == null)
             {
-                return RedirectToAction("Login", "Account"); // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
+                return RedirectToAction("Login", "Account");
             }
 
-            bool isSeller = await _storeRepository.IsUserSellerAsync(userId); // Kiểm tra xem có phải seller không
+            bool isSeller = await _storeRepository.IsUserSellerAsync(userId);
             if (!isSeller)
             {
                 TempData["ErrorMessage"] = "Bạn không phải là seller!";
-                return RedirectToAction("Index", "Home"); // Chuyển hướng nếu không phải seller
+                return RedirectToAction("Index", "Home");
             }
 
-            var stores = await _storeDetailService.GetStoresByUserIdAsync(userId); // Lấy danh sách store của user
+            var stores = await _storeDetailService.GetStoresByUserIdAsync(userId);
 
-            //if (stores == null || !stores.Any()) // Kiểm tra nếu không có store nào
-            //{
-            //    TempData["NoStoreMessage"] = "Bạn chưa có store nào. Hãy đăng ký ngay!";
-            //    return RedirectToAction("CreateStore", "Seller"); // Chuyển hướng đến trang đăng ký store
-            //}
+            // Kiểm tra nếu có store nhưng đang chờ duyệt
+            bool hasPendingStore = stores.Any(s => s.Status == "PENDING");
+
+            ViewBag.HasPendingStore = hasPendingStore; // Truyền thông tin ra View
 
             return View(stores);
         }
+
 
 
         [Authorize]
