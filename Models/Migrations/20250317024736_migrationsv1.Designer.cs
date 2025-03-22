@@ -12,8 +12,8 @@ using Models.DBContext;
 namespace Models.Migrations
 {
     [DbContext(typeof(EasyFoodDbContext))]
-    [Migration("20250305092209_migrations")]
-    partial class migrations
+    [Migration("20250317024736_migrationsv1")]
+    partial class migrationsv1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -268,6 +268,16 @@ namespace Models.Migrations
                     b.Property<bool>("DisPlay")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime?>("DueTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsComplele")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Method")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("MoneyAfterChange")
                         .HasColumnType("decimal(18,2)");
 
@@ -277,15 +287,19 @@ namespace Models.Migrations
                     b.Property<decimal>("MoneyChange")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("Time")
+                    b.Property<DateTime?>("StartTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserID")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("orderCode")
+                        .HasColumnType("int");
 
                     b.HasKey("ID");
 
@@ -457,9 +471,14 @@ namespace Models.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<Guid?>("VoucherID")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("ID");
 
                     b.HasIndex("UserID");
+
+                    b.HasIndex("VoucherID");
 
                     b.ToTable("Orders");
                 });
@@ -694,6 +713,46 @@ namespace Models.Migrations
                     b.ToTable("RecipeReviews");
                 });
 
+            modelBuilder.Entity("Models.Review", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Cmt")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DateRelay")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Datecmt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ProductID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Relay")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ProductID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Reviews");
+                });
+
             modelBuilder.Entity("Models.StoreDetails", b =>
                 {
                     b.Property<Guid>("ID")
@@ -741,6 +800,56 @@ namespace Models.Migrations
                         .IsUnique();
 
                     b.ToTable("StoreDetails");
+                });
+
+            modelBuilder.Entity("Models.Voucher", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CurrentUsage")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("DiscountAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("DiscountType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ExpirationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MaxUsage")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("MinOrderValue")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Scope")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Vouchers");
                 });
 
             modelBuilder.Entity("Models.Wishlist", b =>
@@ -887,7 +996,14 @@ namespace Models.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("Models.Voucher", "Voucher")
+                        .WithMany("Orders")
+                        .HasForeignKey("VoucherID")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.Navigation("AppUser");
+
+                    b.Navigation("Voucher");
                 });
 
             modelBuilder.Entity("Models.OrderDetail", b =>
@@ -988,6 +1104,25 @@ namespace Models.Migrations
                     b.Navigation("Recipe");
                 });
 
+            modelBuilder.Entity("Models.Review", b =>
+                {
+                    b.HasOne("Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Models.AppUser", "AppUser")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("Models.StoreDetails", b =>
                 {
                     b.HasOne("Models.AppUser", "AppUser")
@@ -1076,6 +1211,11 @@ namespace Models.Migrations
             modelBuilder.Entity("Models.StoreDetails", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("Models.Voucher", b =>
+                {
+                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }

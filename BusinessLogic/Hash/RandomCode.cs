@@ -73,5 +73,7 @@ namespace BusinessLogic.Hash
             string guidPart = Guid.NewGuid().ToString("N").Substring(0, 6); // Lấy 6 ký tự đầu của Guid
             return int.Parse(guidPart, System.Globalization.NumberStyles.HexNumber) % 1000000;
         }
+
+
     }
 }

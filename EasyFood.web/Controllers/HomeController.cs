@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Services.BalanceChanges;
+﻿   using BusinessLogic.Hash;
+using BusinessLogic.Services.BalanceChanges;
 using BusinessLogic.Services.Carts;
 using BusinessLogic.Services.Orders;
 using BusinessLogic.Services.ProductImages;
@@ -16,6 +17,7 @@ using Net.payOS;
 using Net.payOS.Types;
 using Org.BouncyCastle.Pqc.Crypto.Lms;
 using Repository.ViewModels;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http.Headers;
@@ -41,6 +43,7 @@ namespace EasyFood.web.Controllers
         private readonly IStoreDetailService _storeDetailService;
         private readonly IBalanceChangeService _balance;
         private readonly IOrdersServices _order;
+
         private readonly PayOS _payos;
 
 
@@ -66,9 +69,27 @@ namespace EasyFood.web.Controllers
 
 
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var list = new List<ProductsViewModel>();
+            this._url = "https://localhost:5555/Gateway/ProductsService/GetAllProducts";
+            try
+            {
+                var response = await client.GetAsync(this._url);
+                if (!response.IsSuccessStatusCode)
+                {
+                    return View(list);
+                }
+
+                var mes = await response.Content.ReadAsStringAsync();
+                list = JsonSerializer.Deserialize<List<ProductsViewModel>>(mes, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                return View(list);
+            }
+            catch (Exception ex)
+            {
+                return View(list);
+            }
         }
         [HttpGet]
         public IActionResult Login(string ReturnUrl = null)
@@ -336,11 +357,10 @@ namespace EasyFood.web.Controllers
         }
 
 
-
         public async Task<IActionResult> GetAllStore()
         {
             var list = new List<StoreViewModel>();
-            this._url = "https://localhost:5555/Gateway/StoreDetailService";
+            this._url = "https://localhost:5555/Gateway/StoreDetailService/GetAllStores";
             try
             {
                 var response = await client.GetAsync(this._url);
@@ -358,6 +378,44 @@ namespace EasyFood.web.Controllers
                     return View(list);
                 }
             }
+        }
+
+
+
+        public async Task<IActionResult> GetStoreDetail(Guid iD)
+        {
+
+            var FindStore = await _storeDetailService.FindAsync(x => x.ID == iD);
+
+            if (FindStore != null)
+            {
+                var list = new StoreDetailsViewModels();
+                this._url = $"https://localhost:5555/Gateway/StoreDetailService/GetStoreDetail?id={iD}";
+
+                try
+                {
+                    var response = await client.GetAsync(this._url);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        return View(list);
+                    }
+
+                    var mes = await response.Content.ReadAsStringAsync();
+                    list = JsonSerializer.Deserialize<StoreDetailsViewModels>(mes, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    return View(list);
+                }
+                catch (Exception ex)
+                {
+                    return View(list);
+                }
+            }
+          
+
+           
+
+
+            return NotFound();
         }
 
 
@@ -650,6 +708,7 @@ namespace EasyFood.web.Controllers
         [HttpGet]
         public async Task<IActionResult> Invoice(string id)
         {
+       /*  await Task.Delay(3000);*/
             var tem = new InvoiceViewModels();
 
             if(int.TryParse(id, out var orderCode))
@@ -664,9 +723,69 @@ namespace EasyFood.web.Controllers
                     }
                     if (!flagBalance.IsComplele)
                     {
-                        return RedirectToAction("NotFoundPage", "Home");
+                        var checkORder = await this._payos.getPaymentLinkInformation(orderCode);
+                        var status = checkORder.status.ToUpper();                     
+                        switch (status)
+                        {
+                            case "CANCELLED":
+                                flagBalance.DueTime = DateTime.Now;
+                                flagBalance.Status = status;
+                                flagBalance.IsComplele = true;
+                                break;
+                            case "PENDING":
+                                flagBalance.DueTime = DateTime.Now;
+                                flagBalance.Status = status;
+                                break;
+                            case "EXPIRED":
+                                flagBalance.DueTime = DateTime.Now;
+                                flagBalance.Status = status;
+                                break;
+                            case "UNDERPAID":
+                                flagBalance.DueTime = DateTime.Now;
+                                flagBalance.Status = status;
+                                break;
+                            case "PROCESSING":
+                                flagBalance.DueTime = DateTime.Now;
+                                flagBalance.Status = status;
+                                break;
+                            case "FAILED":
+                                flagBalance.DueTime = DateTime.Now;
+                                flagBalance.Status = status;
+                                break;                          
+                            default:
+                                break;
+
+                             
+                        }
+                        await this._balance.UpdateAsync(flagBalance);
+                        try
+                        {
+                            await this._balance.SaveChangesAsync();
+                        }
+                        catch
+                        {
+                            return RedirectToAction("NotFoundPage", "Home");
+                        }
+                        tem.orderCoce = id;
+                        tem.invoiceDate = flagBalance.StartTime;
+                        tem.DueDate = flagBalance.DueTime;
+                        tem.NameUse = getUser.FirstName + " " + getUser.LastName;
+                        tem.paymentMethod = "Online Banking";
+                        tem.status = flagBalance.Status;
+                        tem.emailUser = getUser.Email;
+                        tem.phoneUser = getUser.PhoneNumber;
+                        tem.tax = 0;
+                        tem.AddressUse = getUser.Address;
+                        tem.itemList.Add(new ItemInvoice
+                        {
+                            nameItem = $"Deposit to {getUser.UserName}",
+                            amount = flagBalance.MoneyChange,
+                            quantity = 1,
+                            unitPrice = flagBalance.MoneyChange
+                        });
+                        tem.invoiceDate = flagBalance.StartTime;
                     }
-                    if (flagBalance.Method == "deposit")
+                    if (flagBalance.Method.Equals("Deposit", StringComparison.OrdinalIgnoreCase))
                     {
                         tem.orderCoce = id;
                         tem.invoiceDate = flagBalance.StartTime;
@@ -686,18 +805,7 @@ namespace EasyFood.web.Controllers
                         });
                         tem.invoiceDate = flagBalance.StartTime;
                     }
-
-
-                   
-
-
                 }
-               /* else
-                {
-                    var flagOrder = await this._order.FindAsync(u => u.orderCode == orderCode);
-                }*/
-
-
 
             }
             else
@@ -773,5 +881,135 @@ namespace EasyFood.web.Controllers
             }
 
         }
+
+        [HttpPost]
+        public async Task<IActionResult> GetBalance()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return Json(new ErroMess { msg= "Bạn phải đăng nhập thể thực hiện hành động này!" });
+            }
+            var balance = await this._balance.GetBalance(user.Id);
+            return Json(new ErroMess { success =true, msg = $"{balance}" });
+        }
+        public async Task<IActionResult> DeleteCart([FromBody] CartItem obj)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if(user == null)
+            {
+                return RedirectToAction("Home", "Login");
+            }
+            string apiUrl = $"https://localhost:5555/Gateway/UsersService/DeleteCart/{obj.ProductID}";
+            try
+            {
+                var jsonContent = JsonSerializer.Serialize(obj);
+                var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+                var response = await client.PostAsync(apiUrl, content);
+                if (response.IsSuccessStatusCode)
+                {
+                    return Json(new { success = true, message = "Delete to product to success!" });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Delete to product to  fail!" });
+                }
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { success = false, message = "Lỗi server.", error = ex.Message });
+            }
+        }
+        public async Task<IActionResult> AddToCart([FromBody] CartViewModels obj)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            // 🔍 Check if the product exists
+            var productVarian = await _productvarian.FindAsync(x => x.ProductID == obj.ProductID);
+            if (productVarian == null)
+            {
+                return Json(new { success = false, message = "Product does not exist!" });
+            }
+
+            // 🔥 Check stock quantity before adding to cart
+            if (obj.quantity > productVarian.Stock)
+            {
+                return Json(new { success = false, message = $"Quantity exceeds stock! Only {productVarian.Stock} items left." });
+            }
+
+            // 🛒 Send request to add to cart if valid
+            string apiUrl = $"https://localhost:5555/Gateway/UsersService/AddCart";
+            var requestData = new
+            {
+                UserID = user.Id,
+                ProductId = obj.ProductID,
+                Quantity = obj.quantity
+            };
+
+            try
+            {
+                var jsonContent = JsonSerializer.Serialize(requestData);
+                var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+                var response = await client.PostAsync(apiUrl, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Json(new { success = true, message = "Added to cart successfully!" });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Quantity exceeds available stock!" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Server error.", error = ex.Message });
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> CartPart()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return PartialView("_Cart", new List<CartViewModels>()); // Trả về giỏ hàng trống
+            }
+
+            string apiUrl = $"https://localhost:5555/Gateway/UsersService/ViewCartDetail/{user.Id}";
+            List<CartViewModels> cartItems = new List<CartViewModels>();
+
+            try
+            {
+                var response = await client.GetAsync(apiUrl);
+                if (!response.IsSuccessStatusCode)
+                {
+                    return PartialView("_Cart", new List<CartViewModels>());
+                }
+
+                var mes = await response.Content.ReadAsStringAsync();
+                cartItems = JsonSerializer.Deserialize<List<CartViewModels>>(mes, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                });
+
+                return PartialView("_Cart", cartItems ?? new List<CartViewModels>());
+            }
+            catch (Exception ex)
+            {
+                return PartialView("_Cart", new List<CartViewModels>());
+            }
+        }
+
+
+
+
     }
+
+
 }
+

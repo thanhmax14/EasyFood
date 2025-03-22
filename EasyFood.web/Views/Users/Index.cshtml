@@ -1,4 +1,5 @@
-﻿@model Repository.ViewModels.IndexUserViewModels
+﻿@using System.Text.Json
+@model Repository.ViewModels.IndexUserViewModels
 <!DOCTYPE html>
 <html class="no-js" lang="en">
 
@@ -24,6 +25,7 @@
 
     <script src="chrome-extension://mooikfkahbdckldjjndioackbalphokd/~/assets/prompt.js"></script>
     @Html.Raw(" <link href='https://cdn.jsdelivr.net/npm/@flaticon/flaticon-uicons/css/all/all.css' rel='stylesheet'>");
+
       <link rel="stylesheet" href="~/assets/js/gridjs/theme/mermaid.min.css">
 </head>
 
@@ -478,7 +480,7 @@
                                     <div class="tab-pane fade" id="wallet" role="tabpanel" aria-labelledby="wallet-tab">
                                         <div class="card">
                                             <div class="card-header">
-                                                <h3 class="mb-0">Your Balance</h3>
+                                                <h3 class="mb-0">Your Balance : <span id="balance-display">@Model.BalanceUser vnd</span></h3>
                                             </div>
                                             <div class="container mt-4">
 
@@ -530,34 +532,107 @@
                                                     <div class="col-md-6" id="withdrawForm" style="display: none;">
                                                         <div class="card shadow-sm">
                                                             <div class="card-header">
-                                                                <h5 class="mb-0">Rút Tiền</h5>
+                                                                <h5 class="mb-0">
+                                                                    Rút Tiền
+                                                                </h5>
                                                             </div>
                                                             <div class="card-body">
-                                                                <label class="form-label">Số tiền rút</label>
-                                                                <input type="text" class="form-control mb-3">
-                                                                <label class="form-label">Phương thức rút</label>
+                                                                <label class="form-label">
+                                                                    <p>Số tiền rút</p>
+                                                                </label>
+                                                                <input type="text" class="form-control mb-3" id="numOrderVut">
+                                                                <label class="form-label">
+                                                                    <p>Phương thức rút</p>
+                                                                </label>
                                                                 <div class="form-check">
                                                                     <input class="form-check-input" type="radio"
                                                                            name="withdrawType" checked>
                                                                     <label class="form-check-label">
-                                                                        Chuyển khoản ngân
-                                                                        hàng
+                                                                        <p>
+                                                                            Chuyển khoản ngân
+                                                                            hàng
+                                                                        </p>
                                                                     </label>
                                                                 </div>
-                                                                <label class="form-label mt-3">
-                                                                    Tên tài khoản
-                                                                    nhận
+                                                                <label class="form-label">
+                                                                    <p>Ngân Hàng</p>
                                                                 </label>
-                                                                <input type="text" class="form-control">
-                                                                <label class="form-label mt-3">Số tài khoản</label>
-                                                                <input type="text" class="form-control">
-                                                                <button class="btn btn-danger mt-3 w-100">
+
+                                                                <div class="custom_select">
+                                                                    <select class="form-control select-active w-100" id="code">
+                                                                        <option value="">United Kingdom</option>
+                                                                        <option value="TT">Trinidad and Tobago</option>
+                                                                        <option value="TN">Tunisia</option>
+                                                                        <option value="TR">Turkey</option>
+                                                                        <option value="TM">Turkmenistan</option>
+                                                                        <option value="TC">
+                                                                            Turks and Caicos Islands
+                                                                        </option>
+                                                                        <option value="TV">Tuvalu</option>
+                                                                        <option value="UG">Uganda</option>
+                                                                        <option value="UA">Ukraine</option>
+                                                                        <option value="AE">United Arab Emirates</option>
+                                                                        <option value="GB">United Kingdom (UK)</option>
+                                                                        <option value="US">USA (US)</option>
+                                                                        <option value="UY">Uruguay</option>
+                                                                        <option value="UZ">Uzbekistan</option>
+                                                                        <option value="VU">Vanuatu</option>
+                                                                        <option value="VA">Vatican</option>
+                                                                        <option value="VE">Venezuela</option>
+                                                                        <option value="VN">Vietnam</option>
+                                                                        <option value="WF">Wallis and Futuna</option>
+                                                                        <option value="EH">Western Sahara</option>
+                                                                        <option value="WS">Western Samoa</option>
+                                                                        <option value="YE">Yemen</option>
+                                                                        <option value="ZM">Zambia</option>
+                                                                        <option value="ZW">Zimbabwe</option>
+                                                                    </select>
+                                                                </div>
+                                                                <label class="form-label mt-3">
+                                                                    <p>
+                                                                        Tên tài khoản
+                                                                        nhận
+                                                                    </p>
+                                                                </label>
+                                                                <input type="text" class="form-control" id="nameAcc">
+                                                                <label class="form-label mt-3">
+                                                                    <p>Số tài khoản</p>
+                                                                </label>
+                                                                <input type="text" class="form-control" id="umaccou">
+                                                                <button id="btnWithdraw" class="btn btn-danger mt-3 w-100">
                                                                     Rút
                                                                     Tiền
                                                                 </button>
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <script>
+                                                        document.addEventListener("DOMContentLoaded", function () {
+                                                            const bankSelect = document.querySelector(".custom_select select");
+
+                                                            async function fetchBanks() {
+                                                                try {
+                                                                    const response = await fetch("https://api.vietqr.io/v2/banks");
+                                                                    const result = await response.json();
+
+                                                                    if (result.code === "00" && result.data.length > 0) {
+                                                                        bankSelect.innerHTML = ""; 
+
+                                                                        result.data.forEach(bank => {
+                                                                            const option = document.createElement("option");
+                                                                            option.value = bank.code;  
+                                                                            option.textContent = `${bank.name} (${bank.shortName})`;
+                                                                            bankSelect.appendChild(option);
+                                                                        });
+                                                                    }
+                                                                } catch (error) {
+                                                                    console.error("Lỗi khi lấy danh sách ngân hàng:", error);
+                                                                }
+                                                            }
+
+                                                            fetchBanks();
+                                                        });
+                                                    </script>
                                                 </div>
 
                                                 <!-- Transactions List -->
@@ -576,6 +651,7 @@
                                             const withdrawBtn = document.getElementById('withdrawBtn');
                                             const depositForm = document.getElementById('depositForm');
                                             const withdrawForm = document.getElementById('withdrawForm');
+                                            const selectElement = withdrawForm.querySelector('select');
 
                                             // Function to hide both forms
                                             function hideForms() {
@@ -585,34 +661,98 @@
 
                                             // Show deposit form
                                             depositBtn.addEventListener('click', function (e) {
-                                                e.stopPropagation(); // Prevent click from bubbling up to document
-                                                depositForm.style.display = 'block';
-                                                withdrawForm.style.display = 'none';
+                                                e.stopPropagation();
+                                                if (depositForm.style.display === 'block') {
+                                                    depositForm.style.display = 'none';
+                                                } else {
+                                                    hideForms();
+                                                    depositForm.style.display = 'block';
+                                                }
                                             });
 
                                             // Show withdraw form
                                             withdrawBtn.addEventListener('click', function (e) {
-                                                e.stopPropagation(); // Prevent click from bubbling up to document
-                                                withdrawForm.style.display = 'block';
-                                                depositForm.style.display = 'none';
+                                                e.stopPropagation();
+                                                if (withdrawForm.style.display === 'block') {
+                                                    withdrawForm.style.display = 'none';
+                                                } else {
+                                                    hideForms();
+                                                    withdrawForm.style.display = 'block';
+                                                }
                                             });
 
-                                            // Hide forms when clicking outside
                                             document.addEventListener('click', function (e) {
-                                                if (!depositBtn.contains(e.target) && !withdrawBtn.contains(e.target) &&
-                                                    !depositForm.contains(e.target) && !withdrawForm.contains(e.target)) {
+                                                const isClickInsideSelect = selectElement && (selectElement.contains(e.target) || e.target.tagName === 'OPTION');
+                                                const isClickInsideInput = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA';
+
+                                                if (!depositBtn.contains(e.target) &&
+                                                    !withdrawBtn.contains(e.target) &&
+                                                    !depositForm.contains(e.target) &&
+                                                    !withdrawForm.contains(e.target) &&
+                                                    !isClickInsideSelect &&
+                                                    !isClickInsideInput) {
                                                     hideForms();
                                                 }
                                             });
+
 
                                             // Prevent form clicks from closing the form
                                             depositForm.addEventListener('click', function (e) {
                                                 e.stopPropagation();
                                             });
+
                                             withdrawForm.addEventListener('click', function (e) {
                                                 e.stopPropagation();
                                             });
-                                        </script>                                
+
+                                            // Handle select element specifically
+                                            if (selectElement) {
+                                                selectElement.addEventListener('click', function (e) {
+                                                    e.stopPropagation();
+                                                });
+
+                                                selectElement.addEventListener('focus', function (e) {
+                                                    e.stopPropagation();
+                                                });
+
+                                                selectElement.addEventListener('change', function (e) {
+                                                    e.stopPropagation();
+                                                });
+
+                                                // Handle key events for search/filter in select
+                                                selectElement.addEventListener('keydown', function (e) {
+                                                    e.stopPropagation();
+                                                });
+                                            }
+
+                                            // Keep form visible when interacting with inputs
+                                            const inputs = document.querySelectorAll('#depositForm input, #withdrawForm input');
+                                            inputs.forEach(input => {
+                                                input.addEventListener('click', function (e) {
+                                                    e.stopPropagation();
+                                                });
+                                                input.addEventListener('focus', function (e) {
+                                                    e.stopPropagation();
+                                                });
+                                                input.addEventListener('keydown', function (e) {
+                                                    e.stopPropagation();
+                                                });
+                                            });
+                                        </script>
+
+                                        <style>
+                                            .mr-2 {
+                                                margin-right: 10px;
+                                            }
+
+                                            .custom_select .select2-container--default .select2-selection--single {
+                                                width: 484.8px;
+                                            }
+
+                                            .custom_select .select2-container {
+                                                max-width: 484.8px;
+                                            }
+                                        </style>
                                     </div>
 
 
@@ -1011,26 +1151,57 @@
 </body>
 
 </html>
-<script>
+@* <script>
     document.addEventListener("DOMContentLoaded", function () {
         const container = document.getElementById("Exampletable");
-
+        var list = @Html.Raw(JsonSerializer.Serialize(Model.Balance));
 
         container.innerHTML = "";
 
         new gridjs.Grid({
             columns: [
-                { name: "NO.", width: "90px" },
-                { name: "Before", width: "110px" },
-                { name: "Change", width: "110px", formatter: (e) => gridjs.html(`<a href="#">${e}</a>`) },
-                { name: "After", width: "110px" },
-                { name: "Type", width: "100px" },
-                { name: "Status", width: "110px", formatter: (e) => gridjs.html(`<a href="#">${e}</a>`) },
-                { name: "Date", width: "150px", formatter: (e) => gridjs.html(`<a href="#">${e}</a>`) },
+                { name: "NO.", width: "90px" , formatter: (e) => gridjs.html(`<p>${e}</p>`) },
+                { name: "Before", width: "110px", formatter: (e) => gridjs.html(`<p>${e}</p>`) },
+                {
+                    name: "Before",
+                    width: "110px",
+                    formatter: (e) => {
+                        const color = e < 0 ? "red" : "green";
+                        return gridjs.html(`<p style="color:${color}">${e}</p>`)
+                    }
+                },
+                { name: "After", width: "110px", formatter: (e) => gridjs.html(`<p>${e}</p>`) },
+                { name: "Type", width: "100px", formatter: (e) => gridjs.html(`<p>${e}</p>`) },
+                {
+                    name: "Status",
+                    width: "130px",
+                    formatter: (e) => {
+                        let color = "#C3A73A";
+
+                        if (e.toLowerCase() === "done") {
+                            color = "green";
+                        } else if (e.toLowerCase() === "cancel") {
+                            color = "#C10103";
+                        }
+
+                        return gridjs.html(`<p style="color:${color}; font-weight:bold;">${e}</p>`);
+                    }
+                },
+
+                {
+                    name: "Type",
+                    width: "100px",
+                    formatter: (e) => {
+                        const date = new Date(e);
+                        const formatted = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+                        return gridjs.html(`<p>${formatted}</p>`);
+                    }
+                },
                 {
                     name: "Invoice",
                     width: "150px",
-                    formatter: () => gridjs.html("<a href='#' class='text-reset text-decoration-underline'>Details</a>")
+                    formatter: (e) => gridjs.html(`<a href="${e}" target="_blank" class="text-reset text-decoration-underline">Details</a>`)
+
                 }
             ],
             pagination: {
@@ -1041,26 +1212,194 @@
             pageSize: [5, 10, 20, 50],
             sort: true,
             search: true,
-            data: [
-                ["01", "100000", "50000", "150000", "Deposit", "Sucsess", "2025-03-16 15:24:18.8624318"],
-
-            ]
+            data: list.map(u => [
+                u.No,
+                u.Before,
+                u.Change,
+                u.After,
+                u.Types,
+                u.Status,
+                u.Date,
+                u.Invoice
+            ])
         }).render(document.getElementById("Exampletable"));
     });
 
 </script>
+ *@
 
-<script type="text/javascript">
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const container = document.getElementById("Exampletable");
+        var list = @Html.Raw(JsonSerializer.Serialize(Model.Balance));
+        let gridInstance = null;
+        let isInteracting = false; // Biến để theo dõi trạng thái tương tác
+
+        // Hàm khởi tạo bảng
+        function initializeGrid(data) {
+            if (!container.dataset.gridInitialized) {
+                container.innerHTML = "";
+                gridInstance = new gridjs.Grid({
+                    columns: [
+                        { name: "NO.", width: "90px", formatter: (e) => gridjs.html(`<p>${e}</p>`) },
+                        { name: "Before", width: "110px", formatter: (e) => gridjs.html(`<p>${e}</p>`) },
+                        {
+                            name: "Change", // Đổi tên để tránh trùng "Before"
+                            width: "110px",
+                            formatter: (e) => {
+                                const color = e < 0 ? "red" : "green";
+                                return gridjs.html(`<p style="color:${color}">${e}</p>`);
+                            }
+                        },
+                        { name: "After", width: "110px", formatter: (e) => gridjs.html(`<p>${e}</p>`) },
+                        { name: "Type", width: "110px", formatter: (e) => gridjs.html(`<p>${e}</p>`) },
+                        {
+                            name: "Status",
+                            width: "130px",
+                            formatter: (e) => {
+                                let color = "#C3A73A";
+                                const status = e ? e.toLowerCase() : ""; 
+
+                                if (status === "paid" || status === "success") {
+                                    color = "green";
+                                } else if (status === "cancelled") {
+                                    color = "#C10103";
+                                }
+
+                                return gridjs.html(`<p style="color:${color}; font-weight:bold;">${e || "N/A"}</p>`);
+                            }
+
+                        },
+                        {
+                            name: "Date", // Đổi tên để tránh trùng "Type"
+                            width: "100px",
+                            formatter: (e) => {
+                                const date = new Date(e);
+                                const formatted = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+                                return gridjs.html(`<p>${formatted}</p>`);
+                            }
+                        },
+                        {
+                            name: "Invoice",
+                            width: "150px",
+                            formatter: (e) => gridjs.html(`<button type="button" class="btn btn-sm btn-light" onclick="window.open('${e}', '_blank')">Details</button>`)
+                        }
+                    ],
+                    pagination: {
+                        enabled: true,
+                        limit: 5,
+                        summary: true
+                    },
+                    pageSize: [5, 10, 20, 50],
+                    sort: true,
+                    search: true,
+                    data: data.map(u => [
+                        u.No,
+                        u.Before,
+                        u.Change,
+                        u.After,
+                        u.Types,
+                        u.Status,
+                        u.Date,
+                        u.Invoice
+                    ])
+                }).render(container);
+
+                container.dataset.gridInitialized = "true";
+ 
+                container.addEventListener("click", () => isInteracting = true); 
+                container.addEventListener("input", () => isInteracting = true); 
+                const paginationButtons = container.querySelectorAll(".gridjs-pagination .gridjs-pages button");
+                paginationButtons.forEach(button => {
+                    button.addEventListener("click", () => {
+                        isInteracting = true;
+                        console.log("Pagination button clicked, stopping updates"); 
+                    });
+                });
+
+            
+                const sortButtons = container.querySelectorAll(".gridjs-sort");
+                sortButtons.forEach(button => {
+                    button.addEventListener("click", () => {
+                        isInteracting = true;
+                        console.log("Sort button clicked, stopping updates"); 
+                    });
+                });
+
+
+
+                container.addEventListener("mouseleave", () => isInteracting = false);
+                container.addEventListener("blur", () => isInteracting = false, true); 
+
+            }
+        }
+
+        // Khởi tạo bảng lần đầu
+        initializeGrid(list);
+
+        // Hàm lấy dữ liệu mới qua AJAX
+        function fetchUpdatedData() {
+            if (!isInteracting) { // Chỉ cập nhật khi không tương tác
+                fetch('/Users/UpdateBalance', { // Thay bằng URL endpoint thực tế
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(newData => {
+                        if (gridInstance) {
+                            gridInstance.updateConfig({
+                                data: newData.map(u => [
+                                    u.no,
+                                    u.before,
+                                    u.change,
+                                    u.after,
+                                    u.types,
+                                    u.status,
+                                    u.date,
+                                    u.invoice
+                                ])
+                            }).forceRender(); // Cập nhật dữ liệu mà không reload toàn bộ
+                        }
+                    })
+                    .catch(error => console.error('Error fetching data:', error));
+            }
+        }
+
+        // Cập nhật dữ liệu mỗi 5 giây
+        setInterval(fetchUpdatedData, 5000);
+
+        // Gọi lần đầu tiên ngay lập tức (tuỳ chọn)
+        fetchUpdatedData();
+    });
+</script>
+
+  <script type="text/javascript">
     $("#btnDeposit").on("click", function () {
+
+        $('#btnDeposit').html('<i class="fa fa-spinner fa-spin"></i> Đang xử lý...')
+            .prop('disabled', true);
         var checkbox = parseInt($("#numOrder").val(), 10);
         var token = $("input[name='__RequestVerificationToken']").val();
 
-        if (isNaN(checkbox) || checkbox <=0) {
-            Swal.fire(
-                'Thất bại',
-                "Vui lòng nhập số tiền lớn hơn 0~",
-                'error'
-            );
+        if (isNaN(checkbox) || checkbox <= 0) {
+            setTimeout(() => {
+                new Notify({
+                    status: 'error',
+                    title: 'Thất Bại',
+                    text: 'Số tiền nạp tối thiểu là 100,000 Vnd',
+                    effect: 'fade',
+                    speed: 300,
+                    showIcon: true,
+                    showCloseButton: true,
+                    autoclose: true,
+                    autotimeout: 3000,
+                    position: 'right top'
+                });
+
+                $('#btnDeposit').html('Add Payment').prop('disabled', false);
+            }, 100); 
             return;
         }
 
@@ -1104,6 +1443,90 @@
                     timer: 5000
                 });
                 $('#btnDeposit').html('Add Payment').prop('disabled', false);
+            }
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $("#btnWithdraw").on("click", function () {
+        $('#btnWithdraw').html('<i class="fa fa-spinner fa-spin"></i> Đang xử lý...')
+            .prop('disabled', true);
+        var checkbox = parseInt($("#numOrderVut").val(), 10);
+        var token = $("input[name='__RequestVerificationToken']").val();
+
+        if (isNaN(checkbox) || checkbox < 500000) {
+            setTimeout(() => {
+            new Notify({
+                status: 'error',
+                title: 'Thất Bại',
+                text: 'Số tiền rút tối thiểu là 500,000 Vnd',
+                effect: 'fade',
+                speed: 300,
+                showIcon: true,
+                showCloseButton: true,
+                autoclose: true,
+                autotimeout: 3000,
+                position: 'right top'
+            });
+            $('#btnWithdraw').html('Withdraw').prop('disabled', false);
+        }, 100);
+    return;
+
+        }
+
+        $('#btnWithdraw').html('<i class="fa fa-spinner fa-spin"></i> Đang xử lý...')
+            .prop('disabled', true);
+
+        $.ajax({
+            url: "@Url.Action("Withdraw", "Users")",
+            method: "POST",
+            dataType: "JSON",
+            data: {
+                number: $("#numOrderVut").val(),
+                nameAcc: $("#nameAcc").val(),
+                numAccount: $("#umaccou").val(),
+                code: $("#code").val(),
+                __RequestVerificationToken: token
+            },
+            success: function (response) {
+                if (response.success) {
+                    new Notify({
+                        status: 'success',
+                        title: 'Thành công!',
+                        text: response.msg || 'Gửi thành công!',
+                        effect: 'fade',
+                        speed: 300,
+                        showIcon: true,
+                        showCloseButton: true,
+                        autoclose: true,
+                        autotimeout: 3000,
+                        position: 'right top'
+                    });
+
+                } else {
+                    new Notify({
+                        status: 'error',
+                        title: 'Thất Bại',
+                        text: response.msg || 'Gửi thất bại!',
+                        effect: 'fade',
+                        speed: 300,
+                        showIcon: true,
+                        showCloseButton: true,
+                        autoclose: true,
+                        autotimeout: 3000,
+                        position: 'right top'
+                    });
+                }
+                $('#btnWithdraw').html('Withdraw').prop('disabled', false);
+            },
+            error: function () {
+                Swal.fire(
+                    'Thất bại',
+                    "Đã xảy ra lỗi",
+                    'error'
+                );
+                $('#btnWithdraw').html('Withdraw').prop('disabled', false);
             }
         });
     });
