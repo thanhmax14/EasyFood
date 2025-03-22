@@ -270,7 +270,7 @@
                                                     <i class="fi-rs-marker mr-10"></i>Register Seller
                                                 </a>
                                             </li>
-                                        } else
+                                        } else if(Model.userView.RequestSeller == "2")
                                         {
                                             <li class="nav-item">
                                                 <a class="nav-link" id="address-tab" target="_blank" asp-controller="Seller" asp-action="FeedbackList" asp-route-id="@Model.userView.StoreDeatilId"
@@ -368,7 +368,7 @@
                                          aria-labelledby="address-tab">
                                         <div class="row justify-content-center">
                                             <div class="col-lg-8">
-                                                @if (Model.userView.RequestSeller == "1" || Model.userView.RequestSeller == "0") // Nếu chưa đăng ký seller
+                                                @if (Model.userView.RequestSeller == "0") // Nếu chưa đăng ký seller
                                                 {
                                                     <div class="card shadow-sm border-0">
                                                         <div class="card-header bg-warning text-dark text-center">
@@ -381,6 +381,13 @@
                                                             <button class="btn btn-success mt-2" id="btnRegisterSeller">Register as Seller</button>
                                                         </div>
                                                     </div>
+                                                } else if(Model.userView.RequestSeller == "1")
+                                                
+                                                {
+                                                     <div class="alert alert-info mt-3" id="approvalMessage">
+                                                         <h5>Announcement!</h5>
+                                                         <p>Your request has been submitted. Please wait for admin approval.</p>
+                                                     </div> 
                                                 }
                                                 else if (Model.userView.RequestSeller == "3") // Nếu đã đăng ký và chờ duyệt
                                                  {
