@@ -8,7 +8,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Models;
 using Repository.ViewModels;
+using System.Collections.Generic;
 using System.Net.WebSockets;
+using System.Security.Cryptography.X509Certificates;
 
 namespace ProductsService.Controllers
 {
@@ -70,8 +72,42 @@ namespace ProductsService.Controllers
         public async Task<IActionResult> GetStoreDetail(Guid id)
         {
             var store = new StoreDetailsViewModels();
-            var productList = new List<ProductListViewModel>();
+            var List = new List<ProductsViewModel>();
             var categoryList = new List<CategoryViewModel>();
+
+            var products = await _productService.ListAsync(u => u.IsActive && u.StoreID == id , orderBy: x => x.OrderByDescending(s => s.CreatedDate));
+
+            foreach (var item in products)
+            {
+                var price = await _productVariantService.FindAsync(s => s.ProductID == item.ID);
+
+                var storeName = await _storeDetailService.FindAsync(x => x.ID == item.StoreID);
+                var categoryName = await _categoryService.FindAsync(c => c.ID == item.CateID);
+                var imgList = await _productImageService.ListAsync(i => i.ProductID == item.ID);
+
+                var Listimg = imgList.Select(i => i.ImageUrl).ToList();
+
+                List.Add(new ProductsViewModel
+                {
+                    CategoryName = categoryName.Name,
+                    StoreName = storeName.Name,
+                    Price = price.Price,
+                    CateID = item.CateID,
+                    CreatedDate = item.CreatedDate,
+                    ID = item.ID,
+                    IsActive = item.IsActive,
+                    IsOnSale = item.IsOnSale,
+                    LongDescription = item.LongDescription,
+                    ManufactureDate = item.ManufactureDate,
+                    ModifiedDate = item.ModifiedDate,
+                    Name = item.Name,
+                    ShortDescription = item.ShortDescription,
+                    StoreId = item.StoreID,
+                    Img = Listimg // Gán danh sách URL hình ảnh cho sản phẩm
+
+                });
+            }
+
 
 
             var storeDetails = await _storeDetailService.FindAsync(s => s.ID == id);
@@ -79,8 +115,7 @@ namespace ProductsService.Controllers
             var product = await _productService.FindAsync(p => p.StoreID == id);
             var ProductPrice = await _productVariantService.FindAsync(s => s.ProductID == product.ID);
             var category = await _categoryService.FindAsync(c => c.ID == product.CateID);
-            var imgList = await _productImageService.ListAsync(i => i.ProductID == product.ID);
-            var Listimg = imgList.Select(i => i.ImageUrl).ToList();
+            
 
             store.UserID = storeDetails.UserID;
             store.UserName = userid?.UserName;
@@ -93,7 +128,7 @@ namespace ProductsService.Controllers
             store.Img = storeDetails.Img;
             store.LongDescriptions = storeDetails.LongDescriptions;
 
-            store.ProductViewModel = productList;
+            store.ProductViewModel = List;
             store.CategoryViewModels = categoryList;
 
             if (storeDetails == null)

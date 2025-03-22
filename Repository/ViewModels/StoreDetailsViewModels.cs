@@ -15,7 +15,7 @@ namespace Repository.ViewModels
         public string CategoryName { get; set; }
         
 
-        public List<ProductListViewModel> ProductViewModel { get; set; }
+        public List<ProductsViewModel> ProductViewModel { get; set; }
 
         public List<CategoryViewModel> CategoryViewModels { get; set; }
 
