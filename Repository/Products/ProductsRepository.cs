@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Models;
 using Models.DBContext;
 using Repository.BaseRepository;
@@ -87,5 +88,175 @@ namespace Repository.Products
 
             return productEntities;
         }
+
+        public List<ProductIndexViewModel> GetProductsByStoreId(Guid storeId)
+        {
+            var products = (from p in _context.Products
+                            join c in _context.Categories on p.CateID equals c.ID
+                            join s in _context.StoreDetails on p.StoreID equals s.ID
+                            join i in _context.ProductImages.Where(img => img.IsMain)
+                                on p.ID equals i.ProductID into imgGroup
+                            from img in imgGroup.DefaultIfEmpty() // Lấy ảnh IsMain nếu có
+                            where p.StoreID == storeId
+                            select new ProductIndexViewModel
+                            {
+                                ProductId = p.ID,
+                                Name = p.Name,
+                                ShortDescription = p.ShortDescription,
+                                LongDescription = p.LongDescription,
+                                CreatedDate = p.CreatedDate,
+                                ModifiedDate = p.ModifiedDate,
+                                ManufactureDate = p.ManufactureDate,
+                                IsActive = p.IsActive,
+                                IsOnSale = p.IsOnSale,
+                                CateName = c.Name,
+                                StoreName = s.Name,
+                                ImageUrl = img != null ? img.ImageUrl : "/images/default.png"
+                            }).ToList();
+
+            return products;
+        }
+        public async Task<Guid> CreateProductAsync(Product product, List<Models.ProductImage> images)
+        {
+            await _context.Products.AddAsync(product);
+            await _context.SaveChangesAsync();
+
+            if (images.Any())
+            {
+                foreach (var image in images)
+                {
+                    image.ProductID = product.ID; // Gán ProductID
+                    await _context.ProductImages.AddAsync(image);
+                }
+                await _context.SaveChangesAsync();
+            }
+
+            return product.ID;
+        }
+
+        public async Task<List<Categories>> GetCategoriesAsync()
+        {
+            return await _context.Categories.ToListAsync();
+        }
+
+        public async Task<ProductUpdateViewModel> GetProductByIdAsync(Guid productId)
+        {
+            var product = await _context.Products
+                .Include(p => p.ProductImages)
+                .FirstOrDefaultAsync(p => p.ID == productId);
+
+            if (product == null) return null;
+
+            return new ProductUpdateViewModel
+            {
+                ProductID = product.ID,
+                Name = product.Name,
+                ShortDescription = product.ShortDescription,
+                LongDescription = product.LongDescription,
+                ManufactureDate = product.ManufactureDate,
+                ModifiedDate = product.ModifiedDate,
+                IsActive = product.IsActive,
+                IsOnSale = product.IsOnSale,
+                CateID = product.CateID,
+                StoreID = product.StoreID,
+                ExistingImages = product.ProductImages.Select(i => i.ImageUrl).ToList()
+            };
+        }
+
+        public async Task UpdateProductAsync(ProductUpdateViewModel model, List<IFormFile> newImages, string webRootPath)
+        {
+            var product = await _context.Products
+                .Include(p => p.ProductImages)
+                .FirstOrDefaultAsync(p => p.ID == model.ProductID);
+
+            if (product == null) return;
+
+            product.Name = model.Name;
+            product.ShortDescription = model.ShortDescription;
+            product.LongDescription = model.LongDescription;
+            product.ManufactureDate = model.ManufactureDate;
+            product.ModifiedDate = DateTime.UtcNow;
+            product.IsActive = model.IsActive;
+            product.IsOnSale = model.IsOnSale;
+            product.CateID = model.CateID;
+
+            // Xóa ảnh cũ
+            if (model.RemoveImageUrls?.Any() == true)
+            {
+                var imagesToRemove = product.ProductImages
+                    .Where(i => model.RemoveImageUrls.Contains(i.ImageUrl))
+                    .ToList();
+
+                foreach (var img in imagesToRemove)
+                {
+                    string imgPath = Path.Combine(webRootPath, "uploads", img.ImageUrl);
+                    if (File.Exists(imgPath))
+                    {
+                        File.Delete(imgPath);
+                    }
+                }
+
+                _context.ProductImages.RemoveRange(imagesToRemove);
+                await _context.SaveChangesAsync();
+            }
+
+            // Kiểm tra số lượng ảnh còn lại
+            int currentImageCount = product.ProductImages.Count;
+
+            // Xử lý ảnh mới nếu chưa đạt 5 ảnh
+            if (currentImageCount < 5 && newImages?.Any() == true)
+            {
+                int availableSlots = 5 - currentImageCount;
+                var imagesToAdd = new List<Models.ProductImage>();
+
+                foreach (var file in newImages.Take(availableSlots))
+                {
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    string filePath = Path.Combine(webRootPath, "uploads", fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+
+                    imagesToAdd.Add(new Models.ProductImage
+                    {
+                        ImageUrl = "/uploads/" + fileName, // Lưu đường dẫn tương đối
+                        ProductID = product.ID,
+                        IsMain = false
+                    });
+                }
+
+                _context.ProductImages.AddRange(imagesToAdd);
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<ProductHideShowViewModel> GetByIdAsync(Guid id)
+        {
+            var product = await _context.Products.FindAsync(id);
+            if (product == null) return null;
+
+            return new ProductHideShowViewModel
+            {
+                ID = product.ID,
+                Name = product.Name,
+                IsActive = product.IsActive
+            };
+        }
+
+        public async Task<bool> UpdateStatusAsync(Guid productId, bool isActive)
+        {
+            var product = await _context.Products.FindAsync(productId);
+            if (product == null) return false;
+
+            product.IsActive = isActive; // Cập nhật trạng thái
+            _context.Products.Update(product);
+            await _context.SaveChangesAsync(); // Lưu thay đổi vào DB
+
+            return true;
+        }
+
     }
 }

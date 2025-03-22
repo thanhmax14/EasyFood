@@ -279,7 +279,7 @@
                             <div class="card-header">
                                 <h4 class="card-title mb-0 flex-grow-1">Base Example</h4>
                             </div><!-- end card header -->
-                            
+
                             <div class="card-body">
                                 <div id="table-stores"></div>
                             </div><!-- end card-body -->
@@ -296,7 +296,7 @@
                             var stores = @Html.Raw(JsonSerializer.Serialize(Model, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }));
 
                             function updateStoreStatus(storeId, action, buttonElement) {
-                                let url = action === "hide" ? "/AdminStore/Hidden" : "/AdminStore/Show";
+                                let url = action === "hide" ? "/Admin/Hidden" : "/Admin/Show";
 
                                 fetch(url, {
                                     method: "POST",

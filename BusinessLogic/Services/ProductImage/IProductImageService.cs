@@ -1,4 +1,5 @@
-﻿using Models;
+﻿using Microsoft.AspNetCore.Http;
+using Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,5 +29,6 @@ namespace BusinessLogic.Services.ProductImages
             Expression<Func<ProductImage, bool>> filter = null,
             Func<IQueryable<ProductImage>, IOrderedQueryable<ProductImage>> orderBy = null,
             Func<IQueryable<ProductImage>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<ProductImage, object>> includeProperties = null);
+        Task<string> SaveImageAsync(IFormFile image);
     }
 }
