@@ -26,15 +26,11 @@ namespace Repository.ViewModels
         public string CategoryName { get; set; }
         public decimal Price { get; set; } = 0;
 
-        public List<string> Img { get; set; } = new List<string>();
+      
         public Guid CateID { get; set; }
-       
-        public string? StoreID { get; set; }
-        public List<ProductImageViewModel> Images { get; set; } // Danh sách hình ảnh (1 ảnh chính, 4 ảnh phụ)
-        public ProductsViewModel()
-        {
-            Images = new List<ProductImageViewModel>();
-        }
+
+
+        public List<string> Img { get; set; } = new List<string>();
         public Guid StoreId { get; set; }
         public IEnumerable<SelectListItem> Categories { get; set; } = new List<SelectListItem>();
     }

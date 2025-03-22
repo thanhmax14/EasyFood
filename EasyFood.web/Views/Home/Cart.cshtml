@@ -16,6 +16,45 @@
     <link rel="shortcut icon" type="image/x-icon" href="~/assets/imgs/theme/favicon.svg">
     <!-- Template CSS -->
     <link rel="stylesheet" href="~/assets/css/main.css?v=6.0">
+    <style>
+        /* Đảm bảo vị trí tương đối cho ảnh */
+        .product-thumbnail {
+            position: relative;
+        }
+
+        /* 1. Làm mờ và vô hiệu hóa tương tác khi có class 'outofstock' */
+        .outofstock {
+            opacity: 0.5;
+            /* Làm mờ toàn bộ dòng */
+            pointer-events: none;
+            /* Không cho tương tác */
+        }
+
+
+
+            /* 3. Hiển thị thông báo 'Out of Stock' trong phần mô tả */
+            .outofstock .out-of-stock-label {
+                color: red;
+                font-weight: bold;
+                margin-left: 10px;
+            }
+
+        /* CSS chung cho layout */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .product-name a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        .qty-down,
+        .qty-up {
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <body>
@@ -262,26 +301,30 @@
                                             </div>
                                         </td>
                                         <td class="price" data-title="Price">
-                                            <h4 class="text-body">@item.price </h4>
+                                            <h4 class="text-body" id="price-@item.ProductID">@item.price</h4>
                                         </td>
+
                                         <td class="text-center detail-info" data-title="Stock">
                                             <div class="detail-extralink mr-15">
                                                 <div class="detail-qty border radius">
-                                                    <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
-                                                    <input type="text" name="quantity"  class="qty-val" value="@item.quantity"  data-id="@item.ProductID" data-stock="@item.Stock" min="1">
+                                                    <a href="#" class="qty-down" data-id="@item.ProductID"><i class="fi-rs-angle-small-down"></i></a>
+                                                    <input type="text" name="quantity" class="qty-val" value="@item.quantity" data-id="@item.ProductID" data-stock="@item.Stock" min="1">
                                                     <a href="#" class="qty-up" data-id="@item.ProductID"><i class="fi-rs-angle-small-up"></i></a>
                                                 </div>
                                             </div>
                                         </td>
                                         <td class="price" data-title="Price">
-                                            <h4 class="text-brand">@item.Subtotal</h4>
+                                            <h4 class="text-brand" id="subtotal-@item.ProductID">@item.Subtotal</h4>
                                         </td>
-                                        <td class="action text-center" data-title="Remove"><a href="#" class="text-body"><i class="fi-rs-trash"></i></a></td>
+
+                                        <td class="action text-center" data-title="Remove">
+                                            <a href="#" class="text-body delete-cart" data-id="@item.ProductID">
+                                                <i class="fi-rs-trash"></i>
+                                            </a>
+                                        </td>
                                     </tr>
                                 }
                               
-
-
                             </tbody>
                         </table>
                     </div>
@@ -574,30 +617,39 @@
                         </div>
                     </div>
                 </div>
+                @{
+    decimal total = 0; // 🔹 Biến lưu tổng giá trị
+}
                 <div class="col-lg-4">
                     <div class="border p-md-4 cart-totals ml-30">
                         <div class="table-responsive">
                             <table class="table no-border">
-                                <tbody>
+                              @foreach (var item in Model)
+                {
+                    total += item.Subtotal; // 🔥 Cộng dồn Subtotal của từng sản phẩm
+                }
+                                
+                                     <tbody>
                                     <tr>
                                         <td class="cart_total_label">
-                                            <h6 class="text-muted">Subtotal</h6>
+                                            <h6 class="text-muted">Total</h6>
                                         </td>
                                         <td class="cart_total_amount">
-                                            <h4 class="text-brand text-end">$12.31</h4>
+                                            <h4 class="text-brand text-end" id="cart-total">@total</h4>
+
                                         </td>
                                     </tr>
-                                    <tr>
+                                 @*    <tr>
                                         <td scope="col" colspan="2">
                                             <div class="divider-2 mt-10 mb-10"></div>
                                         </td>
-                                    </tr>
-                                    <tr>
+                                    </tr> *@
+                                 @*    <tr>
                                         <td class="cart_total_label">
                                             <h6 class="text-muted">Shipping</h6>
                                         </td>
                                         <td class="cart_total_amount">
-                                            <h5 class="text-heading text-end">Free</h4
+                                            <h5 class="text-heading text-end">Free</h5
                                         </td>
                                     </tr>
                                     <tr>
@@ -605,10 +657,10 @@
                                             <h6 class="text-muted">Estimate for</h6>
                                         </td>
                                         <td class="cart_total_amount">
-                                            <h5 class="text-heading text-end">United Kingdom</h4
+                                            <h5 class="text-heading text-end">United Kingdom</h5
                                         </td>
-                                    </tr>
-                                    <tr>
+                                    </tr> *@
+                                  @*   <tr>
                                         <td scope="col" colspan="2">
                                             <div class="divider-2 mt-10 mb-10"></div>
                                         </td>
@@ -618,10 +670,12 @@
                                             <h6 class="text-muted">Total</h6>
                                         </td>
                                         <td class="cart_total_amount">
-                                            <h4 class="text-brand text-end">$12.31</h4>
+                                            <h4 class="text-brand text-end">@total</h4>
                                         </td>
-                                    </tr>
+                                    </tr> *@
                                 </tbody>
+                            
+                               
                             </table>
                         </div>
                         <a href="#" class="btn mb-20 w-100">Proceed To CheckOut<i class="fi-rs-sign-out ml-15"></i></a>
@@ -848,38 +902,44 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-     $(document).ready(function () {
+      $(document).ready(function () {
     $(".qty-up, .qty-down").click(function (e) {
         e.preventDefault();
 
-        var productId = $(this).data("id").toString(); 
+        var button = $(this);
+        var productId = button.data("id").toString();
         var inputField = $("input[data-id='" + productId + "']");
-        var currentQty = parseInt(inputField.val()) || 0;  // ✅ Nếu không lấy được thì mặc định là 0
-        var stockQty = parseInt(inputField.attr("data-stock")) || 0; // ✅ Nếu không lấy được thì mặc định là 0
-        var isIncrease = $(this).hasClass("qty-up");
+        var currentQty = parseInt(inputField.val()) || 0;
+        var stockQty = parseInt(inputField.attr("data-stock")) || 0;
+        var isIncrease = button.hasClass("qty-up");
+        var newQty = isIncrease ? currentQty + 1 : currentQty - 1;
 
         console.log("📌 ProductID:", productId);
         console.log("📌 Current Quantity:", currentQty);
         console.log("📌 Stock Quantity:", stockQty);
 
-        var newQty = isIncrease ? currentQty + 1 : currentQty - 1;
-
+        // 🔥 Kiểm tra giới hạn số lượng
         if (isIncrease && currentQty >= stockQty) {
-            alert("Số lượng trong kho chỉ còn " + stockQty + ". Không thể tăng thêm.");
-            return;
-        }
-        if (!isIncrease && currentQty <= 1) {
-            alert("Số lượng tối thiểu là 1. Không thể giảm.");
+            alert("⚠️ Số lượng đặt hàng đã đạt giới hạn kho (" + stockQty + ")");
+            inputField.val(stockQty);
+            $(".qty-up[data-id='" + productId + "']").hide();
             return;
         }
 
-        // ✅ Gửi Ajax cập nhật giỏ hàng
+        if (!isIncrease && currentQty <= 1) {
+            alert("⚠️ Số lượng tối thiểu là 1.");
+            return;
+        }
+
+        // ✅ Nếu hợp lệ, gửi Ajax
+        button.prop("disabled", true);
+
         $.ajax({
             url: "/Home/CheckQuantity",
             type: "POST",
-            contentType: "application/json", 
+            contentType: "application/json",
             data: JSON.stringify({
-                ProductID: productId,  
+                ProductID: productId,
                 quantity: newQty
             }),
             success: function (response) {
@@ -887,21 +947,147 @@
 
                 if (response.success) {
                     inputField.val(newQty);
-                    $("#subtotal-" + productId).text(response.subtotal);
+
+                    // 🔥 Kiểm tra nếu số lượng đạt giới hạn kho
+                    if (newQty >= stockQty) {
+                        $(".qty-up[data-id='" + productId + "']").hide();
+                        alert("⚠️ Đã đạt giới hạn kho! Không thể tăng thêm.");
+                    } else {
+                        $(".qty-up[data-id='" + productId + "']").show();
+                    }
+
+                    if (newQty > 1) {
+                        $(".qty-down[data-id='" + productId + "']").show();
+                    } else {
+                        $(".qty-down[data-id='" + productId + "']").hide();
+                    }
+
+                    // ✅ Cập nhật subtotal của sản phẩm
+                    var unitPrice = parseFloat($("#price-" + productId).text());
+                    var newSubtotal = newQty * unitPrice;
+                    $("#subtotal-" + productId).text(newSubtotal.toFixed(2));
+
+                    // ✅ Cập nhật tổng tiền giỏ hàng
+                    updateTotalPrice();
                 } else {
-                    alert("Cập nhật thất bại: " + response.message);
+                    inputField.val(currentQty);
+                    alert("⚠️ Cập nhật thất bại: " + response.message);
                 }
             },
             error: function () {
-                alert("Lỗi server, vui lòng thử lại!");
+                alert("⚠️ Lỗi server, vui lòng thử lại!");
+            },
+            complete: function () {
+                button.prop("disabled", false);
             }
         });
     });
+
+    // ✅ Hàm cập nhật tổng tiền
+   function updateTotalPrice() {
+    var total = 0; // 🔥 Đặt lại total về 0 trước khi tính toán
+
+    $("td.price h4.text-brand").each(function () {
+        var subtotal = parseFloat($(this).text().replace(/,/g, '')) || 0;
+        total += subtotal;
+    });
+
+    $("#cart-total").text(total.toFixed(2)); // ✅ Cập nhật lại tổng giá
+}
+
+
+    // ✅ Kiểm tra trạng thái khi load trang
+    $("input.qty-val").each(function () {
+        var inputField = $(this);
+        var productId = inputField.data("id");
+        var stockQty = parseInt(inputField.attr("data-stock")) || 0;
+        var currentQty = parseInt(inputField.val()) || 0;
+
+        if (currentQty >= stockQty) {
+            $(".qty-up[data-id='" + productId + "']").hide();
+        }
+
+        if (currentQty <= 1) {
+            $(".qty-down[data-id='" + productId + "']").hide();
+        }
+    });
+
 });
 
+    </script>
 
+    <script>
+        $(document).ready(function () {
+            $(".delete-cart").click(function (e) {
+                e.preventDefault(); // Ngăn chặn chuyển trang
+
+                var productId = $(this).data("id"); // Lấy ProductID từ data-id
+
+                // Hiển thị hộp thoại xác nhận bằng SweetAlert2
+                Swal.fire({
+                    title: "Bạn có chắc muốn xóa?",
+                    text: "Sản phẩm sẽ bị xóa khỏi giỏ hàng!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Xóa!",
+                    cancelButtonText: "Hủy"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Gửi request xóa bằng Ajax
+                        $.ajax({
+                            url: "/Home/DeleteCart",  // API xóa sản phẩm
+                            type: "POST",
+                            contentType: "application/json",
+                            data: JSON.stringify({ ProductID: productId }),
+                            success: function (response) {
+                                if (response.success) {
+                                    Swal.fire({
+                                        title: "Đã xóa!",
+                                        text: "Sản phẩm đã được xóa khỏi giỏ hàng.",
+                                        icon: "success",
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                    });
+
+                                    // Xóa dòng sản phẩm khỏi bảng
+                                    // Xóa dòng sản phẩm khỏi bảng
+                                    var row = $("#price-" + productId).closest("tr");
+                                    var removedSubtotal = parseFloat(row.find("td.price h4.text-brand").text().replace(/,/g, '')) || 0;
+                                    row.remove();
+
+                                    // Cập nhật tổng tiền ngay sau khi xóa sản phẩm
+                                    var currentTotal = parseFloat($("#cart-total").text().replace(/,/g, '')) || 0;
+                                    var newTotal = currentTotal - removedSubtotal;
+                                    $("#cart-total").text(newTotal.toFixed(2)); // ✅ Cập nhật total ngay lập tức
+
+
+                                } else {
+                                    Swal.fire({
+                                        title: "Lỗi!",
+                                        text: response.message,
+                                        icon: "error"
+                                    });
+                                }
+                            },
+                            error: function () {
+                                Swal.fire({
+                                    title: "Lỗi!",
+                                    text: "Có lỗi xảy ra, vui lòng thử lại!",
+                                    icon: "error"
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        });
 
     </script>
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
     <!-- Vendor JS-->
     <script src="~/assets/js/vendor/modernizr-3.6.0.min.js"></script>

@@ -1,9 +1,9 @@
 ﻿using System.Net.Http.Headers;
-using System.Runtime.InteropServices;
 using System.Text.Json;
 using AutoMapper;
 using BusinessLogic.Services.StoreDetail;
 using Microsoft.AspNetCore.Authorization;
+using BusinessLogic.Services.BalanceChanges;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Models;
@@ -12,13 +12,13 @@ using Repository.ViewModels;
 
 namespace EasyFood.web.Controllers
 {
-    
+
     public class AdminController : Controller
     {
+        private readonly IBalanceChangeService _balance; // xử lý withdaw
         private readonly UserManager<AppUser> _userManager;
         private HttpClient client = null;
         private string url;
-
         private readonly IStoreDetailService _storeService;
         private readonly StoreDetailsRepository _storeRepository;
         private readonly IMapper _mapper;
@@ -26,6 +26,7 @@ namespace EasyFood.web.Controllers
         public AdminController(UserManager<AppUser> userManager, IStoreDetailService storeService, IMapper mapper, IWebHostEnvironment webHostEnvironment, StoreDetailsRepository storeRepository)
         {
             _userManager = userManager;
+            _balance = balance;
             client = new HttpClient();
             var contentype = new MediaTypeWithQualityHeaderValue("application/json");
             client.DefaultRequestHeaders.Accept.Add(contentype);
@@ -75,11 +76,11 @@ namespace EasyFood.web.Controllers
         public async Task<IActionResult> ManagementSeller()
         {
             var admin = await _userManager.GetUserAsync(User);
-            if(admin == null)
+            if (admin == null)
             {
                 return RedirectToAction("Login", "Home");
             }
-            if(!await _userManager.IsInRoleAsync(admin, "Admin"))
+            if (!await _userManager.IsInRoleAsync(admin, "Admin"))
             {
                 return RedirectToAction("Login", "Home");
             }
@@ -88,7 +89,7 @@ namespace EasyFood.web.Controllers
             try
             {
                 var respone = await client.GetAsync(apiURL);
-                if(!respone.IsSuccessStatusCode)
+                if (!respone.IsSuccessStatusCode)
                 {
                     return View(usersViews);
                 }
@@ -106,21 +107,24 @@ namespace EasyFood.web.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> AcceptSeller([FromBody] UsersViewModel obj) {
-            var admin = await _userManager.GetUserAsync (User);
-            if(admin == null || !await _userManager.IsInRoleAsync(admin, "Admin"))
+        public async Task<IActionResult> AcceptSeller([FromBody] UsersViewModel obj)
+        {
+            var admin = await _userManager.GetUserAsync(User);
+            if (admin == null || !await _userManager.IsInRoleAsync(admin, "Admin"))
             {
                 return RedirectToAction("Login", "Home");
             }
-             string apiURL = $"https://localhost:5555/Gateway/ManagementSellerService/Accept-seller/{obj.Email}";
+            string apiURL = $"https://localhost:5555/Gateway/ManagementSellerService/Accept-seller/{obj.Email}";
             try
             {
                 var jsonContent = JsonSerializer.Serialize(obj);
-                var content = new StringContent(jsonContent,System.Text.Encoding.UTF8, "application/json");
+                var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
                 var respone = await client.PostAsync(apiURL, content);
-                if (respone.IsSuccessStatusCode) {
+                if (respone.IsSuccessStatusCode)
+                {
                     return Json(new { success = true, message = "Cập nhật thành công" });
-                } else
+                }
+                else
                 {
                     return Json(new { success = false, message = "Cập nhật thất bại" });
                 }
@@ -145,11 +149,12 @@ namespace EasyFood.web.Controllers
             {
                 var jsonContent = JsonSerializer.Serialize(obj);
                 var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
-                var response = await client.PostAsync(apiURL,content);
-                if(response.IsSuccessStatusCode)
+                var response = await client.PostAsync(apiURL, content);
+                if (response.IsSuccessStatusCode)
                 {
                     return Json(new { success = true, message = "Cập nhật thành công" });
-                }else
+                }
+                else
                 {
                     return Json(new { success = true, message = "Cập nhật thất bại" });
                 }
@@ -403,6 +408,162 @@ namespace EasyFood.web.Controllers
 
             return Json(new { success = true, message = "Store status updated successfully" });
         }
+
+        public async Task<IActionResult> WithdrawList()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            string apiUrl = "https://localhost:5555/Gateway/WithdrawService/GetWithdraw";
+            List<WithdrawAdminListViewModel> withdrawList = new List<WithdrawAdminListViewModel>();
+
+            try
+            {
+                var response = await client.GetAsync(apiUrl);
+                if (!response.IsSuccessStatusCode)
+                {
+                    return View(withdrawList);
+                }
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                withdrawList = JsonSerializer.Deserialize<List<WithdrawAdminListViewModel>>(responseContent,
+                                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                return View(withdrawList);
+            }
+            catch (Exception)
+            {
+                return View(withdrawList);
+            }
+        }
+        public async Task<IActionResult> WithdrawDetails(string id)
+        {
+            try
+            {
+                // Kiểm tra ID có hợp lệ không
+                if (!Guid.TryParse(id, out Guid withdrawId))
+                {
+                    return Json(new ErroMess { success = false, msg = "ID không hợp lệ." });
+                }
+
+                // Tìm thông tin rút tiền theo ID
+                var withdraw = await _balance.FindAsync(w => w.ID == withdrawId);
+
+                if (withdraw == null)
+                {
+                    return Json(new ErroMess { success = false, msg = "Không tìm thấy yêu cầu rút tiền." });
+                }
+
+                // Lấy thông tin người dùng
+                var user = await _userManager.FindByIdAsync(withdraw.UserID);
+                if (user == null)
+                {
+                    return Json(new ErroMess { success = false, msg = "Người dùng không tồn tại." });
+                }
+
+                // Tạo ViewModel để hiển thị trong View
+                var withdrawModel = new WithdrawAdminListViewModel
+                {
+                    ID = withdraw.ID,
+                    UserName = user.UserName,
+                    MoneyChange = withdraw.MoneyChange,
+                    StartTime = withdraw.StartTime,
+                    DueTime = withdraw.DueTime,
+                    Description = withdraw.Description,
+                    Status = withdraw.Status,
+                    Method = withdraw.Method,
+                    UserID = withdraw.UserID
+                };
+
+                return View(withdrawModel);
+            }
+            catch (Exception ex)
+            {
+                // Ghi log lỗi để debug sau này
+                Console.WriteLine($"Lỗi: {ex.Message}");
+
+                // Trả về lỗi JSON để tránh chết chương trình
+                return Json(new ErroMess { success = false, msg = "Có lỗi xảy ra, vui lòng thử lại sau." });
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> AcceptWithdraw(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id) || !Guid.TryParse(id, out Guid guidId))
+                return BadRequest(new ErroMess { msg = "ID không hợp lệ!" });
+            var flag = await _balance.FindAsync(p => p.ID == guidId);
+            if (flag == null)
+                return NotFound(new ErroMess { msg = "Không tìm thấy yêu cầu rút tiền!" });
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound(new ErroMess { msg = "Bạn phải đăng nhập thể thực hiện hành động này!" });
+            }
+            this.url = $"https://localhost:5555/Gateway/WithdrawService/AcceptWithdraw";
+            try
+            {
+                var response = await client.GetAsync($"{this.url}/{id}");
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    PropertyNameCaseInsensitive = true
+                };
+                var mes = await response.Content.ReadAsStringAsync();
+                var dataRepone = JsonSerializer.Deserialize<ErroMess>(mes, options);
+                if (response.IsSuccessStatusCode)
+                {
+                    return Json(dataRepone);
+                }
+                return Json(dataRepone);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, msg = "Lỗi không xác định, vui lòng thử lại." });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RejectWithdraw(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id) || !Guid.TryParse(id, out Guid guidId))
+                return BadRequest(new ErroMess { msg = "ID không hợp lệ!" });
+            var flag = await _balance.FindAsync(p => p.ID == guidId);
+            if (flag == null)
+                return NotFound(new ErroMess { msg = "Không tìm thấy yêu cầu rút tiền!" });
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound(new ErroMess { msg = "Bạn phải đăng nhập thể thực hiện hành động này!" });
+            }
+            this.url = "https://localhost:5555/Gateway/WithdrawService/RejectWithdraw";
+            try
+            {
+                var response = await client.GetAsync($"{this.url}/{id}");
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    PropertyNameCaseInsensitive = true
+                };
+                var mes = await response.Content.ReadAsStringAsync();
+                var dataRepone = JsonSerializer.Deserialize<ErroMess>(mes, options);
+                if (response.IsSuccessStatusCode)
+                {
+                    return Json(dataRepone);
+                }
+                return Json(dataRepone);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, msg = "Lỗi không xác định, vui lòng thử lại." });
+            }
+
+        }
     }
 }
+
+
 

@@ -55,10 +55,16 @@ namespace BusinessLogic.Services.BalanceChanges
 
         public async Task<decimal> GetBalance(string UserId)
         {
-            var getBalance = await this.ListAsync(u => u.UserID == UserId && u.Status == "done",orderBy: query =>query.OrderByDescending(d =>d.DueTime));
+            var getBalance = await this.ListAsync(u => u.UserID == UserId && u.checkDone, orderBy: query =>query.OrderByDescending(d =>d.DueTime));
             if (!getBalance.Any())
                 return 0.0m;
             return getBalance.FirstOrDefault().MoneyAfterChange;
         }
+
+        public async Task<bool> CheckMoney(string userID, decimal Money)
+        {
+            return await GetBalance(userID) >= Money;
+        }
+
     }
 }

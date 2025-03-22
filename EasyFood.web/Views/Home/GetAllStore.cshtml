@@ -16,7 +16,7 @@
     <link rel="shortcut icon" type="image/x-icon" href="~/assets/imgs/theme/favicon.svg" />
     <!-- Template CSS -->
     <link rel="stylesheet" href="~/assets/css/main.css?v=6.0" />
-    @Html.Raw(" <link href='https://cdn.jsdelivr.net/npm/@flaticon/flaticon-uicons/css/all/all.css' rel='stylesheet'>");
+   
 </head>
 
 <body>
@@ -240,7 +240,7 @@
                                                 <span class="text-muted">@(item.CreatedDate.ToString("dd/MM/yyyy") ?? "N/A")</span>
                                             </div>
 
-                                            <h4 class="mb-5"><a href="vendor-details-1.html">@item.Name</a></h4>
+                                            <h4><a asp-action="GetStoreDetail" asp-controller="Home" asp-route-id="@item.ID">@item.Name</a></h4>
                                             <div class="product-rate-cover">
                                                 <div class="product-rate d-inline-block">
                                                     <div class="product-rating" style="width: 90%"></div>

@@ -1,10 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
 using Models.DBContext;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Repository.BalanceChange
 {
@@ -65,24 +60,29 @@ namespace Repository.BalanceChange
             }
         }
 
-        /// <summary>
-        /// Thực thi hành động bên trong transaction một cách an toàn.
-        /// </summary>
-        /// <param name="action">Hành động cần thực thi.</param>
-        public async Task ExecuteInTransactionAsync(Func<Task> action)
+        public async Task<bool> ExecuteInTransactionAsync(Func<Task> action)
         {
             try
             {
                 await BeginTransactionAsync();
                 await action();
                 await CommitAsync();
+                return true;
             }
-            catch
+            catch (Exception ex)
             {
-                await RollbackAsync();
-                throw;
+                try
+                {
+                    await RollbackAsync();
+                }
+                catch (Exception rollbackEx)
+                {
+                    throw new Exception("Lỗi rollback giao dịch!", rollbackEx);
+                }
+                throw new Exception("Lỗi trong giao dịch!", ex);
             }
         }
+
 
         public void Dispose()
         {

@@ -5,6 +5,9 @@ using Models.DBContext;
 using Models;
 using Repository.StoreDetails;
 using BusinessLogic.Services.StoreDetail;
+using BusinessLogic.Services.ProductVariantVariants;
+using BusinessLogic.Services.ProductVariants;
+using BusinessLogic.Services.ProductImages;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +18,14 @@ builder.Services.AddScoped<Repository.StoreDetails.StoreDetailsRepository>();
 builder.Services.AddScoped<IStoreDetailsRepository, StoreDetailsRepository>();
 builder.Services.AddScoped<StoreDetailService, StoreDetailService>();
 builder.Services.AddScoped<IStoreDetailService, StoreDetailService>();
+builder.Services.AddScoped<ProductVariantService, ProductVariantService>();
+builder.Services.AddScoped<IProductVariantService, ProductVariantService>();
+builder.Services.AddScoped<ProductImageService, ProductImageService>();
+builder.Services.AddScoped<IProductImageService, ProductImageService>();
+
+
+
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

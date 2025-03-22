@@ -10,5 +10,12 @@ namespace Repository.ViewModels
     {
         public Guid ID { get; set; }
         public string Name { get; set; }
+
+        public string? Img { get; set; }
+     
+        public int Number { get; set; } = 0;
+        public float Commission { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public DateTime? ModifiedDate { get; set; }
     }
 }

@@ -154,7 +154,7 @@ namespace Models.DBContext
             builder.Entity<Order>()
            .HasOne(h => h.Voucher)
            .WithMany(h => h.Orders)
-           .HasForeignKey(h => h.VoucherID).OnDelete(DeleteBehavior.NoAction);
+           .HasForeignKey(h => h.VoucherID).OnDelete(DeleteBehavior.NoAction).IsRequired(false);
 
 
 

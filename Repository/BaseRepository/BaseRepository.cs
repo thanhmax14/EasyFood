@@ -72,7 +72,7 @@ namespace Repository.BaseRepository
             /// <returns>Task&lt;T&gt;.</returns>
             public virtual async Task<T> FindAsync(Expression<Func<T, bool>> match)
             {
-                return await DbSet.SingleOrDefaultAsync(match);
+                return await DbSet.FirstOrDefaultAsync(match);
             }
 
             /// <summary>
