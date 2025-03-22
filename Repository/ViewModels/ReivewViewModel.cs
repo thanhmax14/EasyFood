@@ -2,6 +2,7 @@
 {
     public class ReivewViewModel
     {
+
         public Guid ID { get; set; }
         public string? Cmt { get; set; }
         public DateTime Datecmt { get; set; } = DateTime.Now;
@@ -19,6 +20,8 @@
         public string ProductName { get; set; }
 
         public Guid StoreId { get; set; }
+
+        public string StoreName { get; set; }
 
     }
 }

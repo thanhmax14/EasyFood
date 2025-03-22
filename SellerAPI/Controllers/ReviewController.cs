@@ -142,8 +142,6 @@ namespace SellerAPI.Controllers
         [HttpPut("ShowFeedback/{id}")]
         public async Task<IActionResult> ShowFeedback(Guid id)
         {
-
-
             try
             {
                 var review = await _reviewService.GetAsyncById(id);
@@ -195,8 +193,52 @@ namespace SellerAPI.Controllers
             }
         }
 
+        [HttpGet("ViewFeedbackListByUser/{userId}")]
+        public async Task<IActionResult> GetReviewByUserId(string userId)
+        {
+            // Lấy danh sách review dựa vào UserID
+            var reviews = await _reviewService.ListAsync(r => r.UserID == userId);
 
+            if (!reviews.Any())
+            {
+                return NotFound(new { message = "Không có đánh giá nào từ người dùng này!" });
+            }
 
+            // Lấy danh sách productId từ review
+            var productIds = reviews.Select(r => r.ProductID).Distinct().ToList();
 
+            // Lấy thông tin sản phẩm từ danh sách productId
+            var products = await _productService.ListAsync(p => productIds.Contains(p.ID));
+
+            // Lấy danh sách storeId từ product
+            var storeIds = products.Select(p => p.StoreID).Distinct().ToList();
+
+            // Lấy thông tin store từ danh sách storeId
+            var stores = await _storeDetailService.ListAsync(s => storeIds.Contains(s.ID));
+
+            // Xây dựng kết quả
+            var result = reviews.Select(review =>
+            {
+                var product = products.FirstOrDefault(p => p.ID == review.ProductID);
+                var store = stores.FirstOrDefault(s => s.ID == product?.StoreID);
+
+                return new ReivewViewModel
+                {
+                    ID = review.ID,
+                    Cmt = review.Cmt,
+                    Relay = review.Relay,
+                    Datecmt = review.Datecmt,
+                    Status = review.Status,
+                    Rating = review.Rating,
+                    UserID = review.UserID,
+                    ProductID = review.ProductID,
+                    ProductName = product?.Name, // Lấy tên sản phẩm
+                    StoreId = product?.StoreID ?? Guid.Empty, // Lấy StoreID
+                    StoreName = store?.Name // Lấy StoreName
+                };
+            }).ToList();
+
+            return Ok(result);
+        }
     }
 }
