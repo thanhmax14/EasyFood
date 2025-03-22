@@ -18,6 +18,7 @@ namespace Models
         public int Stock { get; set; } = 0;
         public DateTime? ModifiedDate { get; set; }
         public DateTime ManufactureDate { get; set; }// Ngày sản xuất
+        public bool IsActive { get; set; } = true;
         [ForeignKey("Product")]
         public Guid ProductID { get; set; }
         public virtual Product Product { get; set; }
