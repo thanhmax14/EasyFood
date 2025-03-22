@@ -44,7 +44,7 @@ namespace ProductsService.Controllers
                 foreach (var item in products)
                 {
 
-                    var price = await _productVariantService.FindAsync(s => s.ProductID == item.ID);
+                    var price = await _productVariantService.FindAsync(s => s.ProductID == item.ID && s.IsActive == true);
 
                     if (price != null)
                     {
@@ -127,22 +127,47 @@ namespace ProductsService.Controllers
             var imgList = await _productImageService.ListAsync(i => i.ProductID == producct.ID);
             var Listimg = imgList.Select(i => i.ImageUrl).ToList(); // Lấy danh sách ImageUrl
             var productDetail = await _productService.FindAsync(x => x.ID == id);
-            var ProductSize = await _productVariantService.FindAsync(s => s.ProductID == id);
-            var storeName = await _storeDetailService.FindAsync(t => t.ID == productDetail.StoreID);
-            var categoryName = await _categoryService.FindAsync(c => c.ID == productDetail.CateID);
+            
+            
 
-            producct.ID = productDetail.ID;
-            producct.Name = productDetail.Name;
-            producct.StoreName = storeName.Name;
-            producct.CategoryName = categoryName.Name;
-            producct.Price = ProductSize.Price;
-            producct.ShortDescription = productDetail.ShortDescription;
-            producct.LongDescription = productDetail.LongDescription;
-            producct.CreatedDate = productDetail.CreatedDate;
-            producct.Stocks = ProductSize.Stock;
-            producct.Size = ProductSize.Size;
-            
-            
+            var price = await _productVariantService.FindAsync(s => s.ProductID == producct.ID && s.IsActive == true);
+
+            if (price != null)
+            {
+                var ProductSize = await _productVariantService.FindAsync(s => s.ProductID == id);
+
+                var storeName = await _storeDetailService.FindAsync(t => t.ID == productDetail.StoreID);
+                var categoryName = await _categoryService.FindAsync(c => c.ID == productDetail.CateID);
+
+                producct.ID = productDetail.ID;
+                producct.Name = productDetail.Name;
+                producct.StoreName = storeName.Name;
+                producct.CategoryName = categoryName.Name;
+                producct.Price = ProductSize.Price;
+                producct.ShortDescription = productDetail.ShortDescription;
+                producct.LongDescription = productDetail.LongDescription;
+                producct.CreatedDate = productDetail.CreatedDate;
+                producct.Stocks = ProductSize.Stock;
+                producct.Size = ProductSize.Size;
+            }
+            else
+            {
+                var storeName = await _storeDetailService.FindAsync(t => t.ID == productDetail.StoreID);
+                var categoryName = await _categoryService.FindAsync(c => c.ID == productDetail.CateID);
+
+                producct.ID = productDetail.ID;
+                producct.Name = productDetail.Name;
+                producct.StoreName = storeName.Name;
+                producct.CategoryName = categoryName.Name;
+                producct.Price = 0;
+                producct.ShortDescription = productDetail.ShortDescription;
+                producct.LongDescription = productDetail.LongDescription;
+                producct.CreatedDate = productDetail.CreatedDate;
+               
+            }
+
+
+
             if (productDetail == null)
             {
                 return BadRequest("Not found Product");

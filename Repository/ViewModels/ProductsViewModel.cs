@@ -22,7 +22,8 @@ namespace Repository.ViewModels
         public bool IsActive { get; set; } = false;
         public bool IsOnSale { get; set; } // Có đang giảm giá?
         public string? StoreName { get; set; }
-        
+
+        public string PriceMessage { get; set; }
         public string CategoryName { get; set; }
         public decimal Price { get; set; } = 0;
 
