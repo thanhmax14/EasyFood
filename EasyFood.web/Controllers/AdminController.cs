@@ -1,9 +1,8 @@
 ﻿using System.Net.Http.Headers;
 using System.Text.Json;
 using AutoMapper;
-using BusinessLogic.Services.StoreDetail;
-using Microsoft.AspNetCore.Authorization;
 using BusinessLogic.Services.BalanceChanges;
+using BusinessLogic.Services.StoreDetail;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Models;
@@ -23,7 +22,7 @@ namespace EasyFood.web.Controllers
         private readonly StoreDetailsRepository _storeRepository;
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        public AdminController(UserManager<AppUser> userManager, IStoreDetailService storeService, IMapper mapper, IWebHostEnvironment webHostEnvironment, StoreDetailsRepository storeRepository)
+        public AdminController(UserManager<AppUser> userManager, IStoreDetailService storeService, IMapper mapper, IWebHostEnvironment webHostEnvironment, StoreDetailsRepository storeRepository, IBalanceChangeService balance)
         {
             _userManager = userManager;
             _balance = balance;
