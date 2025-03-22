@@ -43,5 +43,6 @@ namespace BusinessLogic.Services.StoreDetail
         Task<bool> AcceptStoreAsync(Guid id);
         Task<bool> RejectStoreAsync(Guid id);
         Task<bool> UpdateStoreStatusAsync(Guid storeId, string newStatus);
+        Task<IEnumerable<StoreViewModel>> GetStoresByUserIdAsync(string? userId);
     }
 }

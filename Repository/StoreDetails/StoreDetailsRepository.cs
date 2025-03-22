@@ -176,5 +176,27 @@ namespace Repository.StoreDetails
             _context.StoreDetails.Update(store);
             return await _context.SaveChangesAsync() > 0;
         }
+
+        public async Task<IEnumerable<StoreViewModel>> GetStoresByUserIdAsync(string? userId)
+        {
+            return await _context.StoreDetails
+                .Where(s => s.UserID == userId)
+                .Select(s => new StoreViewModel
+                {
+                    ID = s.ID,
+                    UserID = s.UserID,
+                    Name = s.Name,
+                    CreatedDate = s.CreatedDate,
+                    ModifiedDate = s.ModifiedDate,
+                    LongDescriptions = s.LongDescriptions,
+                    ShortDescriptions = s.ShortDescriptions,
+                    Address = s.Address,
+                    Phone = s.Phone,
+                    Img = s.Img,
+                    Status = s.Status,
+                    IsActive = s.IsActive
+                }).ToListAsync();
+        }
+
     }
 }

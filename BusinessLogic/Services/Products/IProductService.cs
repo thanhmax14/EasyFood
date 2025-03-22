@@ -1,4 +1,5 @@
-﻿using Models;
+﻿using Microsoft.AspNetCore.Http;
+using Models;
 using Repository.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -32,5 +33,11 @@ namespace BusinessLogic.Services.Products
         Task<bool>  CreateProductAsync(ProductListViewModel model, string userId, List<ProductImageViewModel> images);
         Task<Guid> GetCurrentStoreIDAsync(string userId);
         Task<List<ProductListViewModel>> GetAllProductsAsync(Guid storeId);
+        List<ProductIndexViewModel> GetProductsByStoreId(Guid storeId);
+        Task<Guid> CreateProductAsync(ProductViewModel model);
+        Task<List<Categories>> GetCategoriesAsync();
+        Task<ProductUpdateViewModel> GetProductByIdAsync(Guid productId);
+        Task UpdateProductAsync(ProductUpdateViewModel model, List<IFormFile> newImages, string webRootPath);
+        Task<bool> ToggleProductStatus(Guid productId);
     }
 }

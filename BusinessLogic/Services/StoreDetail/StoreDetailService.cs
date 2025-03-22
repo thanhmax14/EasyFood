@@ -176,5 +176,11 @@ namespace BusinessLogic.Services.StoreDetail
             await _repositorys.UpdateStoreAsync(storeDetail);
             return true;
         }
+
+        public async Task<IEnumerable<StoreViewModel>> GetStoresByUserIdAsync(string? userId)
+        {
+            var stores = await _repositorys.GetStoresByUserIdAsync(userId);
+            return stores.Where(s => s.Status.ToLower() == "approved" && s.IsActive);
+        }
     }
 }
