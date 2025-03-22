@@ -180,7 +180,7 @@ namespace Repository.Products
             product.IsOnSale = model.IsOnSale;
             product.CateID = model.CateID;
 
-            // Xóa ảnh cũ
+            // Xóa ảnh cũ nếu có trong danh sách RemoveImageUrls
             if (model.RemoveImageUrls?.Any() == true)
             {
                 var imagesToRemove = product.ProductImages
@@ -200,8 +200,9 @@ namespace Repository.Products
                 await _context.SaveChangesAsync();
             }
 
-            // Kiểm tra số lượng ảnh còn lại
+            // Kiểm tra lại số lượng ảnh sau khi xóa
             int currentImageCount = product.ProductImages.Count;
+            bool hasMainImage = product.ProductImages.Any(i => i.IsMain); // Kiểm tra đã có ảnh chính chưa
 
             // Xử lý ảnh mới nếu chưa đạt 5 ảnh
             if (currentImageCount < 5 && newImages?.Any() == true)
@@ -223,8 +224,10 @@ namespace Repository.Products
                     {
                         ImageUrl = "/uploads/" + fileName, // Lưu đường dẫn tương đối
                         ProductID = product.ID,
-                        IsMain = false
+                        IsMain = !hasMainImage // Đặt IsMain = true nếu chưa có ảnh chính
                     });
+
+                    hasMainImage = true; // Sau khi thêm ảnh đầu tiên, đảm bảo các ảnh sau là IsMain = false
                 }
 
                 _context.ProductImages.AddRange(imagesToAdd);
@@ -232,6 +235,7 @@ namespace Repository.Products
 
             await _context.SaveChangesAsync();
         }
+
 
         public async Task<ProductHideShowViewModel> GetByIdAsync(Guid id)
         {
