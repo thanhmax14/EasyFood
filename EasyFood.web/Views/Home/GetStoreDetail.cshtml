@@ -806,7 +806,7 @@
         </div>
         <div class="container mb-30">
             <div class="archive-header-2 text-center pt-80 pb-50">
-                <h1 class="display-2 mb-50">Nest Food Store</h1>
+                <h1 class="display-2 mb-50">@Model.Name Store</h1>
                 <div class="row">
                     <div class="col-lg-5 mx-auto">
                         <div class="sidebar-widget-2 widget_search mb-50">
@@ -868,22 +868,27 @@
                         </div>
                     </div>
 
-
-
                     <div class="row product-grid">
+               
+                        @foreach(var item in Model.ProductViewModel){
+
                         <div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
                             <div class="product-cart-wrap mb-30">
                                 <div class="product-img-action-wrap">
                                     <div class="product-img product-img-zoom">
                                         <a href="shop-product-right.html">
-                                            <img class="default-img" src="~/assets/imgs/shop/product-1-1.jpg" alt="" />
-                                            <img class="hover-img" src="~/assets/imgs/shop/product-1-2.jpg" alt="" />
+                                            <img class="default-img" src="@item.Img.FirstOrDefault()" alt="" />
+
+                                            <img class="hover-img" src="@item.Img.Skip(1).FirstOrDefault()" alt="" />
                                         </a>
                                     </div>
                                     <div class="product-action-1">
-                                        <a aria-label="Add To Wishlist" class="action-btn" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                        <a aria-label="Compare" class="action-btn" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
-                                        <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
+                                        <a aria-label="Add To Wishlist" class="action-btn" onclick="AddWishlist('@item.ID')"><i id="iconsave" class="fi-rs-heart"></i></a>
+                                        <a aria-label="Compare" class="action-btn" href="">
+                                            <i class="fi-rs-shuffle"></i>
+                                        </a>
+                                        <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal"
+                                           data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
                                     </div>
                                     <div class="product-badges product-badges-position product-badges-mrg">
                                         <span class="hot">Hot</span>
@@ -891,9 +896,9 @@
                                 </div>
                                 <div class="product-content-wrap">
                                     <div class="product-category">
-                                        <a href="shop-grid-right.html">@Model.CategoryName</a>
+                                        <a href="shop-grid-right.html">@item.CategoryName</a>
                                     </div>
-                                    <h2><a href="shop-product-right.html">Seeds of Change Organic Quinoe</a></h2>
+                                    <h2><a asp-action="ProductDetail" asp-controller="Home" asp-route-id="@item.ID">@item.Name</a></h2>
                                     <div class="product-rate-cover">
                                         <div class="product-rate d-inline-block">
                                             <div class="product-rating" style="width: 90%"></div>
@@ -901,29 +906,28 @@
                                         <span class="font-small ml-5 text-muted"> (4.0)</span>
                                     </div>
                                     <div>
-                                        <span class="font-small text-muted">By <a href="vendor-details-1.html">NestFood</a></span>
+                                        <span class="font-small text-muted">
+                                                By  <a asp-action="GetStoreDetail" asp-controller="Home" asp-route-id="@item.StoreId">@item.StoreName</a>
+                                        </span>
                                     </div>
                                     <div class="product-card-bottom">
                                         <div class="product-price">
-                                            <span>$28.85</span>
-                                            <span class="old-price">$32.8</span>
+                                            <span>@item.Price</span>
+                                            
                                         </div>
                                         <div class="add-cart">
-                                            <a class="add" href="shop-cart.html"><i class="fi-rs-shopping-cart mr-5"></i>Add </a>
+                                            <a class="add" href="shop-cart.html">
+                                                <i class="fi-rs-shopping-cart mr-5"></i>Add
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!--end product card-->
-                       
-                        <!--end product card-->
                         
-                        <!--end product card-->
+                        
                        
-                        <!--end product card-->
-                      
-                        <!--end product card-->
+                    }
                     </div>
                     <!--product grid-->
                     <div class="pagination-area mt-20 mb-20">
@@ -1162,12 +1166,15 @@
                     </div>
                     <div class="sidebar-widget widget-category-2 mb-30">
                         <h5 class="section-title style-1 mb-30">Category</h5>
-                        <ul>
-                            <li>
-                                <a href="shop-grid-right.html"> <img src="~/assets/imgs/theme/icons/category-1.svg" alt="" />@Model.CategoryName</a><span class="count">30</span>
-                            </li>
-                           
-                        </ul>
+                        @foreach(var item in Model.ProductViewModel){
+                            <ul>
+                                <li>
+                                    <a href="shop-grid-right.html"> <img src="~/assets/imgs/theme/icons/category-1.svg" alt="" />@item.CategoryName</a><span class="count"></span>
+                                </li>
+
+                            </ul>
+                        }
+                      
                     </div>
 
                     <!-- Fillter By Price -->
