@@ -13,6 +13,7 @@ namespace Repository.ViewModels
         public string? LongDescriptions { get; set; }
         public string? ShortDescriptions { get; set; }
         public string CategoryName { get; set; }
+        
 
         public List<ProductListViewModel> ProductViewModel { get; set; }
 
