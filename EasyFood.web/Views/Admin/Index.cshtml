@@ -2567,8 +2567,8 @@
                     user.Email,
                     user.PhoneNumber,
                     user.Address,
-                    user.Birthday,
-                    user.IsBanByadmin
+                                        new Date(user.Birthday).toLocaleDateString("vi-VN", { day: '2-digit', month: '2-digit', year: 'numeric' }),
+                                        user.IsBanByadmin
                 ])
             }).render(document.getElementById("table-gridjs1111"));
 
@@ -2596,7 +2596,7 @@
 
     function showUser(userEmail) {
         $.ajax({
-            url: "/Admin/Show",
+                                url: "/Admin/ShowAccount",
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({ Email: userEmail }),
@@ -2632,7 +2632,7 @@
 
     function toggleUserBan(userEmail, isBan) {
         $.ajax({
-            url: "/Admin/Hidden",
+                                url: "/Admin/HiddenAccount",
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({ Email: userEmail, IsBanByadmin: isBan }),

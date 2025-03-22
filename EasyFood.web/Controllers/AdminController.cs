@@ -97,6 +97,8 @@ namespace EasyFood.web.Controllers
                 {
                     PropertyNameCaseInsensitive = true
                 });
+                usersViews = usersViews.OrderByDescending(x => x.RequestSeller == "1").ToList();
+
                 return View(usersViews);
             }
             catch (Exception ex)
@@ -164,9 +166,8 @@ namespace EasyFood.web.Controllers
                 return Json(new { success = false, message = "Lỗi kết nối API Gateway!" });
             }
         }
-
-
-        public async Task<IActionResult> Hidden([FromBody] UsersViewModel obj)
+     
+        public async Task<IActionResult> HiddenAccount([FromBody] UsersViewModel obj)
         {
             var admin = await _userManager.GetUserAsync(User);
             if (admin == null)
@@ -178,7 +179,7 @@ namespace EasyFood.web.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
-            string apiURL = $"https://localhost:5555/Gateway/ManagementSellerService/Admin-Hiden{obj.Email}";
+            string apiURL = $"https://localhost:5555/Gateway/ManagementSellerService/Admin-Hiden/{obj.Email}";
             try
             {
                 var jsonContent = JsonSerializer.Serialize(obj);
@@ -200,7 +201,7 @@ namespace EasyFood.web.Controllers
                 return Json(new { success = false, message = "Lỗi kết nối API Gateway!" }); ;
             }
         }
-        public async Task<IActionResult> Show([FromBody] UsersViewModel obj)
+        public async Task<IActionResult> ShowAccount([FromBody] UsersViewModel obj)
         {
             var admin = await _userManager.GetUserAsync(User);
             if (admin == null)
