@@ -356,9 +356,6 @@ namespace EasyFood.web.Controllers
             return NotFound();
         }
 
- 
-
-
 
         public async Task<IActionResult> GetAllStore()
         {
@@ -382,6 +379,8 @@ namespace EasyFood.web.Controllers
                 }
             }
         }
+
+
 
         public async Task<IActionResult> GetStoreDetail(Guid iD)
         {
