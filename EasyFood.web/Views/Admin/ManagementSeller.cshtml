@@ -2582,7 +2582,7 @@
                                         user.Email,
                                         user.PhoneNumber,
                                         user.Address,
-                                        user.Birthday,
+                                        new Date(user.Birthday).toLocaleDateString("vi-VN", { day: '2-digit', month: '2-digit', year: 'numeric' }),
                                         user.RequestSeller
                                     ])
                                 }).render(document.getElementById("table-gridjs1111"));
