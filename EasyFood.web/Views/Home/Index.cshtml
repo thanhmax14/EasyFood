@@ -493,18 +493,31 @@
                                         </div>
                                         <div class="product-card-bottom">
                                             <div class="product-price">
-                                                <span>@item.Price</span>
-                                                <span class="old-price">@item.Price</span>
+                                                @if (item.Price == 0)
+                                                {
+                                                    <span class="out-of-stock">Out of Stock</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>@item.Price</span>
+                                                    <span class="old-price">@item.Price</span>
+                                                }
                                             </div>
-                                            <div class="add-cart">
-                                                <a class="add" href="javascript:void(0);" onclick="AddToCart('@item.ID')">
-                                                    <i class="fi-rs-shopping-cart mr-5"></i>Add
-                                                </a>
-                                            </div>
+                                            @if (item.Price > 0)
+                                            {
+                                                <div class="add-cart">
+                                                    <a class="add" href="javascript:void(0);" onclick="AddToCart('@item.ID')">
+                                                        <i class="fi-rs-shopping-cart mr-5"></i>Add
+                                                    </a>
+                                                </div>
+                                            }
+                                        </div>
+
+
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                          
                         }
                     }
                             <!--end product card-->
