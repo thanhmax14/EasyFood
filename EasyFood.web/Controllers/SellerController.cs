@@ -1,21 +1,19 @@
 ﻿using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Text.Json;
 using AutoMapper;
 using BusinessLogic.Services.Products;
+using BusinessLogic.Services.ProductVariants;
 using BusinessLogic.Services.Reviews;
 using BusinessLogic.Services.StoreDetail;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis;
 using Models;
 using Repository.StoreDetails;
 using Repository.ViewModels;
-using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using BusinessLogic.Services.ProductVariantVariants;
-using BusinessLogic.Services.ProductVariants;
-using Microsoft.CodeAnalysis;
 
 namespace EasyFood.web.Controllers
 {
