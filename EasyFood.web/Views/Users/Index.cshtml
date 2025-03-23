@@ -1,5 +1,6 @@
 ﻿@using System.Text.Json
 @model Repository.ViewModels.IndexUserViewModels
+
 <!DOCTYPE html>
 <html class="no-js" lang="en">
 
@@ -288,6 +289,12 @@
                                             <a class="nav-link" id="wallet-tab" data-bs-toggle="tab" href="#wallet"
                                                role="tab" aria-controls="wallet" aria-selected="true">
                                                 <i class="fi-rs-user mr-10"></i>Wallet
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="Feedback-tab" data-bs-toggle="tab" href="#Feedback"
+                                               role="tab" aria-controls="Feedback" aria-selected="false">
+                                                <i class="fi-rs-shopping-bag mr-10"></i>Your Feedback
                                             </a>
                                         </li>
                                         <li class="nav-item">
@@ -762,7 +769,61 @@
                                         </style>
                                     </div>
 
+                                    @* ///FEEDBACK *@
+                                    <div class="tab-pane fade" id="Feedback" role="tabpanel" aria-labelledby="Feedback-tab">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h3 class="mb-0">Your Feedback</h3>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="table-responsive" id="table-feedback">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <script>
+                                        document.addEventListener("DOMContentLoaded", function () {
+                                            const container = document.getElementById("table-feedback");
+                                            var list = @Html.Raw(JsonSerializer.Serialize(Model.Reivew));
 
+
+                                            // Hàm khởi tạo bảng
+                                            function initializeGrid(data) {
+                                                if (!container.dataset.gridInitialized) {
+                                                    container.innerHTML = "";
+                                                    gridInstance = new gridjs.Grid({
+                                                        columns: [
+                                                            { name: "ID", hidden: true },
+                                                            { name: "Product Name" },
+                                                            { name: "Comment" },
+                                                            { name: "Comment Date" },
+                                                            { name: "Rating" },
+                                                            { name: "Reply" }
+                                                        ],
+                                                        pagination: {
+                                                            enabled: true,
+                                                            limit: 5,
+                                                            summary: true
+                                                        },
+                                                        sort: true,
+                                                        search: true,
+                                                        data: data.map(u => [
+                                                            u.ID,
+                                                            u.ProductName,
+                                                            u.Cmt,
+                                                            new Date(u.Datecmt).toLocaleDateString(), // Sửa 'review.Datecmt' thành 'u.Datecmt'
+                                                            u.Rating,
+                                                            u.Relay // Thêm Reply vào dữ liệu
+                                                        ])
+                                                    }).render(container);
+
+                                                    container.dataset.gridInitialized = "true"; // Đánh dấu đã khởi tạo grid
+                                                }
+                                            }
+
+                                            initializeGrid(list); // Gọi hàm khởi tạo bảng với dữ liệu
+                                        });
+                                    </script>
 
                                 </div>
                             </div>

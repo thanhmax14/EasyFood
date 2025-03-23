@@ -197,53 +197,6 @@ namespace SellerAPI.Controllers
             }
         }
 
-        [HttpGet("ViewFeedbackListByUser/{userId}")]
-        public async Task<IActionResult> GetReviewByUserId(string userId)
-        {
-            // Lấy danh sách review dựa vào UserID
-            var reviews = await _reviewService.ListAsync(r => r.UserID == userId);
-
-            if (!reviews.Any())
-            {
-                return NotFound(new { message = "Không có đánh giá nào từ người dùng này!" });
-            }
-
-            // Lấy danh sách productId từ review
-            var productIds = reviews.Select(r => r.ProductID).Distinct().ToList();
-
-            // Lấy thông tin sản phẩm từ danh sách productId
-            var products = await _productService.ListAsync(p => productIds.Contains(p.ID));
-
-            // Lấy danh sách storeId từ product
-            var storeIds = products.Select(p => p.StoreID).Distinct().ToList();
-
-            // Lấy thông tin store từ danh sách storeId
-            var stores = await _storeDetailService.ListAsync(s => storeIds.Contains(s.ID));
-
-            // Xây dựng kết quả
-            var result = reviews.Select(review =>
-            {
-                var product = products.FirstOrDefault(p => p.ID == review.ProductID);
-                var store = stores.FirstOrDefault(s => s.ID == product?.StoreID);
-
-                return new ReivewViewModel
-                {
-                    ID = review.ID,
-                    Cmt = review.Cmt,
-                    Relay = review.Relay,
-                    Datecmt = review.Datecmt,
-                    Status = review.Status,
-                    Rating = review.Rating,
-                    UserID = review.UserID,
-                    ProductID = review.ProductID,
-                    ProductName = product?.Name, // Lấy tên sản phẩm
-                    StoreId = product?.StoreID ?? Guid.Empty, // Lấy StoreID
-                    StoreName = store?.Name // Lấy StoreName
-                };
-            }).ToList();
-
-            return Ok(result);
-        }
 
         //check trùng bằng existingReview
         //[HttpPost("CreateReview")]
@@ -328,6 +281,77 @@ namespace SellerAPI.Controllers
             }
         }
 
+        [HttpGet("GetReviewByUserId/{userId}")]
+        public async Task<IActionResult> GetReviewByUserId(string userId)
+        {
+            var list = new List<ReivewViewModel>();
+
+            // Kiểm tra userId hợp lệ
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return BadRequest(new ErroMess { msg = "Vui lòng nhập userID" });
+            }
+
+            try
+            {
+                // Kiểm tra user có tồn tại không
+                var getUser = await _userManager.FindByIdAsync(userId);
+                if (getUser == null)
+                {
+                    return BadRequest(new ErroMess { msg = "Người dùng không tồn tại trong hệ thống" });
+                }
+
+                // Lấy danh sách review theo UserID, sắp xếp giảm dần theo Datecmt
+                var reviews = await _reviewService.ListAsync(
+                    r => r.UserID == userId,
+                    orderBy: q => q.OrderByDescending(r => r.Datecmt) // Ưu tiên đánh giá mới nhất
+                );
+
+                if (!reviews.Any())
+                {
+                    return NotFound(new ErroMess { msg = "Không có đánh giá nào từ người dùng này!" });
+                }
+
+                // Lấy danh sách productId từ review
+                var productIds = reviews.Select(r => r.ProductID).Distinct().ToList();
+                var products = await _productService.ListAsync(p => productIds.Contains(p.ID));
+
+                // Lấy danh sách storeId từ product
+                var storeIds = products.Select(p => p.StoreID).Distinct().ToList();
+                var stores = await _storeDetailService.ListAsync(s => storeIds.Contains(s.ID));
+
+                // Tạo danh sách kết quả
+                int count = 0;
+                foreach (var review in reviews)
+                {
+                    count++;
+                    var product = products.FirstOrDefault(p => p.ID == review.ProductID);
+                    var store = stores.FirstOrDefault(s => s.ID == product?.StoreID);
+
+                    list.Add(new ReivewViewModel
+                    {
+                        //No = count, // Đánh số thứ tự như GetWallet
+                        ID = review.ID,
+                        Cmt = review.Cmt,
+                        Relay = review.Relay,
+                        Datecmt = review.Datecmt,
+                        Status = review.Status,
+                        Rating = review.Rating,
+                        UserID = review.UserID,
+                        ProductID = review.ProductID,
+                        ProductName = product?.Name, // Lấy tên sản phẩm
+                        StoreId = product?.StoreID ?? Guid.Empty, // Lấy StoreID
+                        StoreName = store?.Name // Lấy StoreName
+                    });
+                }
+
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ErroMess { msg = ex.Message });
+            }
+        }
 
     }
 }
