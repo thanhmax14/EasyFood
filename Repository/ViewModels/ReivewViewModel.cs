@@ -10,7 +10,13 @@ namespace Repository.ViewModels
         public DateTime Datecmt { get; set; } = DateTime.Now;
 
         public string? Relay { get; set; }
+<<<<<<< Updated upstream
         public DateTime DateRelay { get; set; } = DateTime.Now;
+=======
+        public DateTime? DateRelay { get; set; } = DateTime.Now;
+        //1 (true) → ẩn
+        //0 (false) → hiện
+>>>>>>> Stashed changes
         public bool Status { get; set; } = false;
         public int Rating { get; set; } = 5;
 
@@ -23,6 +29,15 @@ namespace Repository.ViewModels
         //public string Username { get; set; }
         //public string ProductName { get; set; }
 
+<<<<<<< Updated upstream
+=======
+        public string? Username { get; set; }
+        public string? ProductName { get; set; }
+
+        public Guid? StoreId { get; set; }
+
+        public string? StoreName { get; set; }
+>>>>>>> Stashed changes
 
     }
 }
