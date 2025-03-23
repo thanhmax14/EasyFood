@@ -30,6 +30,10 @@ namespace BusinessLogic.Services.Categorys
             Func<IQueryable<Categories>, IOrderedQueryable<Categories>> orderBy = null,
             Func<IQueryable<Categories>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<Categories, object>> includeProperties = null);
         Task<IEnumerable<CategoryViewModel>> GetAllAsync();
-
+        Task<List<CategoryListViewModel>> GetCategoriesAsync();
+        void CreateCategory(CategoryCreateViewModel model);
+        bool CheckNumberExists(int number);
+        void UpdateCategory(CategoryUpdateViewModel model);
+        CategoryUpdateViewModel GetCategoryForUpdate(Guid id);
     }
 }

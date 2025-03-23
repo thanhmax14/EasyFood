@@ -63,5 +63,41 @@ namespace BusinessLogic.Services.Categorys
                 Name = c.Name
             });
         }
+        public async Task<List<CategoryListViewModel>> GetCategoriesAsync()
+        {
+            return await _repositorys.GetCategoryListAsync();
+        }
+
+        public void CreateCategory(CategoryCreateViewModel model)
+        {
+            _repositorys.CreateCategory(model);
+        }
+
+        public bool CheckNumberExists(int number)
+        {
+            return _repositorys.IsNumberExists(number);
+        }
+
+        public CategoryUpdateViewModel GetCategoryForUpdate(Guid id)
+        {
+            var category = _repositorys.GetCategoryById(id);
+            if (category == null) return null;
+
+            return new CategoryUpdateViewModel
+            {
+                ID = category.ID,
+                Name = category.Name,
+                Commission = category.Commission,
+                Number = category.Number,
+                Img = category.Img,
+                CreatedDate = category.CreatedDate,
+                ModifiedDate = category.ModifiedDate
+            };
+        }
+
+        public void UpdateCategory(CategoryUpdateViewModel model)
+        {
+            _repositorys.UpdateCategory(model);
+        }
     }
 }

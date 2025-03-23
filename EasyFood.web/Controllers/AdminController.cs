@@ -2,6 +2,7 @@
 using System.Text.Json;
 using AutoMapper;
 using BusinessLogic.Services.BalanceChanges;
+using BusinessLogic.Services.Categorys;
 using BusinessLogic.Services.ProductVariants;
 using BusinessLogic.Services.StoreDetail;
 using Microsoft.AspNetCore.Identity;
@@ -23,8 +24,9 @@ namespace EasyFood.web.Controllers
         private readonly StoreDetailsRepository _storeRepository;
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        
-        public AdminController(UserManager<AppUser> userManager, IStoreDetailService storeService, IMapper mapper, IWebHostEnvironment webHostEnvironment, StoreDetailsRepository storeRepository, IBalanceChangeService balance)
+        private readonly ICategoryService _categoryService;
+
+        public AdminController(UserManager<AppUser> userManager, IStoreDetailService storeService, IMapper mapper, IWebHostEnvironment webHostEnvironment, StoreDetailsRepository storeRepository, IBalanceChangeService balance, ICategoryService categoryService)
         {
             _userManager = userManager;
             _balance = balance;
@@ -36,6 +38,7 @@ namespace EasyFood.web.Controllers
             _mapper = mapper;
             _webHostEnvironment = webHostEnvironment;
             _storeRepository = storeRepository;
+            _categoryService = categoryService;
         }
 
         public async Task<IActionResult> Index()
