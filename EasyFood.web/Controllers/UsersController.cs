@@ -60,12 +60,12 @@ namespace EasyFood.web.Controllers
             // Gọi API Gateway để lấy thông tin user theo ID
             string apiUrl = $"https://localhost:5555/Gateway/UsersService/View-Profile/{userId}";
             var urlBalace = $"https://localhost:5555/Gateway/WalletService/GetWallet";
-            string urlFeedback = $"https://localhost:5555/Gateway/ReviewService/GetReviewByUserId/{userId}";
+            //string urlFeedback = $"https://localhost:5555/Gateway/ReviewService/GetReviewByUserId/{userId}";
             try
             {
                 var response = await client.GetAsync(apiUrl);
                 var responceBalance = await this.client.GetAsync($"{urlBalace}/{user.Id}");
-                var feedbackTask = await client.GetAsync(urlFeedback);
+                //var feedbackTask = await client.GetAsync(urlFeedback);
                 if (!response.IsSuccessStatusCode || !responceBalance.IsSuccessStatusCode)
                 {
                     return View(list);
@@ -83,14 +83,14 @@ namespace EasyFood.web.Controllers
                 list.Balance = dataRepone;
                 list.BalanceUser = await this._balance.GetBalance(user.Id);
 
-                var feedbackJson = await feedbackTask.Content.ReadAsStringAsync();
-                //list.Reivew = JsonSerializer.Deserialize<List<ReivewViewModel>>(feedbackJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                var feedbackOptions = new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                    PropertyNameCaseInsensitive = true
-                };
-                list.Reivew = JsonSerializer.Deserialize<List<ReivewViewModel>>(feedbackJson, feedbackOptions);
+                //var feedbackJson = await feedbackTask.Content.ReadAsStringAsync();
+                ////list.Reivew = JsonSerializer.Deserialize<List<ReivewViewModel>>(feedbackJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                //var feedbackOptions = new JsonSerializerOptions
+                //{
+                //    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                //    PropertyNameCaseInsensitive = true
+                //};
+                //list.Reivew = JsonSerializer.Deserialize<List<ReivewViewModel>>(feedbackJson, feedbackOptions);
 
                 return View(list);
             }
