@@ -56,12 +56,10 @@ builder.Services.Configure<IdentityOptions>(options =>
 });
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+
+
+app.UseSwagger();
+app.UseSwaggerUI();
 await SeedDataAsync(app);
 app.UseHttpsRedirection();
 
