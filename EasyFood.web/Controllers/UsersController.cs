@@ -66,7 +66,7 @@ namespace EasyFood.web.Controllers
                 var response = await client.GetAsync(apiUrl);
                 var responceBalance = await this.client.GetAsync($"{urlBalace}/{user.Id}");
                 var feedbackTask = await client.GetAsync(urlFeedback);
-                if (!response.IsSuccessStatusCode || !responceBalance.IsSuccessStatusCode || !feedbackTask.IsSuccessStatusCode)
+                if (!response.IsSuccessStatusCode || !responceBalance.IsSuccessStatusCode)
                 {
                     return View(list);
                 }
