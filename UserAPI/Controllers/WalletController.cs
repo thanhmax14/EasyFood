@@ -1,5 +1,7 @@
 ﻿using BusinessLogic.Hash;
 using BusinessLogic.Services.BalanceChanges;
+using BusinessLogic.Services.OrderDetailService;
+using BusinessLogic.Services.Orders;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Models;
@@ -18,12 +20,16 @@ namespace UserAPI.Controllers
         private readonly PayOS _payos;
         private readonly UserManager<AppUser> _userManager;
         private readonly ManageTransaction _managetrans;
-        public WalletController(IBalanceChangeService balance, PayOS payos, UserManager<AppUser> userManager, ManageTransaction managetrans)
+        private readonly IOrdersServices _ordersServices;
+        private readonly IOrderDetailService _detail;
+        public WalletController(IBalanceChangeService balance, PayOS payos, UserManager<AppUser> userManager, ManageTransaction managetrans, IOrdersServices ordersServices, IOrderDetailService detail)
         {
             _balance = balance;
             _payos = payos;
             _userManager = userManager;
             _managetrans = managetrans;
+            _ordersServices = ordersServices;
+            _detail = detail;
         }
 
         [HttpGet("{userID}")]
@@ -47,7 +53,6 @@ namespace UserAPI.Controllers
                 return StatusCode(500, new ErroMess { msg = ex.Message });
             }
         }
-        [ApiExplorerSettings(IgnoreApi = true)]
         [HttpPost("CreatePayment")]
         public async Task<IActionResult> CreatePayment([FromBody] DepositViewModel model)
         {
@@ -119,7 +124,7 @@ namespace UserAPI.Controllers
             }
         }
 
-        [ApiExplorerSettings(IgnoreApi = true)]
+  
         [HttpPost("webhook-url")]
         public async Task<IActionResult> ReceivePaymentAsync([FromBody] WebhookType webhook)
         {
@@ -155,6 +160,29 @@ namespace UserAPI.Controllers
 
                         return Ok(new { success = true });
                     }
+                    else
+                    {
+                        var order = await this._ordersServices.FindAsync(u => u.OrderCode == data.orderCode+"");
+                        if (order != null)
+                        {
+                            order.Status = "Success";
+                            order.StatusPayment= "Success";
+                            order.IsActive = true;
+                            order.ModifiedDate = DateTime.Now;
+                            await this._ordersServices.UpdateAsync(order);  
+                            await this._ordersServices.SaveChangesAsync();
+                           var getOrderDetil = await this._detail.ListAsync(_detail => _detail.OrderID == order.ID);
+                            foreach (var item in getOrderDetil)
+                            {
+                                item.Status = "Success";
+                                item.IsActive = true;
+                                item.ModifiedDate =DateTime.Now;
+                                await this._detail.UpdateAsync(item);
+                                await this._detail.SaveChangesAsync();
+                            }
+                            return Ok(new { success = true });
+                        }
+                    }
                     return Ok(false);
                 }
                 else
@@ -164,10 +192,12 @@ namespace UserAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { success = false, message = "Lỗi hệ thống" });
+                return BadRequest(new ErroMess { msg = ex.Message });
             }
 
         }
+
+
 
 
         [ApiExplorerSettings(IgnoreApi = true)]

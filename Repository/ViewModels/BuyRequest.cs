@@ -11,6 +11,8 @@ namespace Repository.ViewModels
         public Dictionary<Guid, int> Products { get; set; } = new();
         public bool IsOnline { get; set; } = false;
         public string UserID { get; set; }
+        public string SuccessUrl { get; set; }
+        public string CalledUrl { get; set; }
 
     }
 }

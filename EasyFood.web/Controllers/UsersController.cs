@@ -3,12 +3,14 @@ using System.Text;
 using System.Text.Json;
 using BusinessLogic.Services.BalanceChanges;
 using BusinessLogic.Services.Carts;
+using BusinessLogic.Services.ProductImages;
 using BusinessLogic.Services.Products;
 using BusinessLogic.Services.ProductVariants;
 using BusinessLogic.Services.Reviews;
 using BusinessLogic.Services.StoreDetail;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Models;
 using Repository.ViewModels;
 
@@ -24,26 +26,12 @@ namespace EasyFood.web.Controllers
         private readonly IProductService _product;
         public readonly ICartService _cart;
         public readonly IProductVariantService _productWarian;
-        private readonly IStoreDetailService _storeDetailService;
-        private readonly IReviewService _reviewService;
+
+        private readonly IProductImageService _img;
 
 
 
-        public UsersController(UserManager<AppUser> userManager, IBalanceChangeService balance, IHttpContextAccessor httpContextAccessor,
-            IProductService product, ICartService cart, IProductVariantService productWarian, IStoreDetailService storeDetail, IReviewService reviewService)
-        {
-            _userManager = userManager;
-            client = new HttpClient();
-            var contentype = new MediaTypeWithQualityHeaderValue("application/json");
-            client.DefaultRequestHeaders.Accept.Add(contentype);
-            _balance = balance;
-            _httpContextAccessor = httpContextAccessor;
-            _product = product;
-            _cart = cart;
-            _productWarian = productWarian;
-            _storeDetailService = storeDetail;
-            _reviewService = reviewService;
-        }
+
         public async Task<IActionResult> Index()
         {
             // Kiểm tra người dùng có đăng nhập hay không
@@ -112,6 +100,7 @@ namespace EasyFood.web.Controllers
             {
                 return Json(new { success = false, message = "You are not logged in." });
             }
+
 
             string apiUrl = $"https://localhost:5555/Gateway/UsersService/{user.Id}";
             try
@@ -348,6 +337,7 @@ namespace EasyFood.web.Controllers
             {
                 return Json(new ErroMess { msg = "Vui lòng chọn sản phẩm cần mua!" });
             }
+            var listItem = new List<ListItems>();
             foreach (var id in productIds)
             {
                 var product = await _product.GetAsyncById(id);
@@ -366,18 +356,151 @@ namespace EasyFood.web.Controllers
                     return Json(new ErroMess { msg = "Số lượng sản phẩm mua vượt quá số lượng tồn kho!" });
                 }
 
+                var getImg = await this._img.FindAsync(u => u.ProductID == id);
+
+                var img = "https://nest-frontend-v6.vercel.app/assets/imgs/shop/product-1-1.jpg";
+                if (getImg != null)
+                {
+                    img = getImg.ImageUrl;
+                }
+
+
+                listItem.Add(new ListItems
+                {
+                    ItemName = product.Name,
+                    ItemImage = getImg.ImageUrl,
+                    ItemPrice = getQuatity.Price,
+                    ItemQuantity = checkcart.Quantity,
+                    productID = product.ID
+                });
+
             }
 
+            var temInfo = new CheckOutView
+            {
+                address = user.Address,
+                email = user.Email,
+                firstName = user.FirstName,
+                lastName = user.LastName,
+                phone = user.PhoneNumber,
+                itemCheck = listItem
+            };
+            }
+            HttpContext.Session.Set("BillingTourInfo", JsonSerializer.SerializeToUtf8Bytes(temInfo));
 
-
-
-
-
-
-
-            return Ok(new { message = "Danh sách sản phẩm đã được xử lý.", selectedProducts = productIds });
+            return Json(new { success = true, message = "Danh sách sản phẩm đã được xử lý.", selectedProducts = productIds, redirectUrl = "/Users/CheckOut" });
         }
 
+        public async Task<IActionResult> CheckOut()
+        {
+            var a = base.HttpContext.Session.GetString("BillingTourInfo");
+
+
+            if (HttpContext.Session.TryGetValue("BillingTourInfo", out byte[] data))
+            {
+                var billingInfo = JsonSerializer.Deserialize<CheckOutView>(data);
+                if (billingInfo != null)
+                {
+                    return View(billingInfo);
+                }
+            }
+            return RedirectToAction("NotFoundPage", "Home");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SubmitPayment(string paymentOption)
+        {
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return Json(new ErroMess { msg = "Bạn chưa đăng nhập!!" });
+            }
+            if (string.IsNullOrWhiteSpace(paymentOption))
+            {
+                return Json(new ErroMess { msg = "Vui lòng chọn phương thức thanh toán!" });
+            }
+            if (paymentOption.ToLower() == "OnlineGateway".ToLower())
+            {
+                if (HttpContext.Session.TryGetValue("BillingTourInfo", out byte[] data))
+                {
+                    var billingInfo = JsonSerializer.Deserialize<CheckOutView>(data);
+                    if (billingInfo != null)
+                    {
+                        var buyRequest = new BuyRequest();
+                        foreach (var item in billingInfo.itemCheck)
+                        {
+                            buyRequest.Products.Add(item.productID, item.ItemQuantity);
+
+                        }
+                        var request = _httpContextAccessor.HttpContext.Request;
+                        var baseUrl = $"{request.Scheme}://{request.Host}";
+                        buyRequest.IsOnline = true;
+                        buyRequest.UserID = user.Id;
+                        buyRequest.SuccessUrl = $"{baseUrl}/home/invoice";
+                        buyRequest.CalledUrl = $"{baseUrl}/home/invoice";
+
+                        this._url = $"https://localhost:5555/Gateway/ShoppingService/BuyProduct";
+                        string jsonData = JsonSerializer.Serialize(buyRequest);
+                        var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+                        var response = await client.PostAsync($"{this._url}", content);
+                        var options = new JsonSerializerOptions
+                        {
+                            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                            PropertyNameCaseInsensitive = true
+                        };
+                        var mes = await response.Content.ReadAsStringAsync();
+                        var messErro = JsonSerializer.Deserialize<ErroMess>(mes, options);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            return Json(new { success = messErro.success, msg = messErro.msg, haveUrl = messErro.success, redirectUrl = "" + messErro.msg });
+                           
+                        }
+                        return Json(messErro);
+                    }
+                }
+            }
+            if (paymentOption.ToLower() == "Wallet".ToLower())
+            {
+                if (HttpContext.Session.TryGetValue("BillingTourInfo", out byte[] data))
+                {
+                    var billingInfo = JsonSerializer.Deserialize<CheckOutView>(data);
+                    if (billingInfo != null)
+                    {
+                        var buyRequest = new BuyRequest();
+                        foreach (var item in billingInfo.itemCheck)
+                        {
+                            buyRequest.Products.Add(item.productID, item.ItemQuantity);
+
+                        }
+                        var request = _httpContextAccessor.HttpContext.Request;
+                        var baseUrl = $"{request.Scheme}://{request.Host}";
+                        buyRequest.IsOnline = false;
+                        buyRequest.UserID = user.Id;
+                        buyRequest.SuccessUrl = $"{baseUrl}/home/invoice";
+                        buyRequest.CalledUrl = $"{baseUrl}/home/invoice";
+
+                        this._url = $"https://localhost:5555/Gateway/ShoppingService/BuyProduct";
+                        string jsonData = JsonSerializer.Serialize(buyRequest);
+                        var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+                        var response = await client.PostAsync($"{this._url}", content);
+                        var options = new JsonSerializerOptions
+                        {
+                            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                            PropertyNameCaseInsensitive = true
+                        };
+                        var mes = await response.Content.ReadAsStringAsync();
+                        var messErro = JsonSerializer.Deserialize<ErroMess>(mes, options);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            return Json(messErro);
+                        }
+                        return Json(messErro);
+                    }
+                }
+            }
+            return Json(new ErroMess { msg = "Bạn chưa đăng nhập!!" });
+        }
 
         //public async Task<IActionResult> FeedbackListByUserId()
         //{
@@ -445,5 +568,6 @@ namespace EasyFood.web.Controllers
         //        return View(list);
         //    }
         //}
+
     }
 }

@@ -1,4 +1,5 @@
-﻿@model List<Repository.ViewModels.CartViewModels>
+﻿@model Repository.ViewModels.CheckOutView
+
 <!DOCTYPE html>
 <html class="no-js" lang="en">
 
@@ -16,53 +17,455 @@
     <link rel="shortcut icon" type="image/x-icon" href="~/assets/imgs/theme/favicon.svg">
     <!-- Template CSS -->
     <link rel="stylesheet" href="~/assets/css/main.css?v=6.0">
-    <style>
-        /* Đảm bảo vị trí tương đối cho ảnh */
-        .product-thumbnail {
-            position: relative;
-        }
-
-        /* 1. Làm mờ và vô hiệu hóa tương tác khi có class 'outofstock' */
-        .outofstock {
-            opacity: 0.5;
-            /* Làm mờ toàn bộ dòng */
-            pointer-events: none;
-            /* Không cho tương tác */
-        }
-
-        /* CSS chung cho layout */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .product-name a {
-            text-decoration: none;
-            color: #333;
-        }
-        /* Cập nhật trạng thái làm mờ */
-        .outofstock .qty-up {
-            pointer-events: none; /* Vô hiệu hóa nút tăng */
-        }
-
-        .outofstock .qty-down {
-            pointer-events: auto; /* Cho phép người dùng giảm số lượng */
-        }
-
-        .out-of-stock-label {
-            color: red;
-            font-weight: bold;
-            font-size: 14px;
-            display: block;
-        }
-    </style>
-
 </head>
 
 <body>
-
-    @await Html.PartialAsync("_Header")
-
+    <header class="header-area header-style-1 header-height-2">
+        <div class="mobile-promotion"><span>Grand opening, <strong>up to 15%</strong> off all items. Only <strong>3 days</strong> left</span></div>
+        <div class="header-top header-top-ptb-1 d-none d-lg-block">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-xl-3 col-lg-4">
+                        <div class="header-info">
+                            <ul>
+                                <li><a href="page-about.htlm">About Us</a></li>
+                                <li><a href="page-account.html">My Account</a></li>
+                                <li><a href="shop-wishlist.html">Wishlist</a></li>
+                                <li><a href="shop-order.html">Order Tracking</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-xl-6 col-lg-4">
+                        <div class="text-center">
+                            <div id="news-flash" class="d-inline-block">
+                                <ul>
+                                    <li>100% Secure delivery without contacting the courier</li>
+                                    <li>Supper Value Deals - Save more with coupons</li>
+                                    <li>Trendy 25silver jewelry, save up 35% off today</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-4">
+                        <div class="header-info header-info-right">
+                            <ul>
+                                <li>Need help? Call Us: <strong class="text-brand"> + 1800 900</strong></li>
+                                <li>
+                                    <a class="language-dropdown-active" href="#">English <i class="fi-rs-angle-small-down"></i></a>
+                                    <ul class="language-dropdown">
+                                        <li><a href="#"><img src="~/assets/imgs/theme/flag-fr.png" alt="">Français</a></li>
+                                        <li><a href="#"><img src="~/assets/imgs/theme/flag-dt.png" alt="">Deutsch</a></li>
+                                        <li><a href="#"><img src="~/assets/imgs/theme/flag-ru.png" alt="">Pусский</a></li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a class="language-dropdown-active" href="#">USD <i class="fi-rs-angle-small-down"></i></a>
+                                    <ul class="language-dropdown">
+                                        <li><a href="#"><img src="~/assets/imgs/theme/flag-fr.png" alt="">INR</a></li>
+                                        <li><a href="#"><img src="~/assets/imgs/theme/flag-dt.png" alt="">MBP</a></li>
+                                        <li><a href="#"><img src="~/assets/imgs/theme/flag-ru.png" alt="">EU</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-middle header-middle-ptb-1 d-none d-lg-block">
+            <div class="container">
+                <div class="header-wrap">
+                    <div class="logo logo-width-1">
+                        <a href="index.html"><img src="~/assets/imgs/theme/logo.svg" alt="logo"></a>
+                    </div>
+                    <div class="header-right">
+                        <div class="search-style-2">
+                            <form action="#">
+                                <select class="select-active">
+                                    <option>All Categories</option>
+                                    <option>Milks and Dairies</option>
+                                    <option>Wines & Alcohol</option>
+                                    <option>Clothing & Beauty</option>
+                                    <option>Pet Foods & Toy</option>
+                                    <option>Fast food</option>
+                                    <option>Baking material</option>
+                                    <option>Vegetables</option>
+                                    <option>Fresh Seafood</option>
+                                    <option>Noodles & Rice </option>
+                                    <option>Ice cream</option>
+                                </select>
+                                <input type="text" placeholder="Search for items...">
+                            </form>
+                        </div>
+                        <div class="header-action-right">
+                            <div class="header-action-2">
+                                <div class="search-location">
+                                    <form action="#">
+                                        <select class="select-active">
+                                            <option>Your Location</option>
+                                            <option>Alabama</option>
+                                            <option>Alaska</option>
+                                            <option>Arizona</option>
+                                            <option>Delaware</option>
+                                            <option>Florida</option>
+                                            <option>Georgia</option>
+                                            <option>Hawaii</option>
+                                            <option>Indiana</option>
+                                            <option>Maryland</option>
+                                            <option>Nevada</option>
+                                            <option>New Jersey</option>
+                                            <option>New Mexico</option>
+                                            <option>New York</option>
+                                        </select>
+                                    </form>
+                                </div>
+                                <div class="header-action-icon-2">
+                                    <a href="shop-compare.html">
+                                        <img class="svgInject" alt="Nest" src="~/assets/imgs/theme/icons/icon-compare.svg" />
+                                        <span class="pro-count blue">3</span>
+                                    </a>
+                                    <a href="shop-compare.html"><span class="lable ml-0">Compare</span></a>
+                                </div>
+                                <div class="header-action-icon-2">
+                                    <a href="shop-wishlist.html">
+                                        <img class="svgInject" alt="Nest" src="~/assets/imgs/theme/icons/icon-heart.svg" />
+                                        <span class="pro-count blue">6</span>
+                                    </a>
+                                    <a href="shop-wishlist.html"><span class="lable">Wishlist</span></a>
+                                </div>
+                                <div class="header-action-icon-2">
+                                    <a class="mini-cart-icon" href="shop-cart.html">
+                                        <img alt="Nest" src="~/assets/imgs/theme/icons/icon-cart.svg" />
+                                        <span class="pro-count blue">2</span>
+                                    </a>
+                                    <a href="shop-cart.html"><span class="lable">Cart</span></a>
+                                    <div class="cart-dropdown-wrap cart-dropdown-hm2">
+                                        <ul>
+                                            <li>
+                                                <div class="shopping-cart-img">
+                                                    <a href="shop-product-right.html"><img alt="Nest" src="~/assets/imgs/shop/thumbnail-3.jpg" /></a>
+                                                </div>
+                                                <div class="shopping-cart-title">
+                                                    <h4><a href="shop-product-right.html">Daisy Casual Bag</a></h4>
+                                                    <h4><span>1 × </span>$800.00</h4>
+                                                </div>
+                                                <div class="shopping-cart-delete">
+                                                    <a href="#"><i class="fi-rs-cross-small"></i></a>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="shopping-cart-img">
+                                                    <a href="shop-product-right.html"><img alt="Nest" src="~/assets/imgs/shop/thumbnail-2.jpg" /></a>
+                                                </div>
+                                                <div class="shopping-cart-title">
+                                                    <h4><a href="shop-product-right.html">Corduroy Shirts</a></h4>
+                                                    <h4><span>1 × </span>$3200.00</h4>
+                                                </div>
+                                                <div class="shopping-cart-delete">
+                                                    <a href="#"><i class="fi-rs-cross-small"></i></a>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                        <div class="shopping-cart-footer">
+                                            <div class="shopping-cart-total">
+                                                <h4>Total <span>$4000.00</span></h4>
+                                            </div>
+                                            <div class="shopping-cart-button">
+                                                <a href="shop-cart.html" class="outline">View cart</a>
+                                                <a href="shop-checkout.html">Checkout</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="header-action-icon-2">
+                                    <a href="page-account.html">
+                                        <img class="svgInject" alt="Nest" src="~/assets/imgs/theme/icons/icon-user.svg" />
+                                    </a>
+                                    <a href="page-account.html"><span class="lable ml-0">Account</span></a>
+                                    <div class="cart-dropdown-wrap cart-dropdown-hm2 account-dropdown">
+                                        <ul>
+                                            <li><a href="page-account.html"><i class="fi fi-rs-user mr-10"></i>My Account</a></li>
+                                            <li><a href="page-account.html"><i class="fi fi-rs-location-alt mr-10"></i>Order Tracking</a></li>
+                                            <li><a href="page-account.html"><i class="fi fi-rs-label mr-10"></i>My Voucher</a></li>
+                                            <li><a href="shop-wishlist.html"><i class="fi fi-rs-heart mr-10"></i>My Wishlist</a></li>
+                                            <li><a href="page-account.html"><i class="fi fi-rs-settings-sliders mr-10"></i>Setting</a></li>
+                                            <li><a href="page-login.html"><i class="fi fi-rs-sign-out mr-10"></i>Sign out</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-bottom header-bottom-bg-color sticky-bar">
+            <div class="container">
+                <div class="header-wrap header-space-between position-relative">
+                    <div class="logo logo-width-1 d-block d-lg-none">
+                        <a href="index.html"><img src="~/assets/imgs/theme/logo.svg" alt="logo"></a>
+                    </div>
+                    <div class="header-nav d-none d-lg-flex">
+                        <div class="main-categori-wrap d-none d-lg-block">
+                            <a class="categories-button-active " href="#">
+                                <span class="fi-rs-apps"></span> <span class="et">Browse</span> All Categories
+                                <i class="fi-rs-angle-down"></i>
+                            </a>
+                            <div class="categories-dropdown-wrap categories-dropdown-active-large font-heading">
+                                <div class="d-flex categori-dropdown-inner">
+                                    <ul>
+                                        <li><a href="shop-grid-right.html"> <img src="~/assets/imgs/theme/icons/category-1.svg" alt="">Milks and Dairies</a></li>
+                                        <li><a href="shop-grid-right.html"> <img src="~/assets/imgs/theme/icons/category-2.svg" alt="">Clothing & beauty</a></li>
+                                        <li><a href="shop-grid-right.html"> <img src="~/assets/imgs/theme/icons/category-3.svg" alt="">Pet Foods & Toy</a></li>
+                                        <li><a href="shop-grid-right.html"> <img src="~/assets/imgs/theme/icons/category-4.svg" alt="">Baking material</a></li>
+                                        <li><a href="shop-grid-right.html"> <img src="~/assets/imgs/theme/icons/category-5.svg" alt="">Fresh Fruit</a></li>
+                                    </ul>
+                                    <ul class="end">
+                                        <li><a href="shop-grid-right.html"> <img src="~/assets/imgs/theme/icons/category-6.svg" alt="">Wines & Drinks</a></li>
+                                        <li><a href="shop-grid-right.html"> <img src="~/assets/imgs/theme/icons/category-7.svg" alt="">Fresh Seafood</a></li>
+                                        <li><a href="shop-grid-right.html"> <img src="~/assets/imgs/theme/icons/category-8.svg" alt="">Fast food</a></li>
+                                        <li><a href="shop-grid-right.html"> <img src="~/assets/imgs/theme/icons/category-9.svg" alt="">Vegetables</a></li>
+                                        <li><a href="shop-grid-right.html"> <img src="~/assets/imgs/theme/icons/category-10.svg" alt="">Bread and Juice</a></li>
+                                    </ul>
+                                </div>
+                                <div class="more_slide_open" style="display: none;">
+                                    <div class="d-flex categori-dropdown-inner">
+                                        <ul>
+                                            <li><a href="shop-grid-right.html"> <img src="~/assets/imgs/theme/icons/icon-1.svg" alt="">Milks and Dairies</a></li>
+                                            <li><a href="shop-grid-right.html"> <img src="~/assets/imgs/theme/icons/icon-2.svg" alt="">Clothing & beauty</a></li>
+                                        </ul>
+                                        <ul class="end">
+                                            <li><a href="shop-grid-right.html"> <img src="~/assets/imgs/theme/icons/icon-3.svg" alt="">Wines & Drinks</a></li>
+                                            <li><a href="shop-grid-right.html"> <img src="~/assets/imgs/theme/icons/icon-4.svg" alt="">Fresh Seafood</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="more_categories"> <span class="icon"></span> <span class="heading-sm-1">Show more...</span></div>
+                            </div>
+                        </div>
+                        <div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block font-heading">
+                            <nav>
+                                <ul>
+                                    <li class="hot-deals"><img src="~/assets/imgs/theme/icons/icon-hot.svg" alt="hot deals"><a href="shop-grid-right.html">Deals</a></li>
+                                    <li><a class="active" href="index.html">Home <i class="fi-rs-angle-down"></i></a>
+                                        <ul class="sub-menu">
+                                            <li><a href="index.html">Home 1</a></li>
+                                            <li><a href="index-2.html">Home 2</a></li>
+                                            <li><a href="index-3.html">Home 3</a></li>
+                                            <li><a href="index-4.html">Home 4</a></li>
+                                            <li><a href="index-5.html">Home 5</a></li>
+                                            <li><a href="index-6.html">Home 6</a></li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="page-about.html">About</a>
+                                    </li>
+                                    <li><a href="shop-grid-right.html">Shop <i class="fi-rs-angle-down"></i></a>
+                                        <ul class="sub-menu">
+                                            <li><a href="shop-grid-right.html">Shop Grid – Right Sidebar</a></li>
+                                            <li><a href="shop-grid-left.html">Shop Grid – Left Sidebar</a></li>
+                                            <li><a href="shop-list-right.html">Shop List – Right Sidebar</a></li>
+                                            <li><a href="shop-list-left.html">Shop List – Left Sidebar</a></li>
+                                            <li><a href="shop-fullwidth.html">Shop - Wide</a></li>
+                                            <li><a href="#">Single Product <i class="fi-rs-angle-right"></i></a>
+                                                <ul class="level-menu">
+                                                    <li><a href="shop-product-right.html">Product – Right Sidebar</a></li>
+                                                    <li><a href="shop-product-left.html">Product – Left Sidebar</a></li>
+                                                    <li><a href="shop-product-full.html">Product – No sidebar</a></li>
+                                                </ul>
+                                            </li>
+                                            <li><a href="shop-filter.html">Shop – Filter</a></li>
+                                            <li><a href="shop-wishlist.html">Shop – Wishlist</a></li>
+                                            <li><a href="shop-cart.html">Shop – Cart</a></li>
+                                            <li><a href="shop-checkout.html">Shop – Checkout</a></li>
+                                            <li><a href="shop-compare.html">Shop – Compare</a></li>
+                                            <li>
+                                                <a href="#">Shop Invoice<i class="fi-rs-angle-right"></i></a>
+                                                <ul class="level-menu">
+                                                    <li><a href="shop-invoice-1.html">Shop Invoice 1</a></li>
+                                                    <li><a href="shop-invoice-2.html">Shop Invoice 2</a></li>
+                                                    <li><a href="shop-invoice-3.html">Shop Invoice 3</a></li>
+                                                    <li><a href="shop-invoice-4.html">Shop Invoice 4</a></li>
+                                                    <li><a href="shop-invoice-5.html">Shop Invoice 5</a></li>
+                                                    <li><a href="shop-invoice-6.html">Shop Invoice 6</a></li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="#">Vendors <i class="fi-rs-angle-down"></i></a>
+                                        <ul class="sub-menu">
+                                            <li><a href="vendors-grid.html">Vendors Grid</a></li>
+                                            <li><a href="vendors-list.html">Vendors List</a></li>
+                                            <li><a href="vendor-details-1.html">Vendor Details 01</a></li>
+                                            <li><a href="vendor-details-2.html">Vendor Details 02</a></li>
+                                            <li><a href="vendor-dashboard.html">Vendor Dashboard</a></li>
+                                            <li><a href="vendor-guide.html">Vendor Guide</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="position-static"><a href="#">Mega menu <i class="fi-rs-angle-down"></i></a>
+                                        <ul class="mega-menu">
+                                            <li class="sub-mega-menu sub-mega-menu-width-22">
+                                                <a class="menu-title" href="#">Fruit & Vegetables</a>
+                                                <ul>
+                                                    <li><a href="shop-product-right.html">Meat & Poultry</a></li>
+                                                    <li><a href="shop-product-right.html">Fresh Vegetables</a></li>
+                                                    <li><a href="shop-product-right.html">Herbs & Seasonings</a></li>
+                                                    <li><a href="shop-product-right.html">Cuts & Sprouts</a></li>
+                                                    <li><a href="shop-product-right.html">Exotic Fruits & Veggies</a></li>
+                                                    <li><a href="shop-product-right.html">Packaged Produce</a></li>
+                                                </ul>
+                                            </li>
+                                            <li class="sub-mega-menu sub-mega-menu-width-22">
+                                                <a class="menu-title" href="#">Breakfast & Dairy</a>
+                                                <ul>
+                                                    <li><a href="shop-product-right.html">Milk & Flavoured Milk</a></li>
+                                                    <li><a href="shop-product-right.html">Butter and Margarine</a></li>
+                                                    <li><a href="shop-product-right.html">Eggs Substitutes</a></li>
+                                                    <li><a href="shop-product-right.html">Marmalades</a></li>
+                                                    <li><a href="shop-product-right.html">Sour Cream</a></li>
+                                                    <li><a href="shop-product-right.html">Cheese</a></li>
+                                                </ul>
+                                            </li>
+                                            <li class="sub-mega-menu sub-mega-menu-width-22">
+                                                <a class="menu-title" href="#">Meat & Seafood</a>
+                                                <ul>
+                                                    <li><a href="shop-product-right.html">Breakfast Sausage</a></li>
+                                                    <li><a href="shop-product-right.html">Dinner Sausage</a></li>
+                                                    <li><a href="shop-product-right.html">Chicken</a></li>
+                                                    <li><a href="shop-product-right.html">Sliced Deli Meat</a></li>
+                                                    <li><a href="shop-product-right.html">Wild Caught Fillets</a></li>
+                                                    <li><a href="shop-product-right.html">Crab and Shellfish</a></li>
+                                                </ul>
+                                            </li>
+                                            <li class="sub-mega-menu sub-mega-menu-width-34">
+                                                <div class="menu-banner-wrap">
+                                                    <a href="shop-product-right.html"><img src="~/assets/imgs/banner/banner-menu.png" alt="Nest"></a>
+                                                    <div class="menu-banner-content">
+                                                        <h4>Hot deals</h4>
+                                                        <h3>Don't miss<br> Trending</h3>
+                                                        <div class="menu-banner-price">
+                                                            <span class="new-price text-success">Save to 50%</span>
+                                                        </div>
+                                                        <div class="menu-banner-btn">
+                                                            <a href="shop-product-right.html">Shop now</a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="menu-banner-discount">
+                                                        <h3>
+                                                            <span>25%</span>
+                                                            off
+                                                        </h3>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="blog-category-grid.html">Blog <i class="fi-rs-angle-down"></i></a>
+                                        <ul class="sub-menu">
+                                            <li><a href="blog-category-grid.html">Blog Category Grid</a></li>
+                                            <li><a href="blog-category-list.html">Blog Category List</a></li>
+                                            <li><a href="blog-category-big.html">Blog Category Big</a></li>
+                                            <li><a href="blog-category-fullwidth.html">Blog Category Wide</a></li>
+                                            <li><a href="#">Single Post <i class="fi-rs-angle-right"></i></a>
+                                                <ul class="level-menu level-menu-modify">
+                                                    <li><a href="blog-post-left.html">Left Sidebar</a></li>
+                                                    <li><a href="blog-post-right.html">Right Sidebar</a></li>
+                                                    <li><a href="blog-post-fullwidth.html">No Sidebar</a></li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="#">Pages <i class="fi-rs-angle-down"></i></a>
+                                        <ul class="sub-menu">
+                                            <li><a href="page-about.html">About Us</a></li>
+                                            <li><a href="page-contact.html">Contact</a></li>
+                                            <li><a href="page-account.html">My Account</a></li>
+                                            <li><a href="page-login.html">Login</a></li>
+                                            <li><a href="page-register.html">Register</a></li>
+                                            <li><a href="page-forgot-password.html">Forgot password</a></li>
+                                            <li><a href="page-reset-password.html">Reset password</a></li>
+                                            <li><a href="page-purchase-guide.html">Purchase Guide</a></li>
+                                            <li><a href="page-privacy-policy.html">Privacy Policy</a></li>
+                                            <li><a href="page-terms.html">Terms of Service</a></li>
+                                            <li><a href="page-404.html">404 Page</a></li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="page-contact.html">Contact</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="hotline d-none d-lg-flex">
+                        <img src="~/assets/imgs/theme/icons/icon-headphone.svg" alt="hotline">
+                        <p>1900 - 888<span>24/7 Support Center</span></p>
+                    </div>
+                    <div class="header-action-icon-2 d-block d-lg-none">
+                        <div class="burger-icon burger-icon-white">
+                            <span class="burger-icon-top"></span>
+                            <span class="burger-icon-mid"></span>
+                            <span class="burger-icon-bottom"></span>
+                        </div>
+                    </div>
+                    <div class="header-action-right d-block d-lg-none">
+                        <div class="header-action-2">
+                            <div class="header-action-icon-2">
+                                <a href="shop-wishlist.html">
+                                    <img alt="Nest" src="~/assets/imgs/theme/icons/icon-heart.svg">
+                                    <span class="pro-count white">4</span>
+                                </a>
+                            </div>
+                            <div class="header-action-icon-2">
+                                <a class="mini-cart-icon" href="shop-cart.html">
+                                    <img alt="Nest" src="~/assets/imgs/theme/icons/icon-cart.svg">
+                                    <span class="pro-count white">2</span>
+                                </a>
+                                <div class="cart-dropdown-wrap cart-dropdown-hm2">
+                                    <ul>
+                                        <li>
+                                            <div class="shopping-cart-img">
+                                                <a href="shop-product-right.html"><img alt="Nest" src="~/assets/imgs/shop/thumbnail-3.jpg"></a>
+                                            </div>
+                                            <div class="shopping-cart-title">
+                                                <h4><a href="shop-product-right.html">Plain Striola Shirts</a></h4>
+                                                <h3><span>1 × </span>$800.00</h3>
+                                            </div>
+                                            <div class="shopping-cart-delete">
+                                                <a href="#"><i class="fi-rs-cross-small"></i></a>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="shopping-cart-img">
+                                                <a href="shop-product-right.html"><img alt="Nest" src="~/assets/imgs/shop/thumbnail-4.jpg"></a>
+                                            </div>
+                                            <div class="shopping-cart-title">
+                                                <h4><a href="shop-product-right.html">Macbook Pro 2024</a></h4>
+                                                <h3><span>1 × </span>$3500.00</h3>
+                                            </div>
+                                            <div class="shopping-cart-delete">
+                                                <a href="#"><i class="fi-rs-cross-small"></i></a>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    <div class="shopping-cart-footer">
+                                        <div class="shopping-cart-total">
+                                            <h4>Total <span>$383.00</span></h4>
+                                        </div>
+                                        <div class="shopping-cart-button">
+                                            <a href="shop-cart.html">View cart</a>
+                                            <a href="shop-checkout.html">Checkout</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
     <div class="mobile-header-active mobile-header-wrapper-style">
         <div class="mobile-header-wrapper-inner">
             <div class="mobile-header-top">
@@ -252,111 +655,125 @@
                 <div class="breadcrumb">
                     <a href="index.html" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
                     <span></span> Shop
-                    <span></span> Cart
+                    <span></span> Checkout
                 </div>
             </div>
         </div>
         <div class="container mb-80 mt-50">
-            <div class="row">
+          @*   <div class="row">
                 <div class="col-lg-8 mb-40">
-                    <h1 class="heading-2 mb-10">Your Cart</h1>
+                    <h1 class="heading-2 mb-10">Checkout</h1>
                     <div class="d-flex justify-content-between">
                         <h6 class="text-body">There are <span class="text-brand">3</span> products in your cart</h6>
-                        <h6 class="text-body"><a href="#" class="text-muted"><i class="fi-rs-trash mr-5"></i>Clear Cart</a></h6>
                     </div>
                 </div>
-            </div>
+            </div> *@
             <div class="row">
-                <div class="col-lg-8">
-                    <div class="table-responsive shopping-summery">
-                        <table class="table table-wishlist">
-                            <thead>
-                                <tr class="main-heading">
-                                    <th class="custome-checkbox start pl-30">
-                                        <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox11" value="">
-                                        <label class="form-check-label" for="exampleCheckbox11"></label>
-                                    </th>
-                                    <th scope="col" colspan="2">Product</th>
-                                    <th scope="col">Unit Price</th>
-                                    <th scope="col">Quantity</th>
-                                    <th scope="col">Subtotal</th>
-                                    <th scope="col" class="end">Remove</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model)
-                                {
-                                    <tr class="@(item.quantity > item.Stock ? "outofstock" : "")">
-                                        <td class="custome-checkbox pl-30">
-                                            <input class="form-check-input" type="checkbox" name="checkbox[]" id="checkbox-@item.ProductID" value="@item.ProductID">
-                                            <label class="form-check-label" for="checkbox-@item.ProductID"></label>
-                                        </td>
-                                        <td class="image product-thumbnail">
-                                            <img src="@item.img" alt="@item.ProductName">
-                                        </td>
-                                        <td class="product-des product-name">
-                                            <h6 class="mb-5"><a class="product-name mb-10 text-heading" href="">@item.ProductName</a></h6>
-                                            <div class="product-rate-cover">
-                                                <div class="product-rate d-inline-block">
-                                                    <div class="product-rating" style="width:90%">
-                                                    </div>
-                                                </div>
-                                                <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                            </div>
-                                        </td>
-                                        <td class="price" data-title="Price">
-                                            <h4 class="text-body" id="price-@item.ProductID">@item.price</h4>
-                                        </td>
-
-                                        <td class="text-center detail-info" data-title="Stock">
-                                            <div class="detail-extralink mr-15">
-                                                <div class="detail-qty border radius">
-                                                    <!-- Nút giảm số lượng -->
-                                                    <a href="#" class="qty-down" data-id="@item.ProductID">
-                                                        <i class="fi-rs-angle-small-down"></i>
-                                                    </a>
-                                                    <!-- Input để nhập số lượng sản phẩm -->
-                                                    <input type="text" name="quantity" class="qty-val" value="@item.quantity"
-                                                           data-id="@item.ProductID" data-stock="@item.Stock" min="1">
-                                                    <!-- Nút tăng số lượng -->
-                                                    <a href="#" class="qty-up" data-id="@item.ProductID">
-                                                        <i class="fi-rs-angle-small-up"></i>
-                                                    </a>
+                <div class="col-lg-7">
+                    <div class="row mb-50">
+                   @*      <div class="col-lg-6 mb-sm-15 mb-lg-0 mb-md-3">
+                            <div class="toggle_info">
+                                <span><i class="fi-rs-user mr-10"></i><span class="text-muted font-lg">Already have an account?</span> <a href="#loginform" data-bs-toggle="collapse" class="collapsed font-lg" aria-expanded="false">Click here to login</a></span>
+                            </div>
+                            <div class="panel-collapse collapse login_form" id="loginform">
+                                <div class="panel-body">
+                                    <p class="mb-30 font-sm">If you have shopped with us before, please enter your details below. If you are a new customer, please proceed to the Billing &amp; Shipping section.</p>
+                                    <form method="post">
+                                        <div class="form-group">
+                                            <input type="text" name="email" placeholder="Username Or Email">
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="password" name="password" placeholder="Password">
+                                        </div>
+                                        <div class="login_footer form-group">
+                                            <div class="chek-form">
+                                                <div class="custome-checkbox">
+                                                    <input class="form-check-input" type="checkbox" name="checkbox" id="remember" value="">
+                                                    <label class="form-check-label" for="remember"><span>Remember me</span></label>
                                                 </div>
                                             </div>
-                                        </td>
-                                        <td class="price" data-title="Subtotal">
-                                            <h4 class="text-brand" id="subtotal-@item.ProductID">@item.Subtotal</h4>
-                                        </td>
-
-                                        <td class="action text-center" data-title="Remove">
-                                            <a href="#" class="text-body delete-cart" data-id="@item.ProductID">
-                                                <i class="fi-rs-trash"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-
-
-                        </table>
+                                            <a href="#">Forgot password?</a>
+                                        </div>
+                                        <div class="form-group">
+                                            <button class="btn btn-md" name="login">Log in</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div> *@
+                     @*    <div class="col-lg-6">
+                            <form method="post" class="apply-coupon">
+                                <input type="text" placeholder="Enter Coupon Code...">
+                                <button class="btn  btn-md" name="login">Apply Coupon</button>
+                            </form>
+                        </div> *@
                     </div>
-                    <div class="divider-2 mb-30"></div>
-                    <div class="cart-action d-flex justify-content-between">
-                        <a class="btn "><i class="fi-rs-arrow-left mr-10"></i>Continue Shopping</a>
-                        <a class="btn  mr-10 mb-sm-15"><i class="fi-rs-refresh mr-10"></i>Update Cart</a>
-                    </div>
-                    <div class="row mt-50">
-                        <div class="col-lg-7">
-                            <div class="calculate-shiping p-40 border-radius-15 border">
-                                <h4 class="mb-10">Calculate Shipping</h4>
-                                <p class="mb-30"><span class="font-lg text-muted">Flat rate:</span><strong class="text-brand">5%</strong></p>
-                                <form class="field_form shipping_calculator">
-                                    <div class="form-row">
-                                        <div class="form-group col-lg-12">
-                                            <div class="custom_select">
-                                                <select class="form-control select-active w-100">
-                                                    <option value="">United Kingdom</option>
+                    <div class="row">
+                        <h4 class="mb-30">Billing Details</h4>
+                        <form method="post">
+                            <div class="row">
+                                <div class="form-group col-lg-6">
+                                    <input type="text" required="" name="fname" placeholder="First name *">
+                                </div>
+                                <div class="form-group col-lg-6">
+                                    <input type="text" required="" name="lname" placeholder="Last name *">
+                                </div>
+                            </div>
+                          
+                            <div class="row">
+                                <div class="form-group col-lg-6">
+                                    <input required="" type="email" asp-for="email" placeholder="email *">
+                                </div>
+                                <div class="form-group col-lg-6">
+                                    <input required="" type="text" asp-for="phone" name="phone" placeholder="Phone *">
+                                </div>
+                            </div>
+                          
+                            <div class="form-group mb-30">
+                                <textarea rows="5" asp-for="address" placeholder="Additional information"></textarea>
+                            </div>
+                           @*  <div class="form-group">
+                                <div class="checkbox">
+                                    <div class="custome-checkbox">
+                                        <input class="form-check-input" type="checkbox" name="checkbox" id="createaccount">
+                                        <label class="form-check-label label_info" data-bs-toggle="collapse" href="#collapsePassword" data-target="#collapsePassword" aria-controls="collapsePassword" for="createaccount"><span>Create an account?</span></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="collapsePassword" class="form-group create-account collapse in">
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <input required="" type="password" placeholder="Password" name="password">
+                                    </div>
+                                </div>
+                            </div> *@
+
+                       @*      <div class="ship_detail">
+                                <div class="form-group">
+                                    <div class="chek-form">
+                                        <div class="custome-checkbox">
+                                            <input class="form-check-input" type="checkbox" name="checkbox" id="differentaddress">
+                                            <label class="form-check-label label_info" data-bs-toggle="collapse" data-target="#collapseAddress" href="#collapseAddress" aria-controls="collapseAddress" for="differentaddress"><span>Ship to a different address?</span></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="collapseAddress" class="different_address collapse in">
+                                    <div class="row">
+                                        <div class="form-group col-lg-6">
+                                            <input type="text" asp-for="firstName" name="fname" placeholder="First name *">
+                                        </div>
+                                        <div class="form-group col-lg-6">
+                                            <input type="text"asp-for="firstName" name="lname" placeholder="Last name *">
+                                        </div>
+                                    </div>
+                                    <div class="row shipping_calculator">
+                                        <div class="form-group col-lg-6">
+                                            <input required="" type="text" name="cname" placeholder="Company Name">
+                                        </div>
+                                        <div class="form-group col-lg-6">
+                                            <div class="custom_select w-100">
+                                                <select class="form-control select-active">
+                                                    <option value="">Select an option...</option>
                                                     <option value="AX">Aland Islands</option>
                                                     <option value="AF">Afghanistan</option>
                                                     <option value="AL">Albania</option>
@@ -605,99 +1022,179 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-row row">
+                                    <div class="row">
                                         <div class="form-group col-lg-6">
-                                            <input required="required" placeholder="State / Country" name="name" type="text">
+                                            <input type="text" name="billing_address" required="" placeholder="Address *">
                                         </div>
                                         <div class="form-group col-lg-6">
-                                            <input required="required" placeholder="PostCode / ZIP" name="name" type="text">
+                                            <input type="text" name="billing_address2" required="" placeholder="Address line2">
                                         </div>
                                     </div>
-                                </form>
-                            </div>
-                        </div>
-                        <div class="col-lg-5">
-                            <div class="p-40">
-                                <h4 class="mb-10">Apply Coupon</h4>
-                                <p class="mb-30"><span class="font-lg text-muted">Using A Promo Code?</p>
-                                <form action="#">
-                                    <div class="d-flex justify-content-between">
-                                        <input class="font-medium mr-15 coupon" name="Coupon" placeholder="Enter Your Coupon">
-                                        <button class="btn"><i class="fi-rs-label mr-10"></i>Apply</button>
+                                    <div class="row">
+                                        <div class="form-group col-lg-6">
+                                            <input required="" type="text" name="state" placeholder="State / County *">
+                                        </div>
+                                        <div class="form-group col-lg-6">
+                                            <input required="" type="text" name="city" placeholder="City / Town *">
+                                        </div>
                                     </div>
-                                </form>
-                            </div>
-                        </div>
+                                    <div class="row">
+                                        <div class="form-group col-lg-6">
+                                            <input required="" type="text" name="zipcode" placeholder="Postcode / ZIP *">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> *@
+                        </form>
                     </div>
                 </div>
-                @{
-    decimal total = 0; // 🔹 Biến lưu tổng giá trị
-}
-                <div class="col-lg-4">
-                    <div class="border p-md-4 cart-totals ml-30">
-                        <div class="table-responsive">
+                <div class="col-lg-5">
+                    <div class="border p-40 cart-totals ml-30 mb-50">
+                        <div class="d-flex align-items-end justify-content-between mb-30">
+                            <h4>Your Order</h4>
+                            <h6 class="text-muted">Subtotal</h6>
+                        </div>
+                        <div class="divider-2 mb-30"></div>
+                        <div class="table-responsive order_table checkout">
                             <table class="table no-border">
-                              @foreach (var item in Model)
-                {
-                    total += item.Subtotal; // 🔥 Cộng dồn Subtotal của từng sản phẩm
-                }
-                                
-                                     <tbody>
-                                    <tr>
-                                        <td class="cart_total_label">
-                                            <h6 class="text-muted">Total</h6>
-                                        </td>
-                                        <td class="cart_total_amount">
-                                            <h4 class="text-brand text-end" id="cart-total">@total</h4>
+                                <tbody>
 
-                                        </td>
-                                    </tr>
-                                 @*    <tr>
-                                        <td scope="col" colspan="2">
-                                            <div class="divider-2 mt-10 mb-10"></div>
-                                        </td>
-                                    </tr> *@
-                                 @*    <tr>
-                                        <td class="cart_total_label">
-                                            <h6 class="text-muted">Shipping</h6>
-                                        </td>
-                                        <td class="cart_total_amount">
-                                            <h5 class="text-heading text-end">Free</h5
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="cart_total_label">
-                                            <h6 class="text-muted">Estimate for</h6>
-                                        </td>
-                                        <td class="cart_total_amount">
-                                            <h5 class="text-heading text-end">United Kingdom</h5
-                                        </td>
-                                    </tr> *@
-                                  @*   <tr>
-                                        <td scope="col" colspan="2">
-                                            <div class="divider-2 mt-10 mb-10"></div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="cart_total_label">
-                                            <h6 class="text-muted">Total</h6>
-                                        </td>
-                                        <td class="cart_total_amount">
-                                            <h4 class="text-brand text-end">@total</h4>
-                                        </td>
-                                    </tr> *@
+                                    @if (Model.itemCheck.Any())
+                                    {
+                                        foreach (var item in Model.itemCheck)
+                                        {
+
+                                            <tr>
+                                                <td class="image product-thumbnail"><img src="@item.ItemImage" alt="#"></td>
+                                                <td>
+                                                    <h6 class="w-160 mb-5"><a href="shop-product-full.html" class="text-heading">@item.ItemName</a></h6>
+                                                    <div class="product-rate-cover">
+                                                        <div class="product-rate d-inline-block">
+                                                            <div class="product-rating" style="width:90%">
+                                                            </div>
+                                                        </div>
+                                                      @*   <span class="font-small ml-5 text-muted"> (4.0)</span> *@
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <h6 class="text-muted pl-20 pr-20">x @item.ItemQuantity</h6>
+                                                </td>
+                                                <td>
+                                                    <h4 class="text-brand">$@item.ItemPrice</h4>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+
+
+
+
+
+
+
                                 </tbody>
-                            
-                               
                             </table>
                         </div>
-                        @Html.AntiForgeryToken()
-                        <button id="btn-submit" class="btn mb-20 w-100">Proceed To CheckOut<i class="fi-rs-sign-out ml-15"></i></button>
                     </div>
+                    <div class="payment ml-30">
+                        <h4 class="mb-30">Payment</h4>
+                        <form id="paymentForm">
+                            @Html.AntiForgeryToken()
+                            <div class="payment_option">
+                                <div class="custome-radio">
+                                    <input class="form-check-input" required type="radio" name="payment_option" id="wallet" value="Wallet">
+                                    <label class="form-check-label" for="wallet">Payment with wallet</label>
+                                </div>
+                                <div class="custome-radio">
+                                    <input class="form-check-input" required type="radio" name="payment_option" id="online_gateway" value="OnlineGateway">
+                                    <label class="form-check-label" for="online_gateway">Online Gateway</label>
+                                </div>
+                            </div>
+                        </form>
+
+                        <div class="payment-logo d-flex">
+                            <img class="mr-15" src="~/assets/imgs/theme/icons/payment-paypal.svg" alt="">
+                            <img class="mr-15" src="~/assets/imgs/theme/icons/payment-visa.svg" alt="">
+                            <img class="mr-15" src="~/assets/imgs/theme/icons/payment-master.svg" alt="">
+                            <img src="~/assets/imgs/theme/icons/payment-zapper.svg" alt="">
+                        </div>
+
+                        <button id="submitPayment" type="button" class="btn btn-fill-out btn-block mt-30">
+                            Place an Order <i class="fi-rs-sign-out ml-15"></i>
+                        </button>
+                    </div>
+
+                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                    <script>
+                        $(document).ready(function () {
+                            $("#submitPayment").click(function () {
+                                var selectedOption = $("input[name='payment_option']:checked").val();
+                                if (!selectedOption) {
+                                    alert("Vui lòng chọn phương thức thanh toán!");
+                                    return;
+                                }
+
+                                var token = $('input[name="__RequestVerificationToken"]').val();
+                                var url = '@Url.Action("SubmitPayment", "Users")';
+
+                                $("#submitPayment").html('<i class="fa fa-spinner fa-spin"></i> Đang xử lý...').prop('disabled', true);
+
+                                $.ajax({
+                                    url: url,
+                                    type: 'POST',
+                                    headers: { "RequestVerificationToken": token },
+                                    data: { paymentOption: selectedOption },
+                                    success: function (response) {
+                                        if (response.haveUrl){
+                                            window.location.href = response.redirectUrl;
+                                        }else{
+                                            if (response.success) {
+                                                new Notify({
+                                                    status: 'success',
+                                                    title: 'Thành công!',
+                                                    text: response.msg || 'Gửi thành công!',
+                                                    effect: 'fade',
+                                                    speed: 300,
+                                                    showIcon: true,
+                                                    showCloseButton: true,
+                                                    autoclose: true,
+                                                    autotimeout: 3000,
+                                                    position: 'right top'
+                                                });
+                                                
+                                            } else {
+                                                new Notify({
+                                                    status: 'error',
+                                                    title: 'Thất Bại',
+                                                    text: response.msg || 'Gửi thất bại!',
+                                                    effect: 'fade',
+                                                    speed: 300,
+                                                    showIcon: true,
+                                                    showCloseButton: true,
+                                                    autoclose: true,
+                                                    autotimeout: 3000,
+                                                    position: 'right top'
+                                                });
+                                            }
+                                        }
+                                        
+                                        $("#submitPayment").html('Place an Order').prop('disabled', false);
+                                    },
+                                    error: function (xhr) {
+                                        alert("Có lỗi xảy ra: " + xhr.responseText);
+                                        $("#submitPayment").html('Place an Order').prop('disabled', false);
+                                    }
+                                });
+                            });
+                        });
+                    </script>
+
                 </div>
             </div>
         </div>
     </main>
+
+   
     <footer class="main">
         <section class="newsletter mb-15">
             <div class="container">
@@ -874,10 +1371,8 @@
                     <div class="footer-bottom"></div>
                 </div>
                 <div class="col-xl-4 col-lg-6 col-md-6">
-                    <p class="font-sm mb-0">
-                        &copy; 2024, <strong class="text-brand">Nest</strong> - HTML Ecommerce Template
-                        <br>All rights reserved
-                    </p>
+                    <p class="font-sm mb-0">&copy; 2024, <strong class="text-brand">Nest</strong> - HTML Ecommerce Template
+                        <br>All rights reserved</p>
                 </div>
                 <div class="col-xl-4  col-lg-6 text-center d-none d-xl-block">
                     <div class="hotline d-lg-inline-flex mr-30">
@@ -913,432 +1408,6 @@
             </div>
         </div>
     </div>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            // Hàm kiểm tra số lượng kho khi trang tải và sau khi thay đổi số lượng
-            function checkStock() {
-                $("input.qty-val").each(function () {
-                    var inputField = $(this);
-                    var productId = inputField.data("id");
-                    var stockQty = parseInt(inputField.attr("data-stock")) || 0;
-                    var currentQty = parseInt(inputField.val()) || 0;
-                    var row = inputField.closest("tr");
-
-                    console.log("🔍 Kiểm tra sản phẩm:", productId);
-                    console.log("📦 Kho thực tế:", stockQty, "🛒 Giỏ hàng:", currentQty);
-
-                    // Nếu số lượng vượt quá kho, làm mờ và hiển thị thông báo
-                    if (currentQty > stockQty) {
-                        row.addClass("outofstock"); // Làm mờ sản phẩm
-                        if (!row.find(".out-of-stock-label").length) {
-                            row.find(".product-des").append('<span class="out-of-stock-label">⚠️ Số lượng trong kho đã thay đổi!</span>');
-                        }
-                        row.find(".qty-up").prop("disabled", true); // Vô hiệu hóa nút tăng
-                        row.find(".qty-down").prop("disabled", false); // Cho phép giảm
-                    } else {
-                        row.removeClass("outofstock"); // Không làm mờ nếu số lượng hợp lệ
-                        row.find(".out-of-stock-label").remove(); // Xóa thông báo nếu không vượt quá kho
-                        row.find(".qty-up").prop("disabled", false); // Bật lại nút tăng
-                        row.find(".qty-down").prop("disabled", currentQty <= 1); // Vô hiệu hóa nút giảm khi số lượng bằng 1
-                    }
-                });
-            }
-
-            // Kiểm tra khi trang load
-            checkStock();
-
-            // Xử lý tăng/giảm số lượng
-            $(".qty-up, .qty-down").click(function (e) {
-                e.preventDefault();
-
-                var button = $(this);
-                var productId = button.data("id").toString();
-                var inputField = $("input[data-id='" + productId + "']");
-                var currentQty = parseInt(inputField.val()) || 0;
-                var stockQty = parseInt(inputField.attr("data-stock")) || 0;
-                var isIncrease = button.hasClass("qty-up");
-                var newQty = isIncrease ? currentQty + 1 : currentQty - 1;
-
-                console.log("📌 ProductID:", productId);
-                console.log("📌 Current Quantity:", currentQty);
-                console.log("📌 Stock Quantity:", stockQty);
-
-                // Kiểm tra nếu số lượng tăng và vượt quá kho
-                if (isIncrease && newQty > stockQty) {
-                    alert("⚠️ Số lượng đặt hàng đã đạt giới hạn kho (" + stockQty + ")");
-                    inputField.val(stockQty);  // Đặt lại số lượng về giới hạn kho
-                    $(".qty-up[data-id='" + productId + "']").hide();  // Ẩn nút tăng
-                    return;  // Không tiếp tục xử lý
-                }
-
-                // Nếu giảm số lượng xuống dưới 1
-                if (!isIncrease && newQty < 1) {
-                    alert("⚠️ Số lượng tối thiểu là 1.");
-                    return;
-                }
-
-                // Nếu hợp lệ, gửi Ajax
-                button.prop("disabled", true);
-
-                $.ajax({
-                    url: "/Home/CheckQuantity",
-                    type: "POST",
-                    contentType: "application/json",
-                    data: JSON.stringify({
-                        ProductID: productId,
-                        quantity: newQty
-                    }),
-                    success: function (response) {
-                        console.log("✅ Response từ Server:", response);
-
-                        if (response.success) {
-                            inputField.val(newQty);
-                            if (response.isMaxStock) {
-                                alert("⚠️ " + response.message); // Hiển thị cảnh báo nếu đạt giới hạn kho
-                            }
-
-                            // Kiểm tra nếu số lượng mới không vượt quá kho
-                            if (newQty >= stockQty) {
-                                $(".qty-up[data-id='" + productId + "']").hide(); // Ẩn nút tăng khi đạt giới hạn kho
-                                // alert("⚠️ Số lượng đặt hàng đã đạt giới hạn kho (" + stockQty + ")");
-                            } else {
-                                $(".qty-up[data-id='" + productId + "']").show(); // Hiển thị lại nút tăng
-                            }
-
-                            if (newQty > 1) {
-                                $(".qty-down[data-id='" + productId + "']").show();
-                            } else {
-                                $(".qty-down[data-id='" + productId + "']").hide();
-                            }
-
-                            // Cập nhật subtotal của sản phẩm
-                            var unitPrice = parseFloat($("#price-" + productId).text());
-                            var newSubtotal = newQty * unitPrice;
-                            $("#subtotal-" + productId).text(newSubtotal.toFixed(2));
-
-                            // Cập nhật tổng tiền giỏ hàng
-                            updateTotalPrice();
-
-                            // Kiểm tra lại kho sau khi thay đổi số lượng
-                            checkStock();
-                        } else {
-                            inputField.val(currentQty);
-                            alert("⚠️ Cập nhật thất bại: " + response.message);
-                        }
-                    },
-                    error: function () {
-                        alert("⚠️ Lỗi server, vui lòng thử lại!");
-                    },
-                    complete: function () {
-                        button.prop("disabled", false);
-                    }
-                });
-            });
-
-            function updateTotalPrice() {
-                var total = 0;
-                var hasCheckedItems = $("input.form-check-input:checked").length > 0;
-
-                if (hasCheckedItems) {
-                    // Nếu có checkbox được chọn, chỉ tính tổng các sản phẩm được chọn
-                    $("input.form-check-input:checked").each(function () {
-                        var row = $(this).closest("tr");
-                        if (!row.hasClass("outofstock")) { // Bỏ qua sản phẩm bị mờ
-                            var subtotal = parseFloat(row.find("td.price h4.text-brand").text().replace(/,/g, '')) || 0;
-                            total += subtotal;
-                        }
-                    });
-                } else {
-                    // Nếu không có checkbox nào được chọn, tính tổng tất cả sản phẩm không bị mờ
-                    $("tr").not(".outofstock").each(function () {
-                        var subtotal = parseFloat($(this).find("td.price h4.text-brand").text().replace(/,/g, '')) || 0;
-                        total += subtotal;
-                    });
-                }
-
-                $("#cart-total").text(total.toFixed(2));
-                console.log("💰 Tổng giỏ hàng đã cập nhật:", total.toFixed(2));
-            }
-
-            // Kiểm tra trạng thái khi load trang
-            $("input.qty-val").each(function () {
-                var inputField = $(this);
-                var productId = inputField.data("id");
-                var stockQty = parseInt(inputField.attr("data-stock")) || 0;
-                var currentQty = parseInt(inputField.val()) || 0;
-
-                if (currentQty >= stockQty) {
-                    $(".qty-up[data-id='" + productId + "']").hide(); // Ẩn nút tăng nếu đã đạt giới hạn kho
-                }
-
-                if (currentQty <= 1) {
-                    $(".qty-down[data-id='" + productId + "']").hide(); // Ẩn nút giảm khi số lượng bằng 1
-                }
-            });
-        });
-    </script>
-
-
-
-
-
-
-    <script>
-        $(document).ready(function () {
-            $(".delete-cart").click(function (e) {
-                e.preventDefault(); // Ngăn chặn chuyển trang
-
-                var productId = $(this).data("id"); // Lấy ProductID từ data-id
-
-                // Hiển thị hộp thoại xác nhận bằng SweetAlert2
-                Swal.fire({
-                    title: "Bạn có chắc muốn xóa?",
-                    text: "Sản phẩm sẽ bị xóa khỏi giỏ hàng!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#d33",
-                    cancelButtonColor: "#3085d6",
-                    confirmButtonText: "Xóa!",
-                    cancelButtonText: "Hủy"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Gửi request xóa bằng Ajax
-                        $.ajax({
-                            url: "/Home/DeleteCart",  // API xóa sản phẩm
-                            type: "POST",
-                            contentType: "application/json",
-                            data: JSON.stringify({ ProductID: productId }),
-                            success: function (response) {
-                                if (response.success) {
-                                    Swal.fire({
-                                        title: "Đã xóa!",
-                                        text: "Sản phẩm đã được xóa khỏi giỏ hàng.",
-                                        icon: "success",
-                                        timer: 2000,
-                                        showConfirmButton: false
-                                    });
-
-                                    // Xóa dòng sản phẩm khỏi bảng
-                                    // Xóa dòng sản phẩm khỏi bảng
-                                    var row = $("#price-" + productId).closest("tr");
-                                    var removedSubtotal = parseFloat(row.find("td.price h4.text-brand").text().replace(/,/g, '')) || 0;
-                                    row.remove();
-
-                                    // Cập nhật tổng tiền ngay sau khi xóa sản phẩm
-                                    var currentTotal = parseFloat($("#cart-total").text().replace(/,/g, '')) || 0;
-                                    var newTotal = currentTotal - removedSubtotal;
-                                    $("#cart-total").text(newTotal.toFixed(2)); // ✅ Cập nhật total ngay lập tức
-
-
-                                } else {
-                                    Swal.fire({
-                                        title: "Lỗi!",
-                                        text: response.message,
-                                        icon: "error"
-                                    });
-                                }
-                            },
-                            error: function () {
-                                Swal.fire({
-                                    title: "Lỗi!",
-                                    text: "Có lỗi xảy ra, vui lòng thử lại!",
-                                    icon: "error"
-                                });
-                            }
-                        });
-                    }
-                });
-            });
-        });
-
-    </script>
-    <script>
-        $(document).ready(function () {
-            function getTotalPrice() {
-                var total = 0;
-                $("tr").not(".outofstock").find("td.price h4.text-brand").each(function () {
-                    var subtotal = parseFloat($(this).text().replace(/,/g, '')) || 0;
-                    total += subtotal;
-                });
-                return total.toFixed(2);
-            }
-
-            function updateSelectedTotal() {
-                var total = 0;
-                var checkedItems = $("input.form-check-input:checked");
-
-                console.log("🟢 Số lượng checkbox được chọn:", checkedItems.length);
-
-                if (checkedItems.length > 0) {
-                    checkedItems.each(function () {
-                        var row = $(this).closest("tr");
-                        if (!row.hasClass("outofstock")) { // Chỉ tính tổng sản phẩm không bị mờ
-                            var subtotalText = row.find("td.price h4.text-brand").text().replace(/,/g, '');
-                            var subtotal = parseFloat(subtotalText) || 0;
-                            total += subtotal;
-                        }
-                    });
-                    console.log("⚡ Tổng tiền của các sản phẩm đã chọn:", total);
-                } else {
-                    total = parseFloat(getTotalPrice());
-                    console.log("⚡ Không có checkbox nào được chọn. Tổng tiền = 0");
-                }
-
-                $("#cart-total").text(total.toFixed(2));
-            }
-
-            $("input.form-check-input").change(function () {
-                updateSelectedTotal();
-            });
-
-            $("#exampleCheckbox11").change(function () {
-                var isChecked = $(this).prop("checked");
-                $("input.form-check-input").prop("checked", isChecked).trigger("change");
-            });
-
-            // Đảm bảo tổng giá trị được cập nhật đúng khi tải trang
-            $("input.form-check-input").prop("checked", false);
-            updateSelectedTotal();
-        });
-
-
-
-        $("#btn-submit").click(function () {
-            var token = $("input[name='__RequestVerificationToken']").val();
-            var selectedProducts = [];
-
-            $("input.form-check-input:checked").each(function () {
-                selectedProducts.push($(this).val());
-            });
-
-            if (selectedProducts.length === 0) {
-                alert("Vui lòng chọn ít nhất một sản phẩm!");
-                return;
-            }
-
-            var formData = new FormData();
-            formData.append("__RequestVerificationToken", token);
-
-            selectedProducts.forEach(id => {
-                formData.append("productIds[]", id); // Sử dụng mảng đúng cách
-            });
-
-            $.ajax({
-                url: "/Users/Buy",
-                type: "POST",
-                data: formData,
-                processData: false, // Ngăn jQuery xử lý dữ liệu
-                contentType: false, // Để trình duyệt tự động thiết lập content-type
-                success: function (response) {
-
-                    if (response.success) {
-                        Swal.fire({
-                            title: 'Thành công!',
-                            text: 'Bạn sẽ được chuyển hướng đến trang thanh toán...',
-                            icon: 'success',
-                            confirmButtonText: 'OK'
-                        }).then((result) => {
-                            if (result.isConfirmed || result.isDismissed) {
-                                window.location.href = response.redirectUrl;
-                            }
-                        });
-                    } else {
-                        new Notify({
-                            status: 'error',
-                            title: 'Thất Bại',
-                            text: response.msg || 'Gửi thất bại!',
-                            effect: 'fade',
-                            speed: 300,
-                            showIcon: true,
-                            showCloseButton: true,
-                            autoclose: true,
-                            autotimeout: 3000,
-                            position: 'right top'
-                        });
-                    }
-
-
-                },
-                error: function () {
-                    alert("Gửi danh sách thất bại!");
-                }
-            });
-        });
-
-
-
-
-    </script>
-
-   @*  <script>
-        $(document).ready(function () {
-            function checkStock() {
-                $("input.qty-val").each(function () {
-                    var inputField = $(this);
-                    var productId = inputField.data("id");
-                    var stockQty = parseInt(inputField.attr("data-stock")) || 0;
-                    var currentQty = parseInt(inputField.val()) || 0;
-                    var row = inputField.closest("tr");
-
-                    console.log("🔍 Kiểm tra sản phẩm:", productId);
-                    console.log("📦 Kho thực tế:", stockQty, "🛒 Giỏ hàng:", currentQty);
-
-                    // Kiểm tra nếu số lượng trong giỏ hàng vượt quá số lượng kho
-                    if (currentQty > stockQty) {
-                        row.addClass("outofstock"); // Làm mờ và vô hiệu hóa
-                        if (!row.find(".out-of-stock-label").length) {
-                            row.find(".product-des").append('<span class="out-of-stock-label">⚠️ Số lượng trong kho đã thay đổi!</span>');
-                        }
-                        // Vô hiệu hóa nút tăng
-                        row.find(".qty-up").prop("disabled", true);
-                        // Cho phép giảm số lượng
-                        row.find(".qty-down").prop("disabled", false);
-                    } else {
-                        row.removeClass("outofstock"); // Không làm mờ nếu số lượng hợp lệ
-                        row.find(".out-of-stock-label").remove(); // Xóa thông báo
-                        // Bật lại nút tăng khi số lượng hợp lệ
-                        row.find(".qty-up").prop("disabled", false);
-                        // Vô hiệu hóa nút giảm khi số lượng bằng 1
-                        row.find(".qty-down").prop("disabled", currentQty <= 1);
-                    }
-                });
-            }
-
-            // Gọi khi trang load
-            checkStock();
-
-            // Gọi khi số lượng thay đổi
-            $(".qty-up, .qty-down").click(function () {
-                var inputField = $(this).closest("tr").find(".qty-val");
-                var currentQty = parseInt(inputField.val()) || 0;
-                var stockQty = parseInt(inputField.attr("data-stock")) || 0;
-
-                // Kiểm tra để không vượt quá số lượng trong kho
-                if ($(this).hasClass("qty-up")) {
-                    if (currentQty < stockQty) {
-                        inputField.val(currentQty + 1);  // Tăng số lượng
-                    }
-                } else if ($(this).hasClass("qty-down")) {
-                    if (currentQty > 1) {
-                        inputField.val(currentQty - 1);  // Giảm số lượng
-                    }
-                }
-
-                setTimeout(checkStock, 500); // Kiểm tra lại sau khi thay đổi
-            });
-        });
-
-
-    </script> *@
-
-
-
-    <!-- SweetAlert2 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-
     <!-- Vendor JS-->
     <script src="~/assets/js/vendor/modernizr-3.6.0.min.js"></script>
     <script src="~/assets/js/vendor/jquery-3.6.0.min.js"></script>
