@@ -1,14 +1,11 @@
 ﻿using AutoMapper;
 using BusinessLogic.Services.StoreDetail;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Models;
 using Repository.StoreDetails;
 using Repository.ViewModels;
-using System.IO;
 
 public class StoreController : Controller
 {
@@ -101,7 +98,7 @@ public class StoreController : Controller
             await _storeService.AddStoreAsync(storeEntity, user.Id);
             return RedirectToAction("Index"); // Điều hướng sau khi tạo thành công
         }
-        
+
         return View(model);
     }
 

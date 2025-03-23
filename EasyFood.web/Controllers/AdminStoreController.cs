@@ -1,15 +1,14 @@
 ﻿using AutoMapper;
 using BusinessLogic.Services.StoreDetail;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Models;
 using Repository.StoreDetails;
-using Repository.ViewModels;
-using System.Text.Json;
 
 namespace EasyFood.web.Controllers
 {
+    [Authorize]
     public class AdminStoreController : Controller
     {
         private readonly IStoreDetailService _storeService;

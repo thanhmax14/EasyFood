@@ -2,8 +2,8 @@
 using System.Text.Json;
 using AutoMapper;
 using BusinessLogic.Services.BalanceChanges;
-using BusinessLogic.Services.ProductVariants;
 using BusinessLogic.Services.StoreDetail;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Models;
@@ -12,7 +12,7 @@ using Repository.ViewModels;
 
 namespace EasyFood.web.Controllers
 {
-
+    [Authorize]
     public class AdminController : Controller
     {
         private readonly IBalanceChangeService _balance; // xử lý withdaw
@@ -23,7 +23,7 @@ namespace EasyFood.web.Controllers
         private readonly StoreDetailsRepository _storeRepository;
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        
+
         public AdminController(UserManager<AppUser> userManager, IStoreDetailService storeService, IMapper mapper, IWebHostEnvironment webHostEnvironment, StoreDetailsRepository storeRepository, IBalanceChangeService balance)
         {
             _userManager = userManager;
@@ -168,7 +168,7 @@ namespace EasyFood.web.Controllers
                 return Json(new { success = false, message = "Lỗi kết nối API Gateway!" });
             }
         }
-     
+
         public async Task<IActionResult> HiddenAccount([FromBody] UsersViewModel obj)
         {
             var admin = await _userManager.GetUserAsync(User);
@@ -579,7 +579,7 @@ namespace EasyFood.web.Controllers
             return Json(new { success = true, message = "Store status updated successfully", isActive });
         }
 
-        
+
     }
 }
 

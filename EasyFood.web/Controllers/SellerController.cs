@@ -4,7 +4,6 @@ using System.Text.Json;
 using AutoMapper;
 using BusinessLogic.Services.Products;
 using BusinessLogic.Services.ProductVariants;
-using BusinessLogic.Services.ProductVariantVariants;
 using BusinessLogic.Services.Reviews;
 using BusinessLogic.Services.StoreDetail;
 using Microsoft.AspNetCore.Authorization;
@@ -18,6 +17,7 @@ using Repository.ViewModels;
 
 namespace EasyFood.web.Controllers
 {
+    [Authorize]
     public class SellerController : Controller
     {
         private readonly IReviewService _reviewService;

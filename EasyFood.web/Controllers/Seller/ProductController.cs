@@ -6,6 +6,7 @@ using Repository.ViewModels;
 
 namespace EasyFood.web.Controllers.Seller
 {
+
     public class ProductController : Controller
     {
         private readonly IProductService _productService;

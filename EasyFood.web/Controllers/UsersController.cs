@@ -1,5 +1,4 @@
-﻿using System.Net.Http.Headers;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
 using BusinessLogic.Services.BalanceChanges;
 using BusinessLogic.Services.Carts;
@@ -7,16 +6,15 @@ using BusinessLogic.Services.Orders;
 using BusinessLogic.Services.ProductImages;
 using BusinessLogic.Services.Products;
 using BusinessLogic.Services.ProductVariants;
-using BusinessLogic.Services.Reviews;
-using BusinessLogic.Services.StoreDetail;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Models;
 using Repository.ViewModels;
 
 namespace EasyFood.web.Controllers
 {
+    [Authorize]
     public class UsersController : Controller
     {
         private readonly UserManager<AppUser> _userManager;
@@ -90,16 +88,16 @@ namespace EasyFood.web.Controllers
                 //};
                 //list.Reivew = JsonSerializer.Deserialize<List<ReivewViewModel>>(feedbackJson, feedbackOptions);
 
-                var getOrder = await this._order.ListAsync(u => u.UserID ==user.Id);
+                var getOrder = await this._order.ListAsync(u => u.UserID == user.Id);
                 if (getOrder.Any())
                 {
-                    foreach(var item in getOrder)
+                    foreach (var item in getOrder)
                     {
                         list.OrderViewodels.Add(new OrderViewModel
                         {
                             Address = user.Address,
                             Email = user.Email,
-                            Name = user.FirstName + ", "+user.LastName,
+                            Name = user.FirstName + ", " + user.LastName,
                             OrderDate = item.CreatedDate,
                             PaymentMethod = item.MethodPayment,
                             Status = item.Status,
@@ -486,7 +484,7 @@ namespace EasyFood.web.Controllers
                         if (response.IsSuccessStatusCode)
                         {
                             return Json(new { success = messErro.success, msg = messErro.msg, haveUrl = messErro.success, redirectUrl = "" + messErro.msg });
-                           
+
                         }
                         return Json(messErro);
                     }
