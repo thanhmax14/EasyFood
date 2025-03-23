@@ -26,11 +26,19 @@ namespace EasyFood.web.Controllers
         private readonly IProductService _product;
         public readonly ICartService _cart;
         public readonly IProductVariantService _productWarian;
-
         private readonly IProductImageService _img;
 
-
-
+        public UsersController(UserManager<AppUser> userManager, HttpClient client, IBalanceChangeService balance, IHttpContextAccessor httpContextAccessor, IProductService product, ICartService cart, IProductVariantService productWarian, IProductImageService img)
+        {
+            _userManager = userManager;
+            this.client = client;
+            _balance = balance;
+            _httpContextAccessor = httpContextAccessor;
+            _product = product;
+            _cart = cart;
+            _productWarian = productWarian;
+            _img = img;
+        }
 
         public async Task<IActionResult> Index()
         {
@@ -385,11 +393,12 @@ namespace EasyFood.web.Controllers
                 phone = user.PhoneNumber,
                 itemCheck = listItem
             };
-            }
+
             HttpContext.Session.Set("BillingTourInfo", JsonSerializer.SerializeToUtf8Bytes(temInfo));
 
             return Json(new { success = true, message = "Danh sách sản phẩm đã được xử lý.", selectedProducts = productIds, redirectUrl = "/Users/CheckOut" });
         }
+
 
         public async Task<IActionResult> CheckOut()
         {
