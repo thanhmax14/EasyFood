@@ -582,7 +582,61 @@ namespace EasyFood.web.Controllers
             return Json(new { success = true, message = "Store status updated successfully", isActive });
         }
 
-        
+        public async Task<IActionResult> ViewCategories()
+        {
+            var categories = await _categoryService.GetCategoriesAsync();
+            return View(categories);
+        }
+
+        [HttpGet]
+        public IActionResult CreateCategory()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult CreateCategory(CategoryCreateViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                _categoryService.CreateCategory(model);
+                return RedirectToAction("ViewCategories", "Admin");
+            }
+
+            return View(model);
+        }
+
+        [HttpGet("Admin/UpdateCategory/{id}")]
+        public IActionResult UpdateCategory(Guid id)
+        {
+            var model = _categoryService.GetCategoryForUpdate(id);
+            if (model == null)
+            {
+                return NotFound();
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult UpdateCategory(CategoryUpdateViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            try
+            {
+                _categoryService.UpdateCategory(model);
+                return RedirectToAction("ViewCategories", "Admin");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                return View(model);
+            }
+        }
     }
 }
 
