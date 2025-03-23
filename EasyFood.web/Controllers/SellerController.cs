@@ -4,6 +4,7 @@ using System.Text.Json;
 using AutoMapper;
 using BusinessLogic.Services.Products;
 using BusinessLogic.Services.ProductVariants;
+using BusinessLogic.Services.ProductVariantVariants;
 using BusinessLogic.Services.Reviews;
 using BusinessLogic.Services.StoreDetail;
 using Microsoft.AspNetCore.Authorization;
@@ -169,13 +170,12 @@ namespace EasyFood.web.Controllers
 
             // Kiểm tra nếu có store nhưng đang chờ duyệt
             bool hasPendingStore = stores.Any(s => s.Status == "PENDING");
-
+            // Kiểm tra nếu có store bị khóa
+            bool hasLockedStore = stores.Any(s => !s.IsActive);
             ViewBag.HasPendingStore = hasPendingStore; // Truyền thông tin ra View
-
+            ViewBag.HasLockedStore = hasLockedStore;
             return View(stores);
         }
-
-
 
         [Authorize]
         [HttpPost]
@@ -396,6 +396,7 @@ namespace EasyFood.web.Controllers
             ViewBag.ProductId = productId; // Lưu ProductId để sử dụng trong View
             return View(variants);
         }
+
         [HttpGet]
         public IActionResult CreateProductVariant(Guid productId)
         {
@@ -618,6 +619,13 @@ namespace EasyFood.web.Controllers
             {
                 return StatusCode(500, new ErroMess { success = false, msg = "Lỗi kết nối API Gateway!" });
             }
+        }
+
+        [HttpPost]
+        public JsonResult UpdateProductVariantStatus(Guid variantId, bool isActive)
+        {
+            var result = _variantService.UpdateProductVariantStatus(variantId, isActive);
+            return Json(new { success = result });
         }
     }
 }

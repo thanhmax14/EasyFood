@@ -331,22 +331,29 @@
                                         name: "Actions",
                                         width: "120px",
                                         formatter: (_, row) => {
+                                            let storeId = row.cells[0].data;
+                                            let status = row.cells[10].data; // Lấy trạng thái từ cột Status
+
+                                            let actionButton = "";
+                                            if (status === "Approved") {
+                                                actionButton = `
+                                                    <button class="dropdown-item" onclick="updateStoreStatus('${storeId}', 'Rejected')">
+                                                        <i class="ri-close-line align-bottom me-2 text-danger"></i> Reject
+                                                    </button>`;
+                                            } else if (status === "Rejected") {
+                                                actionButton = `
+                                                    <button class="dropdown-item" onclick="updateStoreStatus('${storeId}', 'Approved')">
+                                                        <i class="ri-check-line align-bottom me-2 text-success"></i> Accept
+                                                    </button>`;
+                                            }
+
                                             return gridjs.html(`
                                                 <div class="dropdown">
                                                     <button class="btn btn-soft-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                         <i class="ri-more-fill align-middle"></i>
                                                     </button>
                                                     <ul class="dropdown-menu dropdown-menu-end">
-                                                        <li>
-                                                            <button class="dropdown-item" onclick="updateStoreStatus('${row.cells[0].data}', 'Approved')">
-                                                                <i class="ri-check-line align-bottom me-2 text-success"></i> Accept
-                                                            </button>
-                                                        </li>
-                                                        <li>
-                                                            <button class="dropdown-item" onclick="updateStoreStatus('${row.cells[0].data}', 'Rejected')">
-                                                                <i class="ri-close-line align-bottom me-2 text-danger"></i> Reject
-                                                            </button>
-                                                        </li>
+                                                        ${actionButton}
                                                     </ul>
                                                 </div>
                                             `);
@@ -364,8 +371,8 @@
                                     store.id,
                                     store.name,
                                     store.userName,
-                                    store.createdDate,
-                                    store.modifiedDate ?? "N/A",
+                                    formatDate(store.createdDate),
+                                    formatDate(store.modifiedDate) ?? "N/A",
                                     store.shortDescriptions,
                                     store.longDescriptions,
                                     store.address,
@@ -377,11 +384,6 @@
                         }
                     });
 
-                    /**
-                     * Cập nhật trạng thái của cửa hàng
-                     * param {string} storeId - ID của cửa hàng
-                     * param {string} newStatus - Trạng thái mới (Approved / Rejected)
-                     */
                     function updateStoreStatus(storeId, newStatus) {
                         let actionText = newStatus === "Approved" ? "Accept" : "Reject";
 
@@ -395,7 +397,10 @@
                             confirmButtonText: `Yes, ${actionText.toLowerCase()} it!`
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                fetch(`/AdminStore/UpdateStoreStatus?storeId=${storeId}&newStatus=${newStatus}`, { method: "POST" })
+                                fetch(`/Admin/UpdateStoreStatus/${storeId}/${newStatus}`, {  // Truyền storeId vào URL
+                                    method: "POST",
+                                    headers: { "Content-Type": "application/json" }
+                                })
                                     .then(response => response.json())
                                     .then(data => {
                                         if (data.success) {
@@ -417,12 +422,15 @@
                             }
                         });
                     }
+
+                    // Format ngày (dd/MM/yyyy)
+                    function formatDate(dateString) {
+                        if (!dateString) return "";
+                        let date = new Date(dateString);
+                        return date.toLocaleDateString("en-GB");
+                    }
+
                 </script>
-
-
-
-
-
 
                 <!-- end row -->
 

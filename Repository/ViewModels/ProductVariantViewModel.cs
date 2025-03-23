@@ -17,5 +17,6 @@ namespace Repository.ViewModels
         public DateTime ManufactureDate { get; set; }
         public Guid ProductID { get; set; }
         public Guid StoreID { get; set; } // 🆕 Thêm StoreID
+        public bool IsActive { get; set; }
     }
 }
