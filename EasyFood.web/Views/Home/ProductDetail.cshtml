@@ -526,7 +526,7 @@
                                                         <div class="row">
                                                             <div class="col-lg-8">
                                                                 <h4 class="mb-30">Customer questions & answers</h4>
-                                                                @{
+                                                             @*    @{
                                                                     var totalRatings = Model.Comments.Count();
                                                                     var star5 = Model.Comments.Count(c => c.Rating == 5);
                                                                     var star4 = Model.Comments.Count(c => c.Rating == 4);
@@ -539,7 +539,7 @@
                                                                     var percent3 = totalRatings > 0 ? (star3 * 100) / totalRatings : 0;
                                                                     var percent2 = totalRatings > 0 ? (star2 * 100) / totalRatings : 0;
                                                                     var percent1 = totalRatings > 0 ? (star1 * 100) / totalRatings : 0;
-                                                                }
+                                                                } *@
 
                                                                 <div class="comment-list">
                                                                     @foreach(var item in Model.Comments)
@@ -550,27 +550,27 @@
                                                                                 <div class="thumb text-center">
                                                                                    @*  <img src="~/assets/imgs/blog/author-2.png"
                                                                                          alt="" /> *@
-                                                                                    <a href="#"
-                                                                                       class="font-heading text-brand">@item.Username</a>
+                                                                                   @*  <a href="#"
+                                                                                       class="font-heading text-brand">@item.Username</a> *@
                                                                                 </div>
                                                                                 <div class="desc">
                                                                                     <div class="d-flex justify-content-between mb-10">
                                                                                         <div class="d-flex align-items-center">
                                                                                             <span class="font-xs text-muted" style="margin-left: -10px;">
-                                                                                                @item.Datecmt
+                                                                                               @*  @item.Datecmt *@
                                                                                             </span>
                                                                                         </div>
 
-                                                                                        <div class="product-rate d-inline-block ms-3">
+                                                                                      @*   <div class="product-rate d-inline-block ms-3">
                                                                                             <div class="product-rating" style="width: @(item.Rating * 20)%"></div>
-                                                                                        </div>
+                                                                                        </div> *@
 
 
                                                                                     </div>
-                                                                                    <p class="mb-10">
+                                                                                  @*   <p class="mb-10">
                                                                                        @item.Cmt <a href="#"
                                                                                                                       class="reply">Reply</a>
-                                                                                    </p>
+                                                                                    </p> *@
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -655,7 +655,7 @@
                                                                     <h6>4.8 out of 5</h6>
                                                                 </div>
 
-                                                                <div class="progress">
+                                                               @*  <div class="progress">
                                                                     <span>5 star</span>
                                                                     <div class="progress-bar" role="progressbar"
                                                                          style="width: @percent5%" aria-valuenow="@percent5"
@@ -695,7 +695,7 @@
                                                                         @percent1%
                                                                     </div>
                                                                 </div>
-
+ *@
                                                                 <a href="#" class="font-xs text-muted">
                                                                     How are ratings calculated?
                                                                 </a>

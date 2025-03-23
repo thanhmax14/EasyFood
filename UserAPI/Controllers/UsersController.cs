@@ -128,9 +128,6 @@ namespace UserAPI.Controllers
             // Cập nhật thông tin
             user.Birthday = obj.userView.Birthday;
             user.Address = obj.userView.Address;
-            user.img = obj.userView.img;
-            user.isUpdateProfile = obj.userView.isUpdateProfile;
-            user.ModifyUpdate = DateTime.UtcNow;
             user.PhoneNumber = obj.userView.PhoneNumber;
             user.UserName = obj.userView.UserName;
             user.Email = obj.userView.Email;

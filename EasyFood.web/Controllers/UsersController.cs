@@ -30,7 +30,7 @@ namespace EasyFood.web.Controllers
         private readonly IProductImageService _img;
         private readonly IOrdersServices _order;
 
-        public UsersController(UserManager<AppUser> userManager, HttpClient client, IBalanceChangeService balance, IHttpContextAccessor httpContextAccessor, IProductService product, ICartService cart, IProductVariantService productWarian, IProductImageService img)
+        public UsersController(UserManager<AppUser> userManager, HttpClient client, IBalanceChangeService balance, IHttpContextAccessor httpContextAccessor, IProductService product, ICartService cart, IProductVariantService productWarian, IProductImageService img, IOrdersServices orders)
         {
             _userManager = userManager;
             this.client = client;
@@ -40,6 +40,7 @@ namespace EasyFood.web.Controllers
             _cart = cart;
             _productWarian = productWarian;
             _img = img;
+            _order = orders;
         }
 
         public async Task<IActionResult> Index()
