@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Models;
 using Repository.Categorys;
+using Repository.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,15 +11,16 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.Services.Categorys
 {
-    public class CategoryService:ICategoryService
+    public class CategoryService : ICategoryService
     {
         private readonly ICategoryRepository _repository;
         private readonly IMapper _mapper;
-
-        public CategoryService(ICategoryRepository repository, IMapper mapper)
+        private readonly CategoryRepository _repositorys;
+        public CategoryService(ICategoryRepository repository, IMapper mapper, CategoryRepository repositorys)
         {
             _repository = repository;
             _mapper = mapper;
+            _repositorys = repositorys;
         }
 
         public IQueryable<Categories> GetAll() => _repository.GetAll();
@@ -52,5 +54,14 @@ namespace BusinessLogic.Services.Categorys
             Func<IQueryable<Categories>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<Categories, object>> includeProperties = null) =>
             await _repository.ListAsync(filter, orderBy, includeProperties);
         public async Task<int> SaveChangesAsync() => await _repository.SaveChangesAsync();
+        public async Task<IEnumerable<CategoryViewModel>> GetAllAsync()
+        {
+            var categories = await _repositorys.GetAllAsync();
+            return categories.Select(c => new CategoryViewModel
+            {
+                ID = c.ID,
+                Name = c.Name
+            });
+        }
     }
 }

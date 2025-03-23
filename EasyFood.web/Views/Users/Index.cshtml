@@ -1,4 +1,5 @@
-﻿@model Repository.ViewModels.UsersViewModel
+﻿@using System.Text.Json
+@model Repository.ViewModels.IndexUserViewModels
 <!DOCTYPE html>
 <html class="no-js" lang="en">
 
@@ -24,544 +25,22 @@
 
     <script src="chrome-extension://mooikfkahbdckldjjndioackbalphokd/~/assets/prompt.js"></script>
     @Html.Raw(" <link href='https://cdn.jsdelivr.net/npm/@flaticon/flaticon-uicons/css/all/all.css' rel='stylesheet'>");
+
+      <link rel="stylesheet" href="~/assets/js/gridjs/theme/mermaid.min.css">
 </head>
 
 <body>
-    <header class="header-area header-style-1 header-height-2">
-        <div class="mobile-promotion">
-            <span>Grand opening, <strong>up to 15%</strong> off all items. Only <strong>3 days</strong> left</span>
-        </div>
-        <div class="header-middle header-middle-ptb-1 d-none d-lg-block">
-            <div class="container">
-                <div class="header-wrap">
-                    <div class="logo logo-width-1">
-                        <a href="index.html"><img src="~/assets/imgs/theme/logo.svg" alt="logo" /></a>
-                    </div>
-                    <div class="header-right">
-                        <div class="search-style-2">
-                            <form action="#">
-                                <select class="select-active">
-                                    <option>All Categories</option>
-                                    <option>Milks and Dairies</option>
-                                    <option>Wines & Alcohol</option>
-                                    <option>Clothing & Beauty</option>
-                                    <option>Pet Foods & Toy</option>
-                                    <option>Fast food</option>
-                                    <option>Baking material</option>
-                                    <option>Vegetables</option>
-                                    <option>Fresh Seafood</option>
-                                    <option>Noodles & Rice</option>
-                                    <option>Ice cream</option>
-                                </select>
-                                <input type="text" placeholder="Search for items..." />
-                            </form>
-                        </div>
-                        <div class="header-action-right">
-                            <div class="header-action-2">
-                                <div class="search-location">
-                                    <form action="#">
-                                        <select class="select-active">
-                                            <option>Your Location</option>
-                                            <option>Alabama</option>
-                                            <option>Alaska</option>
-                                            <option>Arizona</option>
-                                            <option>Delaware</option>
-                                            <option>Florida</option>
-                                            <option>Georgia</option>
-                                            <option>Hawaii</option>
-                                            <option>Indiana</option>
-                                            <option>Maryland</option>
-                                            <option>Nevada</option>
-                                            <option>New Jersey</option>
-                                            <option>New Mexico</option>
-                                            <option>New York</option>
-                                        </select>
-                                    </form>
-                                </div>
-                                <div class="header-action-icon-2">
-                                    <a href="shop-compare.html">
-                                        <img class="svgInject" alt="Nest"
-                                             src="~/assets/imgs/theme/icons/icon-compare.svg" />
-                                        <span class="pro-count blue">3</span>
-                                    </a>
-                                    <a href="shop-compare.html"><span class="lable ml-0">Compare</span></a>
-                                </div>
-                                <div class="header-action-icon-2">
-                                    <a href="shop-wishlist.html">
-                                        <img class="svgInject" alt="Nest"
-                                             src="~/assets/imgs/theme/icons/icon-heart.svg" />
-                                        <span class="pro-count blue">6</span>
-                                    </a>
-                                    <a href="shop-wishlist.html"><span class="lable">Wishlist</span></a>
-                                </div>
-                                <div class="header-action-icon-2">
-                                    <a class="mini-cart-icon" href="shop-cart.html">
-                                        <img alt="Nest" src="~/assets/imgs/theme/icons/icon-cart.svg" />
-                                        <span class="pro-count blue">2</span>
-                                    </a>
-                                    <a href="shop-cart.html"><span class="lable">Cart</span></a>
-                                    <div class="cart-dropdown-wrap cart-dropdown-hm2">
-                                        <ul>
-                                            <li>
-                                                <div class="shopping-cart-img">
-                                                    <a href="shop-product-right.html">
-                                                        <img alt="Nest"
-                                                             src="~/assets/imgs/shop/thumbnail-3.jpg" />
-                                                    </a>
-                                                </div>
-                                                <div class="shopping-cart-title">
-                                                    <h4><a href="shop-product-right.html">Daisy Casual Bag</a></h4>
-                                                    <h4><span>1 × </span>$800.00</h4>
-                                                </div>
-                                                <div class="shopping-cart-delete">
-                                                    <a href="#"><i class="fi-rs-cross-small"></i></a>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <div class="shopping-cart-img">
-                                                    <a href="shop-product-right.html">
-                                                        <img alt="Nest"
-                                                             src="~/assets/imgs/shop/thumbnail-2.jpg" />
-                                                    </a>
-                                                </div>
-                                                <div class="shopping-cart-title">
-                                                    <h4><a href="shop-product-right.html">Corduroy Shirts</a></h4>
-                                                    <h4><span>1 × </span>$3200.00</h4>
-                                                </div>
-                                                <div class="shopping-cart-delete">
-                                                    <a href="#"><i class="fi-rs-cross-small"></i></a>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                        <div class="shopping-cart-footer">
-                                            <div class="shopping-cart-total">
-                                                <h4>Total <span>$4000.00</span></h4>
-                                            </div>
-                                            <div class="shopping-cart-button">
-                                                <a href="shop-cart.html" class="outline">View cart</a>
-                                                <a href="shop-checkout.html">Checkout</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="header-action-icon-2">
-                                    <a href="page-account.html">
-                                        <img class="svgInject" alt="Nest" src="~/assets/imgs/theme/icons/icon-user.svg" />
-                                    </a>
-                                    <a href="page-account.html"><span class="lable ml-0">Account</span></a>
-                                    <div class="cart-dropdown-wrap cart-dropdown-hm2 account-dropdown">
-                                        <ul>
-                                            <li>
-                                                <a href="page-account.html">
-                                                    <i class="fi fi-rs-user mr-10"></i>My
-                                                    Account
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="page-account.html">
-                                                    <i class="fi fi-rs-location-alt mr-10"></i>Order Tracking
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="page-account.html">
-                                                    <i class="fi fi-rs-label mr-10"></i>My
-                                                    Voucher
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="shop-wishlist.html">
-                                                    <i class="fi fi-rs-heart mr-10"></i>My
-                                                    Wishlist
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="page-account.html">
-                                                    <i class="fi fi-rs-settings-sliders mr-10"></i>Setting
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="page-login.html">
-                                                    <i class="fi fi-rs-sign-out mr-10"></i>Sign
-                                                    out
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="header-bottom header-bottom-bg-color sticky-bar">
-            <div class="container">
-                <div class="header-wrap header-space-between position-relative">
-                    <div class="logo logo-width-1 d-block d-lg-none">
-                        <a href="index.html"><img src="~/assets/imgs/theme/logo.svg" alt="logo" /></a>
-                    </div>
-                    <div class="header-nav d-none d-lg-flex">
-                        <div class="main-categori-wrap d-none d-lg-block">
-                            <a class="categories-button-active" href="#">
-                                <span class="fi-rs-apps"></span> <span class="et">Browse</span> All Categories
-                                <i class="fi-rs-angle-down"></i>
-                            </a>
-                            <div class="categories-dropdown-wrap categories-dropdown-active-large font-heading">
-                                <div class="d-flex categori-dropdown-inner">
-                                    <ul>
-                                        <li>
-                                            <a href="shop-grid-right.html">
-                                                <img src="~/assets/imgs/theme/icons/category-1.svg" alt="" />Milks and
-                                                Dairies
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="shop-grid-right.html">
-                                                <img src="~/assets/imgs/theme/icons/category-2.svg" alt="" />Clothing &
-                                                beauty
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="shop-grid-right.html">
-                                                <img src="~/assets/imgs/theme/icons/category-3.svg" alt="" />Pet Foods &
-                                                Toy
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="shop-grid-right.html">
-                                                <img src="~/assets/imgs/theme/icons/category-4.svg" alt="" />Baking
-                                                material
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="shop-grid-right.html">
-                                                <img src="~/assets/imgs/theme/icons/category-5.svg" alt="" />Fresh
-                                                Fruit
-                                            </a>
-                                        </li>
-                                    </ul>
-                                    <ul class="end">
-                                        <li>
-                                            <a href="shop-grid-right.html">
-                                                <img src="~/assets/imgs/theme/icons/category-6.svg" alt="" />Wines &
-                                                Drinks
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="shop-grid-right.html">
-                                                <img src="~/assets/imgs/theme/icons/category-7.svg" alt="" />Fresh
-                                                Seafood
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="shop-grid-right.html">
-                                                <img src="~/assets/imgs/theme/icons/category-8.svg" alt="" />Fast food
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="shop-grid-right.html">
-                                                <img src="~/assets/imgs/theme/icons/category-9.svg" alt="" />Vegetables
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="shop-grid-right.html">
-                                                <img src="~/assets/imgs/theme/icons/category-10.svg" alt="" />Bread and
-                                                Juice
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="more_slide_open" style="display: none">
-                                    <div class="d-flex categori-dropdown-inner">
-                                        <ul>
-                                            <li>
-                                                <a href="shop-grid-right.html">
-                                                    <img src="~/assets/imgs/theme/icons/icon-1.svg" alt="" />Milks and
-                                                    Dairies
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="shop-grid-right.html">
-                                                    <img src="~/assets/imgs/theme/icons/icon-2.svg" alt="" />Clothing &
-                                                    beauty
-                                                </a>
-                                            </li>
-                                        </ul>
-                                        <ul class="end">
-                                            <li>
-                                                <a href="shop-grid-right.html">
-                                                    <img src="~/assets/imgs/theme/icons/icon-3.svg" alt="" />Wines &
-                                                    Drinks
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="shop-grid-right.html">
-                                                    <img src="~/assets/imgs/theme/icons/icon-4.svg" alt="" />Fresh
-                                                    Seafood
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="more_categories">
-                                    <span class="icon"></span> <span class="heading-sm-1">
-                                        Show
-                                        more...
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block font-heading">
-                            <nav>
-                                <ul>
-                                    <li class="hot-deals">
-                                        <img src="~/assets/imgs/theme/icons/icon-hot.svg"
-                                             alt="hot deals" /><a href="shop-grid-right.html">Deals</a>
-                                    </li>
-                                    <li>
-                                        <a class="active" href="index.html">Home <i class="fi-rs-angle-down"></i></a>
-                                        <ul class="sub-menu">
-                                            <li><a href="index.html">Home 1</a></li>
-                                            <li><a href="index-2.html">Home 2</a></li>
-                                            <li><a href="index-3.html">Home 3</a></li>
-                                            <li><a href="index-4.html">Home 4</a></li>
-                                            <li><a href="index-5.html">Home 5</a></li>
-                                            <li><a href="index-6.html">Home 6</a></li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <a href="page-about.html">About</a>
-                                    </li>
-                                    <li>
-                                        <a href="shop-grid-right.html">Shop <i class="fi-rs-angle-down"></i></a>
-                                        <ul class="sub-menu">
-                                            <li><a href="shop-grid-right.html">Shop Grid – Right Sidebar</a></li>
-                                            <li><a href="shop-grid-left.html">Shop Grid – Left Sidebar</a></li>
-                                            <li><a href="shop-list-right.html">Shop List – Right Sidebar</a></li>
-                                            <li><a href="shop-list-left.html">Shop List – Left Sidebar</a></li>
-                                            <li><a href="shop-fullwidth.html">Shop - Wide</a></li>
-                                            <li>
-                                                <a href="#">Single Product <i class="fi-rs-angle-right"></i></a>
-                                                <ul class="level-menu">
-                                                    <li>
-                                                        <a href="shop-product-right.html">Product – Right Sidebar</a>
-                                                    </li>
-                                                    <li><a href="shop-product-left.html">Product – Left Sidebar</a></li>
-                                                    <li><a href="shop-product-full.html">Product – No sidebar</a></li>
-                                                    <li>
-                                                        <a href="shop-product-vendor.html">Product – Vendor Infor</a>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                            <li><a href="shop-filter.html">Shop – Filter</a></li>
-                                            <li><a href="shop-wishlist.html">Shop – Wishlist</a></li>
-                                            <li><a href="shop-cart.html">Shop – Cart</a></li>
-                                            <li><a href="shop-checkout.html">Shop – Checkout</a></li>
-                                            <li><a href="shop-compare.html">Shop – Compare</a></li>
-                                            <li>
-                                                <a href="#">Shop Invoice<i class="fi-rs-angle-right"></i></a>
-                                                <ul class="level-menu">
-                                                    <li><a href="shop-invoice-1.html">Shop Invoice 1</a></li>
-                                                    <li><a href="shop-invoice-2.html">Shop Invoice 2</a></li>
-                                                    <li><a href="shop-invoice-3.html">Shop Invoice 3</a></li>
-                                                    <li><a href="shop-invoice-4.html">Shop Invoice 4</a></li>
-                                                    <li><a href="shop-invoice-5.html">Shop Invoice 5</a></li>
-                                                    <li><a href="shop-invoice-6.html">Shop Invoice 6</a></li>
-                                                </ul>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <a href="#">Vendors <i class="fi-rs-angle-down"></i></a>
-                                        <ul class="sub-menu">
-                                            <li><a href="vendors-grid.html">Vendors Grid</a></li>
-                                            <li><a href="vendors-list.html">Vendors List</a></li>
-                                            <li><a href="vendor-details-1.html">Vendor Details 01</a></li>
-                                            <li><a href="vendor-details-2.html">Vendor Details 02</a></li>
-                                            <li><a href="vendor-dashboard.html">Vendor Dashboard</a></li>
-                                            <li><a href="vendor-guide.html">Vendor Guide</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="position-static">
-                                        <a href="#">Mega menu <i class="fi-rs-angle-down"></i></a>
-                                        <ul class="mega-menu">
-                                            <li class="sub-mega-menu sub-mega-menu-width-22">
-                                                <a class="menu-title" href="#">Fruit & Vegetables</a>
-                                                <ul>
-                                                    <li><a href="shop-product-right.html">Meat & Poultry</a></li>
-                                                    <li><a href="shop-product-right.html">Fresh Vegetables</a></li>
-                                                    <li><a href="shop-product-right.html">Herbs & Seasonings</a></li>
-                                                    <li><a href="shop-product-right.html">Cuts & Sprouts</a></li>
-                                                    <li>
-                                                        <a href="shop-product-right.html">Exotic Fruits & Veggies</a>
-                                                    </li>
-                                                    <li><a href="shop-product-right.html">Packaged Produce</a></li>
-                                                </ul>
-                                            </li>
-                                            <li class="sub-mega-menu sub-mega-menu-width-22">
-                                                <a class="menu-title" href="#">Breakfast & Dairy</a>
-                                                <ul>
-                                                    <li><a href="shop-product-right.html">Milk & Flavoured Milk</a></li>
-                                                    <li><a href="shop-product-right.html">Butter and Margarine</a></li>
-                                                    <li><a href="shop-product-right.html">Eggs Substitutes</a></li>
-                                                    <li><a href="shop-product-right.html">Marmalades</a></li>
-                                                    <li><a href="shop-product-right.html">Sour Cream</a></li>
-                                                    <li><a href="shop-product-right.html">Cheese</a></li>
-                                                </ul>
-                                            </li>
-                                            <li class="sub-mega-menu sub-mega-menu-width-22">
-                                                <a class="menu-title" href="#">Meat & Seafood</a>
-                                                <ul>
-                                                    <li><a href="shop-product-right.html">Breakfast Sausage</a></li>
-                                                    <li><a href="shop-product-right.html">Dinner Sausage</a></li>
-                                                    <li><a href="shop-product-right.html">Chicken</a></li>
-                                                    <li><a href="shop-product-right.html">Sliced Deli Meat</a></li>
-                                                    <li><a href="shop-product-right.html">Wild Caught Fillets</a></li>
-                                                    <li><a href="shop-product-right.html">Crab and Shellfish</a></li>
-                                                </ul>
-                                            </li>
-                                            <li class="sub-mega-menu sub-mega-menu-width-34">
-                                                <div class="menu-banner-wrap">
-                                                    <a href="shop-product-right.html">
-                                                        <img src="~/assets/imgs/banner/banner-menu.png" alt="Nest" />
-                                                    </a>
-                                                    <div class="menu-banner-content">
-                                                        <h4>Hot deals</h4>
-                                                        <h3>
-                                                            Don't miss<br />
-                                                            Trending
-                                                        </h3>
-                                                        <div class="menu-banner-price">
-                                                            <span class="new-price text-success">Save to 50%</span>
-                                                        </div>
-                                                        <div class="menu-banner-btn">
-                                                            <a href="shop-product-right.html">Shop now</a>
-                                                        </div>
-                                                    </div>
-                                                    <div class="menu-banner-discount">
-                                                        <h3>
-                                                            <span>25%</span>
-                                                            off
-                                                        </h3>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <a href="blog-category-grid.html">Blog <i class="fi-rs-angle-down"></i></a>
-                                        <ul class="sub-menu">
-                                            <li><a href="blog-category-grid.html">Blog Category Grid</a></li>
-                                            <li><a href="blog-category-list.html">Blog Category List</a></li>
-                                            <li><a href="blog-category-big.html">Blog Category Big</a></li>
-                                            <li><a href="blog-category-fullwidth.html">Blog Category Wide</a></li>
-                                            <li>
-                                                <a href="#">Single Post <i class="fi-rs-angle-right"></i></a>
-                                                <ul class="level-menu level-menu-modify">
-                                                    <li><a href="blog-post-left.html">Left Sidebar</a></li>
-                                                    <li><a href="blog-post-right.html">Right Sidebar</a></li>
-                                                    <li><a href="blog-post-fullwidth.html">No Sidebar</a></li>
-                                                </ul>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <a href="#">Pages <i class="fi-rs-angle-down"></i></a>
-                                        <ul class="sub-menu">
-                                            <li><a href="page-about.html">About Us</a></li>
-                                            <li><a href="page-contact.html">Contact</a></li>
-                                            <li><a href="page-account.html">My Account</a></li>
-                                            <li><a href="page-login.html">Login</a></li>
-                                            <li><a href="page-register.html">Register</a></li>
-                                            <li><a href="page-forgot-password.html">Forgot password</a></li>
-                                            <li><a href="page-reset-password.html">Reset password</a></li>
-                                            <li><a href="page-purchase-guide.html">Purchase Guide</a></li>
-                                            <li><a href="page-privacy-policy.html">Privacy Policy</a></li>
-                                            <li><a href="page-terms.html">Terms of Service</a></li>
-                                            <li><a href="page-404.html">404 Page</a></li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <a href="page-contact.html">Contact</a>
-                                    </li>
-                                </ul>
-                            </nav>
-                        </div>
-                    </div>
-                    <div class="hotline d-none d-lg-flex">
-                        <img src="~/assets/imgs/theme/icons/icon-headphone.svg" alt="hotline" />
-                        <p>1900 - 888<span>24/7 Support Center</span></p>
-                    </div>
-                    <div class="header-action-icon-2 d-block d-lg-none">
-                        <div class="burger-icon burger-icon-white">
-                            <span class="burger-icon-top"></span>
-                            <span class="burger-icon-mid"></span>
-                            <span class="burger-icon-bottom"></span>
-                        </div>
-                    </div>
-                    <div class="header-action-right d-block d-lg-none">
-                        <div class="header-action-2">
-                            <div class="header-action-icon-2">
-                                <a href="shop-wishlist.html">
-                                    <img alt="Nest" src="~/assets/imgs/theme/icons/icon-heart.svg" />
-                                    <span class="pro-count white">4</span>
-                                </a>
-                            </div>
-                            <div class="header-action-icon-2">
-                                <a class="mini-cart-icon" href="shop-cart.html">
-                                    <img alt="Nest" src="~/assets/imgs/theme/icons/icon-cart.svg" />
-                                    <span class="pro-count white">2</span>
-                                </a>
-                                <div class="cart-dropdown-wrap cart-dropdown-hm2">
-                                    <ul>
-                                        <li>
-                                            <div class="shopping-cart-img">
-                                                <a href="shop-product-right.html">
-                                                    <img alt="Nest"
-                                                         src="~/assets/imgs/shop/thumbnail-3.jpg" />
-                                                </a>
-                                            </div>
-                                            <div class="shopping-cart-title">
-                                                <h4><a href="shop-product-right.html">Plain Striola Shirts</a></h4>
-                                                <h3><span>1 × </span>$800.00</h3>
-                                            </div>
-                                            <div class="shopping-cart-delete">
-                                                <a href="#"><i class="fi-rs-cross-small"></i></a>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="shopping-cart-img">
-                                                <a href="shop-product-right.html">
-                                                    <img alt="Nest"
-                                                         src="~/assets/imgs/shop/thumbnail-4.jpg" />
-                                                </a>
-                                            </div>
-                                            <div class="shopping-cart-title">
-                                                <h4><a href="shop-product-right.html">Macbook Pro 2024</a></h4>
-                                                <h3><span>1 × </span>$3500.00</h3>
-                                            </div>
-                                            <div class="shopping-cart-delete">
-                                                <a href="#"><i class="fi-rs-cross-small"></i></a>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                    <div class="shopping-cart-footer">
-                                        <div class="shopping-cart-total">
-                                            <h4>Total <span>$383.00</span></h4>
-                                        </div>
-                                        <div class="shopping-cart-button">
-                                            <a href="shop-cart.html">View cart</a>
-                                            <a href="shop-checkout.html">Checkout</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
+    <style>
+        .gridjs-input {
+            height: 42px !important;
+        }
+
+        .mr-2 {
+            margin-right: 10px;
+        }
+    </style>
+
+    @await Html.PartialAsync("_Header")
     <div class="mobile-header-active mobile-header-wrapper-style">
         <div class="mobile-header-wrapper-inner">
             <div class="mobile-header-top">
@@ -757,9 +236,9 @@
         <div class="page-content pt-150 pb-150">
             <div class="container">
                 <div class="row">
-                    <div class="col-lg-10 m-auto">
+                    <div class="col-lg-11 m-auto">
                         <div class="row">
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <div class="dashboard-menu">
                                     <ul class="nav flex-column" role="tablist">
                                         <li class="nav-item">
@@ -782,16 +261,34 @@
                                                 <i class="fi-rs-shopping-cart-check mr-10"></i>Track Your Order
                                             </a>
                                         </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" id="address-tab" data-bs-toggle="tab" href="#address"
-                                               role="tab" aria-controls="address" aria-selected="true">
-                                                <i class="fi-rs-marker mr-10"></i>Register Seller
-                                            </a>
-                                        </li>
+                                       
+                                        @if (Model.userView.RequestSeller == "0" || Model.userView.RequestSeller == "1")
+                                        {
+                                            <li class="nav-item">
+                                                <a class="nav-link" id="address-tab" data-bs-toggle="tab" href="#address"
+                                                   role="tab" aria-controls="address" aria-selected="true">
+                                                    <i class="fi-rs-marker mr-10"></i>Register Seller
+                                                </a>
+                                            </li>
+                                        } else
+                                        {
+                                            <li class="nav-item">
+                                                <a class="nav-link" id="address-tab" target="_blank" asp-controller="Seller" asp-action="viewstore"
+                                                   role="tab" aria-controls="address" aria-selected="true">
+                                                    <i class="fi-rs-marker mr-10"></i>Management Seller
+                                                </a>
+                                            </li>
+                                        }
                                         <li class="nav-item">
                                             <a class="nav-link" id="account-detail-tab" data-bs-toggle="tab"
                                                href="#account-detail" role="tab" aria-controls="account-detail"
                                                aria-selected="true"><i class="fi-rs-user mr-10"></i>Account details</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="wallet-tab" data-bs-toggle="tab" href="#wallet"
+                                               role="tab" aria-controls="wallet" aria-selected="true">
+                                                <i class="fi-rs-user mr-10"></i>Wallet
+                                            </a>
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link" href="page-login.html">
@@ -801,7 +298,7 @@
                                     </ul>
                                 </div>
                             </div>
-                            <div class="col-md-9">
+                            <div class="col-md-10">
                                 <div class="tab-content account dashboard-content pl-50">
                                     <div class="tab-pane fade active show" id="dashboard" role="tabpanel"
                                          aria-labelledby="dashboard-tab">
@@ -823,41 +320,8 @@
                                                 <h3 class="mb-0">Your Orders</h3>
                                             </div>
                                             <div class="card-body">
-                                                <div class="table-responsive">
-                                                    <table class="table">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Order</th>
-                                                                <th>Date</th>
-                                                                <th>Status</th>
-                                                                <th>Total</th>
-                                                                <th>Actions</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr>
-                                                                <td>#1357</td>
-                                                                <td>March 45, 2020</td>
-                                                                <td>Processing</td>
-                                                                <td>$125.00 for 2 item</td>
-                                                                <td><a href="#" class="btn-small d-block">View</a></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>#2468</td>
-                                                                <td>June 29, 2020</td>
-                                                                <td>Completed</td>
-                                                                <td>$364.00 for 5 item</td>
-                                                                <td><a href="#" class="btn-small d-block">View</a></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>#2366</td>
-                                                                <td>August 02, 2020</td>
-                                                                <td>Completed</td>
-                                                                <td>$280.00 for 3 item</td>
-                                                                <td><a href="#" class="btn-small d-block">View</a></td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
+                                                <div class="table-responsive" id="table-gridjs1111">
+                                                  
                                                 </div>
                                             </div>
                                         </div>
@@ -904,7 +368,7 @@
                                          aria-labelledby="address-tab">
                                         <div class="row justify-content-center">
                                             <div class="col-lg-8">
-                                                @if (Model.RequestSeller == "0") // Nếu chưa đăng ký seller
+                                                @if (Model.userView.RequestSeller == "1" || Model.userView.RequestSeller == "0") // Nếu chưa đăng ký seller
                                                 {
                                                     <div class="card shadow-sm border-0">
                                                         <div class="card-header bg-warning text-dark text-center">
@@ -918,25 +382,28 @@
                                                         </div>
                                                     </div>
                                                 }
-                                                else if (Model.RequestSeller == "1") // Nếu đã đăng ký và chờ duyệt
-                                                {
-                                                    <div class="alert alert-info mt-3" id="approvalMessage">
-                                                        <h5>Announcement!</h5>
-                                                        <p>Your request has been submitted. Please wait for admin approval.</p>
+                                                else if (Model.userView.RequestSeller == "3") // Nếu đã đăng ký và chờ duyệt
+                                                 {
+                                                   @*   <div class="alert alert-info mt-3" id="approvalMessage">
+                                                         <h5>Announcement!</h5>
+                                                         <p>Your request has been submitted. Please wait for admin approval.</p>
+                                                     </div> *@
+                                                    <div class="alert alert-danger mt-3" id="rejectedMessage">
+                                                        <h5>Rejected!</h5>
+                                                        <p>Your request to become a seller has been denied. Please contact support for more information.</p>
                                                     </div>
-                                                }
-                                                else // Nếu bị từ chối hoặc giá trị khác
+                                                 }
+                                              @*   else // Nếu bị từ chối hoặc giá trị khác
                                                 {
                                                     <div class="alert alert-danger mt-3" id="rejectedMessage">
                                                         <h5>Rejected!</h5>
                                                         <p>Your request to become a seller has been denied. Please contact support for more information.</p>
                                                     </div>
-                                                }
+                                                } *@
                                             </div>
 
                                         </div>
                                     </div>
-
                                     <div class="tab-pane fade" id="account-detail" role="tabpanel"
                                          aria-labelledby="account-detail-tab">
                                         <div class="card">
@@ -954,26 +421,26 @@
                                                     <div class="row">
                                                         <div class="form-group col-md-6">
                                                             <label>UserName <span class="required">*</span></label>
-                                                            <input required class="form-control" id="UserName" name="UserName" type="text" value="@Model.UserName" />
+                                                            <input required class="form-control" id="UserName" name="UserName" type="text" value="@Model.userView.UserName" />
 
                                                         </div>
                                                         <div class="form-group col-md-6">
                                                             <label>Email <span class="required">*</span></label>
-                                                            <input required class="form-control" id="Email" name="Email" type="text" value="@Model.Email" />
+                                                            <input required class="form-control" id="Email" name="Email" type="text" value="@Model.userView.Email" />
                                                         </div>
                                                         <div class="form-group col-md-12">
                                                             <label>Phone Number <span class="required">*</span></label>
-                                                            <input required class="form-control" id="PhoneNumber" name="PhoneNumber" type="text" value="@Model.PhoneNumber" />
+                                                            <input required class="form-control" id="PhoneNumber" name="PhoneNumber" type="text" value="@Model.userView.PhoneNumber" />
 
                                                         </div>
                                                         <div class="form-group col-md-12">
                                                             <label>Address <span class="required">*</span></label>
-                                                            <input required class="form-control" id="Address" name="Address" type="text" value="@Model.Address" />
+                                                            <input required class="form-control" id="Address" name="Address" type="text" value="@Model.userView.Address" />
 
                                                         </div>
                                                         <div class="form-group col-md-12">
                                                             <label>Birthday <span class="required">*</span></label>
-                                                            <input required class="form-control" id="Birthday" name="Birthday" type="date" value="@(Model.Birthday != null ? Model.Birthday.Value.ToString("yyyy-MM-dd") : "")" />
+                                                            <input required class="form-control" id="Birthday" name="Birthday" type="date" value="@(Model.userView.Birthday != null ? Model.userView.Birthday.Value.ToString("yyyy-MM-dd") : "")" />
 
 
                                                         </div>
@@ -1008,6 +475,288 @@
                                             </div>
                                         </div>
                                     </div>
+
+
+                                    <div class="tab-pane fade" id="wallet" role="tabpanel" aria-labelledby="wallet-tab">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h3 class="mb-0">Your Balance : <span id="balance-display">@Model.BalanceUser vnd</span></h3>
+                                            </div>
+                                            <div class="container mt-4">
+
+                                                <div class="row mb-4">
+                                                    <div class="col-md-12">
+                                                        <button class="btn btn-success mr-2" id="depositBtn">
+                                                            Nạp
+                                                            Tiền
+                                                        </button>
+                                                        <button class="btn btn-danger" id="withdrawBtn">
+                                                            Rút
+                                                            Tiền
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Forms container -->
+                                                <div class="row">
+                                                    @Html.AntiForgeryToken()
+                                                    <div class="col-md-6" id="depositForm" style="display: none;">
+                                                        <div class="card shadow-sm">
+                                                            <div class="card-header">
+                                                                <h5 class="mb-0">Nạp Tiền</h5>
+                                                            </div>
+                                                            <div class="card-body">
+                                                                <label class="form-label">
+                                                                    <p>Số tiền nạp</p>
+                                                                </label>
+                                                                <input type="number" id="numOrder" class="form-control mb-3">
+                                                                <label class="form-label">
+                                                                    <p>Hình thức thanh toán</p>
+                                                                </label>
+                                                                <div class="form-check">
+                                                                    <input class="form-check-input" type="radio"
+                                                                           name="paymentType" checked>
+                                                                    <label class="form-check-label">
+                                                                        <p>Online payment</p>
+                                                                    </label>
+                                                                </div>
+                                                                <button id="btnDeposit" class="btn btn-success mt-3 w-100">
+                                                                    Nạp
+                                                                    Tiền
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Rút tiền form -->
+                                                    <div class="col-md-6" id="withdrawForm" style="display: none;">
+                                                        <div class="card shadow-sm">
+                                                            <div class="card-header">
+                                                                <h5 class="mb-0">
+                                                                    Rút Tiền
+                                                                </h5>
+                                                            </div>
+                                                            <div class="card-body">
+                                                                <label class="form-label">
+                                                                    <p>Số tiền rút</p>
+                                                                </label>
+                                                                <input type="text" class="form-control mb-3" id="numOrderVut">
+                                                                <label class="form-label">
+                                                                    <p>Phương thức rút</p>
+                                                                </label>
+                                                                <div class="form-check">
+                                                                    <input class="form-check-input" type="radio"
+                                                                           name="withdrawType" checked>
+                                                                    <label class="form-check-label">
+                                                                        <p>
+                                                                            Chuyển khoản ngân
+                                                                            hàng
+                                                                        </p>
+                                                                    </label>
+                                                                </div>
+                                                                <label class="form-label">
+                                                                    <p>Ngân Hàng</p>
+                                                                </label>
+
+                                                                <div class="custom_select">
+                                                                    <select class="form-control select-active w-100" id="code">
+                                                                        <option value="">United Kingdom</option>
+                                                                        <option value="TT">Trinidad and Tobago</option>
+                                                                        <option value="TN">Tunisia</option>
+                                                                        <option value="TR">Turkey</option>
+                                                                        <option value="TM">Turkmenistan</option>
+                                                                        <option value="TC">
+                                                                            Turks and Caicos Islands
+                                                                        </option>
+                                                                        <option value="TV">Tuvalu</option>
+                                                                        <option value="UG">Uganda</option>
+                                                                        <option value="UA">Ukraine</option>
+                                                                        <option value="AE">United Arab Emirates</option>
+                                                                        <option value="GB">United Kingdom (UK)</option>
+                                                                        <option value="US">USA (US)</option>
+                                                                        <option value="UY">Uruguay</option>
+                                                                        <option value="UZ">Uzbekistan</option>
+                                                                        <option value="VU">Vanuatu</option>
+                                                                        <option value="VA">Vatican</option>
+                                                                        <option value="VE">Venezuela</option>
+                                                                        <option value="VN">Vietnam</option>
+                                                                        <option value="WF">Wallis and Futuna</option>
+                                                                        <option value="EH">Western Sahara</option>
+                                                                        <option value="WS">Western Samoa</option>
+                                                                        <option value="YE">Yemen</option>
+                                                                        <option value="ZM">Zambia</option>
+                                                                        <option value="ZW">Zimbabwe</option>
+                                                                    </select>
+                                                                </div>
+                                                                <label class="form-label mt-3">
+                                                                    <p>
+                                                                        Tên tài khoản
+                                                                        nhận
+                                                                    </p>
+                                                                </label>
+                                                                <input type="text" class="form-control" id="nameAcc">
+                                                                <label class="form-label mt-3">
+                                                                    <p>Số tài khoản</p>
+                                                                </label>
+                                                                <input type="text" class="form-control" id="umaccou">
+                                                                <button id="btnWithdraw" class="btn btn-danger mt-3 w-100">
+                                                                    Rút
+                                                                    Tiền
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <script>
+                                                        document.addEventListener("DOMContentLoaded", function () {
+                                                            const bankSelect = document.querySelector(".custom_select select");
+
+                                                            async function fetchBanks() {
+                                                                try {
+                                                                    const response = await fetch("https://api.vietqr.io/v2/banks");
+                                                                    const result = await response.json();
+
+                                                                    if (result.code === "00" && result.data.length > 0) {
+                                                                        bankSelect.innerHTML = ""; 
+
+                                                                        result.data.forEach(bank => {
+                                                                            const option = document.createElement("option");
+                                                                            option.value = bank.code;  
+                                                                            option.textContent = `${bank.name} (${bank.shortName})`;
+                                                                            bankSelect.appendChild(option);
+                                                                        });
+                                                                    }
+                                                                } catch (error) {
+                                                                    console.error("Lỗi khi lấy danh sách ngân hàng:", error);
+                                                                }
+                                                            }
+
+                                                            fetchBanks();
+                                                        });
+                                                    </script>
+                                                </div>
+
+                                                <!-- Transactions List -->
+                                                <div class="card mt-4 w-100">
+                                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                                        <h5>Transactions List</h5>
+                                                    </div>
+                                                    <div class="card-body w-100" id="Exampletable">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <script>
+                                            const depositBtn = document.getElementById('depositBtn');
+                                            const withdrawBtn = document.getElementById('withdrawBtn');
+                                            const depositForm = document.getElementById('depositForm');
+                                            const withdrawForm = document.getElementById('withdrawForm');
+                                            const selectElement = withdrawForm.querySelector('select');
+
+                                            // Function to hide both forms
+                                            function hideForms() {
+                                                depositForm.style.display = 'none';
+                                                withdrawForm.style.display = 'none';
+                                            }
+
+                                            // Show deposit form
+                                            depositBtn.addEventListener('click', function (e) {
+                                                e.stopPropagation();
+                                                if (depositForm.style.display === 'block') {
+                                                    depositForm.style.display = 'none';
+                                                } else {
+                                                    hideForms();
+                                                    depositForm.style.display = 'block';
+                                                }
+                                            });
+
+                                            // Show withdraw form
+                                            withdrawBtn.addEventListener('click', function (e) {
+                                                e.stopPropagation();
+                                                if (withdrawForm.style.display === 'block') {
+                                                    withdrawForm.style.display = 'none';
+                                                } else {
+                                                    hideForms();
+                                                    withdrawForm.style.display = 'block';
+                                                }
+                                            });
+
+                                            document.addEventListener('click', function (e) {
+                                                const isClickInsideSelect = selectElement && (selectElement.contains(e.target) || e.target.tagName === 'OPTION');
+                                                const isClickInsideInput = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA';
+
+                                                if (!depositBtn.contains(e.target) &&
+                                                    !withdrawBtn.contains(e.target) &&
+                                                    !depositForm.contains(e.target) &&
+                                                    !withdrawForm.contains(e.target) &&
+                                                    !isClickInsideSelect &&
+                                                    !isClickInsideInput) {
+                                                    hideForms();
+                                                }
+                                            });
+
+
+                                            // Prevent form clicks from closing the form
+                                            depositForm.addEventListener('click', function (e) {
+                                                e.stopPropagation();
+                                            });
+
+                                            withdrawForm.addEventListener('click', function (e) {
+                                                e.stopPropagation();
+                                            });
+
+                                            // Handle select element specifically
+                                            if (selectElement) {
+                                                selectElement.addEventListener('click', function (e) {
+                                                    e.stopPropagation();
+                                                });
+
+                                                selectElement.addEventListener('focus', function (e) {
+                                                    e.stopPropagation();
+                                                });
+
+                                                selectElement.addEventListener('change', function (e) {
+                                                    e.stopPropagation();
+                                                });
+
+                                                // Handle key events for search/filter in select
+                                                selectElement.addEventListener('keydown', function (e) {
+                                                    e.stopPropagation();
+                                                });
+                                            }
+
+                                            // Keep form visible when interacting with inputs
+                                            const inputs = document.querySelectorAll('#depositForm input, #withdrawForm input');
+                                            inputs.forEach(input => {
+                                                input.addEventListener('click', function (e) {
+                                                    e.stopPropagation();
+                                                });
+                                                input.addEventListener('focus', function (e) {
+                                                    e.stopPropagation();
+                                                });
+                                                input.addEventListener('keydown', function (e) {
+                                                    e.stopPropagation();
+                                                });
+                                            });
+                                        </script>
+
+                                        <style>
+                                            .mr-2 {
+                                                margin-right: 10px;
+                                            }
+
+                                            .custom_select .select2-container--default .select2-selection--single {
+                                                width: 484.8px;
+                                            }
+
+                                            .custom_select .select2-container {
+                                                max-width: 484.8px;
+                                            }
+                                        </style>
+                                    </div>
+
+
+
                                 </div>
                             </div>
                         </div>
@@ -1016,6 +765,52 @@
             </div>
         </div>
     </main>
+  
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const container = document.getElementById("table-gridjs1111");
+
+
+            container.innerHTML = "";
+
+            new gridjs.Grid({
+                columns: [
+                    { name: "ID", width: "80px" },
+                    { name: "Name", width: "150px" },
+                    { name: "Email", width: "220px", formatter: (e) => gridjs.html(`<a href="#">${e}</a>`) },
+                    { name: "Position", width: "250px" },
+                    { name: "Company", width: "180px" },
+                    { name: "Country", width: "180px" },
+                    {
+                        name: "Actions",
+                        width: "150px",
+                        formatter: () => gridjs.html("<a href='#' class='text-reset text-decoration-underline'>Details</a>")
+                    }
+                ],
+                pagination: {
+                    enabled: true,
+                    limit: 5,
+                    summary: true
+                },
+                pageSize: [5, 10, 20, 50],
+                sort: true,
+                search: true,
+                data: [
+                    ["01", "Jonathan", "jonathan@example.com", "Senior Implementation Architect", "Hauck Inc", "Holy See"],
+                    ["02", "Harold", "harold@example.com", "Forward Creative Coordinator", "Metz Inc", "Iran"],
+                    ["03", "Shannon", "shannon@example.com", "Legacy Functionality Associate", "Zemlak Group", "South Georgia"],
+                    ["04", "Robert", "robert@example.com", "Product Accounts Technician", "Hoeger", "San Marino"],
+                    ["05", "Noel", "noel@example.com", "Customer Data Director", "Howell - Rippin", "Germany"],
+                    ["06", "Traci", "traci@example.com", "Corporate Identity Director", "Koelpin - Goldner", "Vanuatu"],
+                    ["07", "Kerry", "kerry@example.com", "Lead Applications Associate", "Feeney, Langworth and Tremblay", "Niger"],
+                    ["08", "Patsy", "patsy@example.com", "Dynamic Assurance Director", "Streich Group", "Niue"],
+                    ["09", "Cathy", "cathy@example.com", "Customer Data Director", "Ebert, Schamberger and Johnston", "Mexico"],
+                    ["10", "Tyrone", "tyrone@example.com", "Senior Response Liaison", "Raynor, Rolfson and Daugherty", "Qatar"]
+                ]
+            }).render(document.getElementById("table-gridjs1111"));
+        });
+
+    </script>
     <footer class="main">
         <section class="newsletter mb-15">
             <div class="container">
@@ -1352,6 +1147,387 @@
     <!-- Template  JS -->
     <script src="~/assets/js/main.js?v=6.0"></script>
     <script src="~/assets/js/shop.js?v=6.0"></script>
+        <script src="~/assets/js/gridjs/gridjs.umd.js"></script>
 </body>
 
 </html>
+@* <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const container = document.getElementById("Exampletable");
+        var list = @Html.Raw(JsonSerializer.Serialize(Model.Balance));
+
+        container.innerHTML = "";
+
+        new gridjs.Grid({
+            columns: [
+                { name: "NO.", width: "90px" , formatter: (e) => gridjs.html(`<p>${e}</p>`) },
+                { name: "Before", width: "110px", formatter: (e) => gridjs.html(`<p>${e}</p>`) },
+                {
+                    name: "Before",
+                    width: "110px",
+                    formatter: (e) => {
+                        const color = e < 0 ? "red" : "green";
+                        return gridjs.html(`<p style="color:${color}">${e}</p>`)
+                    }
+                },
+                { name: "After", width: "110px", formatter: (e) => gridjs.html(`<p>${e}</p>`) },
+                { name: "Type", width: "100px", formatter: (e) => gridjs.html(`<p>${e}</p>`) },
+                {
+                    name: "Status",
+                    width: "130px",
+                    formatter: (e) => {
+                        let color = "#C3A73A";
+
+                        if (e.toLowerCase() === "done") {
+                            color = "green";
+                        } else if (e.toLowerCase() === "cancel") {
+                            color = "#C10103";
+                        }
+
+                        return gridjs.html(`<p style="color:${color}; font-weight:bold;">${e}</p>`);
+                    }
+                },
+
+                {
+                    name: "Type",
+                    width: "100px",
+                    formatter: (e) => {
+                        const date = new Date(e);
+                        const formatted = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+                        return gridjs.html(`<p>${formatted}</p>`);
+                    }
+                },
+                {
+                    name: "Invoice",
+                    width: "150px",
+                    formatter: (e) => gridjs.html(`<a href="${e}" target="_blank" class="text-reset text-decoration-underline">Details</a>`)
+
+                }
+            ],
+            pagination: {
+                enabled: true,
+                limit: 5,
+                summary: true
+            },
+            pageSize: [5, 10, 20, 50],
+            sort: true,
+            search: true,
+            data: list.map(u => [
+                u.No,
+                u.Before,
+                u.Change,
+                u.After,
+                u.Types,
+                u.Status,
+                u.Date,
+                u.Invoice
+            ])
+        }).render(document.getElementById("Exampletable"));
+    });
+
+</script>
+ *@
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const container = document.getElementById("Exampletable");
+        var list = @Html.Raw(JsonSerializer.Serialize(Model.Balance));
+        let gridInstance = null;
+        let isInteracting = false; // Biến để theo dõi trạng thái tương tác
+
+        // Hàm khởi tạo bảng
+        function initializeGrid(data) {
+            if (!container.dataset.gridInitialized) {
+                container.innerHTML = "";
+                gridInstance = new gridjs.Grid({
+                    columns: [
+                        { name: "NO.", width: "90px", formatter: (e) => gridjs.html(`<p>${e}</p>`) },
+                        { name: "Before", width: "110px", formatter: (e) => gridjs.html(`<p>${e}</p>`) },
+                        {
+                            name: "Change", // Đổi tên để tránh trùng "Before"
+                            width: "110px",
+                            formatter: (e) => {
+                                const color = e < 0 ? "red" : "green";
+                                return gridjs.html(`<p style="color:${color}">${e}</p>`);
+                            }
+                        },
+                        { name: "After", width: "110px", formatter: (e) => gridjs.html(`<p>${e}</p>`) },
+                        { name: "Type", width: "110px", formatter: (e) => gridjs.html(`<p>${e}</p>`) },
+                        {
+                            name: "Status",
+                            width: "130px",
+                            formatter: (e) => {
+                                let color = "#C3A73A";
+                                const status = e ? e.toLowerCase() : ""; 
+
+                                if (status === "paid" || status === "success") {
+                                    color = "green";
+                                } else if (status === "cancelled") {
+                                    color = "#C10103";
+                                }
+
+                                return gridjs.html(`<p style="color:${color}; font-weight:bold;">${e || "N/A"}</p>`);
+                            }
+
+                        },
+                        {
+                            name: "Date", // Đổi tên để tránh trùng "Type"
+                            width: "100px",
+                            formatter: (e) => {
+                                const date = new Date(e);
+                                const formatted = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+                                return gridjs.html(`<p>${formatted}</p>`);
+                            }
+                        },
+                        {
+                            name: "Invoice",
+                            width: "150px",
+                            formatter: (e) => gridjs.html(`<button type="button" class="btn btn-sm btn-light" onclick="window.open('${e}', '_blank')">Details</button>`)
+                        }
+                    ],
+                    pagination: {
+                        enabled: true,
+                        limit: 5,
+                        summary: true
+                    },
+                    pageSize: [5, 10, 20, 50],
+                    sort: true,
+                    search: true,
+                    data: data.map(u => [
+                        u.No,
+                        u.Before,
+                        u.Change,
+                        u.After,
+                        u.Types,
+                        u.Status,
+                        u.Date,
+                        u.Invoice
+                    ])
+                }).render(container);
+
+                container.dataset.gridInitialized = "true";
+ 
+                container.addEventListener("click", () => isInteracting = true); 
+                container.addEventListener("input", () => isInteracting = true); 
+                const paginationButtons = container.querySelectorAll(".gridjs-pagination .gridjs-pages button");
+                paginationButtons.forEach(button => {
+                    button.addEventListener("click", () => {
+                        isInteracting = true;
+                        console.log("Pagination button clicked, stopping updates"); 
+                    });
+                });
+
+            
+                const sortButtons = container.querySelectorAll(".gridjs-sort");
+                sortButtons.forEach(button => {
+                    button.addEventListener("click", () => {
+                        isInteracting = true;
+                        console.log("Sort button clicked, stopping updates"); 
+                    });
+                });
+
+
+
+                container.addEventListener("mouseleave", () => isInteracting = false);
+                container.addEventListener("blur", () => isInteracting = false, true); 
+
+            }
+        }
+
+        // Khởi tạo bảng lần đầu
+        initializeGrid(list);
+
+        // Hàm lấy dữ liệu mới qua AJAX
+        function fetchUpdatedData() {
+            if (!isInteracting) { // Chỉ cập nhật khi không tương tác
+                fetch('/Users/UpdateBalance', { // Thay bằng URL endpoint thực tế
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(newData => {
+                        if (gridInstance) {
+                            gridInstance.updateConfig({
+                                data: newData.map(u => [
+                                    u.no,
+                                    u.before,
+                                    u.change,
+                                    u.after,
+                                    u.types,
+                                    u.status,
+                                    u.date,
+                                    u.invoice
+                                ])
+                            }).forceRender(); // Cập nhật dữ liệu mà không reload toàn bộ
+                        }
+                    })
+                    .catch(error => console.error('Error fetching data:', error));
+            }
+        }
+
+        // Cập nhật dữ liệu mỗi 5 giây
+        setInterval(fetchUpdatedData, 5000);
+
+        // Gọi lần đầu tiên ngay lập tức (tuỳ chọn)
+        fetchUpdatedData();
+    });
+</script>
+
+  <script type="text/javascript">
+    $("#btnDeposit").on("click", function () {
+
+        $('#btnDeposit').html('<i class="fa fa-spinner fa-spin"></i> Đang xử lý...')
+            .prop('disabled', true);
+        var checkbox = parseInt($("#numOrder").val(), 10);
+        var token = $("input[name='__RequestVerificationToken']").val();
+
+        if (isNaN(checkbox) || checkbox <= 0) {
+            setTimeout(() => {
+                new Notify({
+                    status: 'error',
+                    title: 'Thất Bại',
+                    text: 'Số tiền nạp tối thiểu là 100,000 Vnd',
+                    effect: 'fade',
+                    speed: 300,
+                    showIcon: true,
+                    showCloseButton: true,
+                    autoclose: true,
+                    autotimeout: 3000,
+                    position: 'right top'
+                });
+
+                $('#btnDeposit').html('Add Payment').prop('disabled', false);
+            }, 100); 
+            return;
+        }
+
+        $('#btnDeposit').html('<i class="fa fa-spinner fa-spin"></i> Đang xử lý...')
+            .prop('disabled', true);
+
+        $.ajax({
+            url: "@Url.Action("AddBalance", "Users")",
+            method: "POST",
+            dataType: "JSON",
+            data: {
+                number: $("#numOrder").val(),
+                __RequestVerificationToken: token
+            },
+            success: function (response) {
+                if (response.success) {
+                    Swal.fire({
+                        title: 'Thành công!',
+                        text: 'Bạn sẽ được chuyển hướng đến trang thanh toán...',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed || result.isDismissed) {
+                            window.location.href = response.msg;
+                        }
+                    });
+
+                } else {
+                    Swal.fire(
+                        'Thất bại',
+                        response.msg,
+                        'error'
+                    );
+                }
+                $('#btnDeposit').html('Add Payment').prop('disabled', false);
+            },
+            error: function () {
+                cuteToast({
+                    type: "error",
+                    message: 'Không thể xử lý',
+                    timer: 5000
+                });
+                $('#btnDeposit').html('Add Payment').prop('disabled', false);
+            }
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $("#btnWithdraw").on("click", function () {
+        $('#btnWithdraw').html('<i class="fa fa-spinner fa-spin"></i> Đang xử lý...')
+            .prop('disabled', true);
+        var checkbox = parseInt($("#numOrderVut").val(), 10);
+        var token = $("input[name='__RequestVerificationToken']").val();
+
+        if (isNaN(checkbox) || checkbox < 500000) {
+            setTimeout(() => {
+            new Notify({
+                status: 'error',
+                title: 'Thất Bại',
+                text: 'Số tiền rút tối thiểu là 500,000 Vnd',
+                effect: 'fade',
+                speed: 300,
+                showIcon: true,
+                showCloseButton: true,
+                autoclose: true,
+                autotimeout: 3000,
+                position: 'right top'
+            });
+            $('#btnWithdraw').html('Withdraw').prop('disabled', false);
+        }, 100);
+    return;
+
+        }
+
+        $('#btnWithdraw').html('<i class="fa fa-spinner fa-spin"></i> Đang xử lý...')
+            .prop('disabled', true);
+
+        $.ajax({
+            url: "@Url.Action("Withdraw", "Users")",
+            method: "POST",
+            dataType: "JSON",
+            data: {
+                number: $("#numOrderVut").val(),
+                nameAcc: $("#nameAcc").val(),
+                numAccount: $("#umaccou").val(),
+                code: $("#code").val(),
+                __RequestVerificationToken: token
+            },
+            success: function (response) {
+                if (response.success) {
+                    new Notify({
+                        status: 'success',
+                        title: 'Thành công!',
+                        text: response.msg || 'Gửi thành công!',
+                        effect: 'fade',
+                        speed: 300,
+                        showIcon: true,
+                        showCloseButton: true,
+                        autoclose: true,
+                        autotimeout: 3000,
+                        position: 'right top'
+                    });
+
+                } else {
+                    new Notify({
+                        status: 'error',
+                        title: 'Thất Bại',
+                        text: response.msg || 'Gửi thất bại!',
+                        effect: 'fade',
+                        speed: 300,
+                        showIcon: true,
+                        showCloseButton: true,
+                        autoclose: true,
+                        autotimeout: 3000,
+                        position: 'right top'
+                    });
+                }
+                $('#btnWithdraw').html('Withdraw').prop('disabled', false);
+            },
+            error: function () {
+                Swal.fire(
+                    'Thất bại',
+                    "Đã xảy ra lỗi",
+                    'error'
+                );
+                $('#btnWithdraw').html('Withdraw').prop('disabled', false);
+            }
+        });
+    });
+</script>

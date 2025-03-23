@@ -1,4 +1,5 @@
 ﻿using Models;
+using Repository.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,5 +29,9 @@ namespace BusinessLogic.Services.ProductVariants
             Expression<Func<ProductVariant, bool>> filter = null,
             Func<IQueryable<ProductVariant>, IOrderedQueryable<ProductVariant>> orderBy = null,
             Func<IQueryable<ProductVariant>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<ProductVariant, object>> includeProperties = null);
+        Task<List<ProductVariantViewModel>> GetVariantsByProductIdAsync(Guid productId);
+        Task CreateProductVariantAsync(ProductVariantCreateViewModel model);
+        Task<bool> UpdateProductVariantAsync(ProductVariantEditViewModel model);
+        Task<ProductVariantEditViewModel> GetProductVariantForEditAsync(Guid variantId);
     }
 }

@@ -15,8 +15,6 @@ namespace Models.DBContext
         {
         }
 
-
-
         public DbSet<BalanceChange> BalanceChanges { get; set; }
         public DbSet<Categories> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
@@ -32,6 +30,7 @@ namespace Models.DBContext
         public DbSet<FavoriteRecipe> FavoriteRecipes { get; set; }
         public DbSet<RecipeReview> RecipeReviews { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<Voucher> Vouchers { get; set; }
         
 
 
@@ -152,7 +151,14 @@ namespace Models.DBContext
            .WithMany(h => h.FavoriteRecipes)
            .HasForeignKey(h => h.UserID).OnDelete(DeleteBehavior.NoAction);
 
-           
+            builder.Entity<Order>()
+           .HasOne(h => h.Voucher)
+           .WithMany(h => h.Orders)
+           .HasForeignKey(h => h.VoucherID).OnDelete(DeleteBehavior.NoAction).IsRequired(false);
+
+
+
+
         }
 
 

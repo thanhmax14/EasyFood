@@ -925,6 +925,7 @@
 
                     @if (Model.Any())
                     {
+                        @Html.AntiForgeryToken()
                         foreach (var item in Model)
                         {
                             <div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
@@ -932,15 +933,15 @@
                                     <div class="product-img-action-wrap">
                                         <div class="product-img product-img-zoom">
                                             <a href="shop-product-right.html">
-                                                <img class="default-img" src="~/assets/imgs/shop/product-1-1.jpg"
-                                                    alt="" />
-                                                <img class="hover-img" src="~/assets/imgs/shop/product-1-2.jpg" alt="" />
+                                                <img class="default-img" src="@item.Img.FirstOrDefault()" alt="" />
+                                              
+                                                <img class="hover-img" src="@item.Img.Skip(1).FirstOrDefault()" alt="" />
                                             </a>
                                         </div>
                                         <div class="product-action-1">
-                                            <a aria-label="Add To Wishlist" class="action-btn"
-                                                href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn" href="shop-compare.html"><i
+                                            <a aria-label="Add To Wishlist" class="action-btn" onclick="AddWishlist('@item.ID')"
+                                               ><i id="iconsave" class="fi-rs-heart"></i></a>
+                                            <a aria-label="Compare" class="action-btn" href=""><i
                                                     class="fi-rs-shuffle"></i></a>
                                             <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal"
                                                 data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
@@ -953,7 +954,7 @@
                                         <div class="product-category">
                                             <a href="shop-grid-right.html">@item.CategoryName</a>
                                         </div>
-                                        <h2><a href="shop-product-right.html">@item.Name</a></h2>
+                                        <h2><a asp-action="ProductDetail" asp-controller="Home" asp-route-id="@item.ID">@item.Name</a></h2>
                                         <div class="product-rate-cover">
                                             <div class="product-rate d-inline-block">
                                                 <div class="product-rating" style="width: 90%"></div>
@@ -961,17 +962,29 @@
                                             <span class="font-small ml-5 text-muted"> (4.0)</span>
                                         </div>
                                         <div>
-                                            <span class="font-small text-muted">By <a
-                                                    href="vendor-details-1.html">@item.StoreName</a></span>
+                                            <span class="font-small text-muted">By  <a asp-action="GetStoreDetail" asp-controller="Home" asp-route-id="@item.StoreId">@item.StoreName</a> </span>
                                         </div>
                                         <div class="product-card-bottom">
-                                            <div class="product-price">
-                                                <span>@item.Price</span>
-                                                <span class="old-price">@item.Price</span>
-                                            </div>
-                                            <div class="add-cart">
-                                                <a class="add" href="shop-cart.html"><i
-                                                        class="fi-rs-shopping-cart mr-5"></i>Add </a>
+                                            <div class="product-card-bottom">
+                                                <div class="product-price">
+                                                    @if (item.Price == 0)
+                                                    {
+                                                        <span class="out-of-stock">Out of Stock</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>@item.Price</span>
+                                                        <span class="old-price">@item.Price</span>
+                                                    }
+                                                </div>
+                                                @if (item.Price > 0)
+                                                {
+                                                    <div class="add-cart">
+                                                        <a class="add" href="javascript:void(0);" onclick="AddToCart('@item.ID')">
+                                                            <i class="fi-rs-shopping-cart mr-5"></i>Add
+                                                        </a>
+                                                    </div>
+                                                }
                                             </div>
                                         </div>
                                     </div>
@@ -1365,3 +1378,81 @@
 </body>
 
 </html>
+
+<script>
+
+    function AddWishlist(id) {
+        var icon = document.getElementById("iconsave");
+        const actionBtn = icon.closest(".action-btn");
+        if (icon.classList.contains("text-danger")) {
+            Swal.fire({
+                title: "Bạn có chắc chắn?",
+                text: "Bạn muốn xóa khỏi danh sách yêu thích?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Có, xóa!",
+                cancelButtonText: "Hủy"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "/Home/RemoveWish",
+                        type: "POST",
+                        data: { id: id },
+                        headers: {
+                            "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val()
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                cuteToast({
+                                    type: "success",
+                                    message: response.message,
+                                    timer: 5000
+                                });
+                                icon.classList.remove("text-danger");
+                                actionBtn.setAttribute("aria-label", "Add To Wishlist");
+                            } else if (response.notAuth) {
+                                Swal.fire('Thất bại', response.message, 'error');
+                            } else {
+                                Swal.fire('Thất bại', response.message, 'error');
+                            }
+                        },
+                        error: function () {
+                            alert("Lỗi xảy ra khi xóa khỏi wishlist.");
+                        }
+                    });
+                }
+            });
+        } else {
+            $.ajax({
+                url: "/Home/AddWish",
+                type: "POST",
+                data: { id: id },
+                headers: {
+                    "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function (response) {
+                    if (response.success) {
+                        cuteToast({
+                            type: "success",
+                            message: response.message,
+                            timer: 5000
+                        });
+                        icon.classList.add("text-danger");
+                        actionBtn.setAttribute("aria-label", "Remove wishlist");
+
+                    } else if (response.notAuth) {
+                        Swal.fire('Thất bại', response.message, 'error');
+                    } else {
+                        Swal.fire('Thất bại', response.message, 'error');
+                    }
+                },
+                error: function () {
+                    alert("Lỗi xảy ra khi thêm vào wishlist.");
+                }
+            });
+        }
+    }
+
+
+
+</script>

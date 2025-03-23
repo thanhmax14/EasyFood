@@ -1,4 +1,5 @@
 ﻿using Models;
+using Repository.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,5 +29,9 @@ namespace BusinessLogic.Services.Carts
             Expression<Func<Cart, bool>> filter = null,
             Func<IQueryable<Cart>, IOrderedQueryable<Cart>> orderBy = null,
             Func<IQueryable<Cart>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<Cart, object>> includeProperties = null);
+        List<CartItem> GetCartFromSession();
+        void SaveCartToSession(List<CartItem> cart);
+
+
     }
 }

@@ -52,5 +52,19 @@ namespace BusinessLogic.Services.BalanceChanges
             Func<IQueryable<BalanceChange>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<BalanceChange, object>> includeProperties = null) =>
             await _repository.ListAsync(filter, orderBy, includeProperties);
         public async Task<int> SaveChangesAsync() => await _repository.SaveChangesAsync();
+
+        public async Task<decimal> GetBalance(string UserId)
+        {
+            var getBalance = await this.ListAsync(u => u.UserID == UserId && u.checkDone, orderBy: query =>query.OrderByDescending(d =>d.DueTime));
+            if (!getBalance.Any())
+                return 0.0m;
+            return getBalance.FirstOrDefault().MoneyAfterChange;
+        }
+
+        public async Task<bool> CheckMoney(string userID, decimal Money)
+        {
+            return await GetBalance(userID) >= Money;
+        }
+
     }
 }

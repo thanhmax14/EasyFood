@@ -34,9 +34,15 @@ namespace BusinessLogic.Services.StoreDetail
         Task<StoreDetails?> GetStoreByIdAsync(Guid storeId);
         Task<bool> UpdateStoreAsync(Guid id, string name, string longDesc, string shortDesc, string address, string phone, string img);
         Task<List<StoreViewModel>> GetInactiveStoresAsync();
-        Task<List<StoreViewModel>> GetActiveStoresAsync();
         Task<bool> HideStoreAsync(Guid storeId);
         Task<bool> UpdateStoreAsync(StoreDetails store);
         Task<bool> ShowStoreAsync(Guid storeId);
+        Task<List<StoreDetails>> GetStoresAsync();
+        Task UpdateStoreStatusAsync(int storeId, bool isActive);
+        Task<List<StoreViewModel>> GetStoreRegistrationRequestsAsync();
+        Task<bool> AcceptStoreAsync(Guid id);
+        Task<bool> RejectStoreAsync(Guid id);
+        Task<bool> UpdateStoreStatusAsync(Guid storeId, string newStatus);
+        Task<IEnumerable<StoreViewModel>> GetStoresByUserIdAsync(string? userId);
     }
 }

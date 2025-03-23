@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Models;
+using Newtonsoft.Json;
 using Repository.Carts;
+using Repository.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +17,12 @@ namespace BusinessLogic.Services.Carts
     {
         private readonly ICartRepository _repository;
         private readonly IMapper _mapper;
-
-        public CartService(ICartRepository repository, IMapper mapper)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public CartService(ICartRepository repository, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _repository = repository;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public IQueryable<Cart> GetAll() => _repository.GetAll();
@@ -52,5 +56,30 @@ namespace BusinessLogic.Services.Carts
             Func<IQueryable<Cart>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<Cart, object>> includeProperties = null) =>
             await _repository.ListAsync(filter, orderBy, includeProperties);
         public async Task<int> SaveChangesAsync() => await _repository.SaveChangesAsync();
+
+
+        public List<CartItem> GetCartFromSession()
+        {
+            var cart = _httpContextAccessor.HttpContext.Session.GetString("Cart");
+            return string.IsNullOrEmpty(cart) ? new List<CartItem>() : JsonConvert.DeserializeObject<List<CartItem>>(cart);
+        }
+
+        public void SaveCartToSession(List<CartItem> cart)
+        {
+            if (cart == null)
+            {
+                _httpContextAccessor.HttpContext.Session.Remove("Cart");
+            }
+            else
+            {
+                var jsonSettings = new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                };
+                _httpContextAccessor.HttpContext.Session.SetString("Cart", JsonConvert.SerializeObject(cart, jsonSettings));
+            }
+        }
+
+
     }
 }

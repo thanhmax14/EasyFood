@@ -21,11 +21,10 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options => options.SignIn.Re
     .AddEntityFrameworkStores<EasyFoodDbContext>().AddDefaultTokenProviders(); ;
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
-builder.Services.ConfigureServices();
-builder.Services.ConfigureRepository();
-builder.Services.AddScoped<Repository.StoreDetails.StoreDetailsRepository>();
-builder.Services.AddScoped<BusinessLogic.Services.StoreDetail.IStoreDetailService, BusinessLogic.Services.StoreDetail.StoreDetailService>();
+builder.Services.ConfigureRepository(); // Đăng ký Repository trước
+builder.Services.ConfigureServices();  // Sau đó đăng ký Service
 
+builder.Services.AddHttpClient();
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
@@ -97,7 +96,7 @@ static async Task SeedDataAsync(WebApplication app)
         var User = await userManager.FindByEmailAsync("thanhpqce171732@fpt.edu.vn");
         if (User == null)
         {
-            User = new AppUser { UserName = "thanhmax14", Email = "thanhpqce171732@fpt.edu.vn" };
+            User = new AppUser { UserName = "thanhmax14", Email = "thanhpqce171732@fpt.edu.vn", EmailConfirmed = true };
             var result = await userManager.CreateAsync(User, "Password123!");
             if (result.Succeeded)
             {
@@ -111,7 +110,7 @@ static async Task SeedDataAsync(WebApplication app)
         var adminUser = await userManager.FindByEmailAsync("admin@gmail.com");
         if (adminUser == null)
         {
-            adminUser = new AppUser { UserName = "admin", Email = "admin@gmail.com" };
+            adminUser = new AppUser { UserName = "admin", Email = "admin@gmail.com", EmailConfirmed = true };
             var result = await userManager.CreateAsync(adminUser, "Password123!");
             if (result.Succeeded)
             {
@@ -123,7 +122,7 @@ static async Task SeedDataAsync(WebApplication app)
         var ctvUser = await userManager.FindByEmailAsync("ctv@gmail.com");
         if (ctvUser == null)
         {
-            ctvUser = new AppUser { UserName = "ctv", Email = "ctv@gmail.com" };
+            ctvUser = new AppUser { UserName = "ctv", Email = "ctv@gmail.com" , EmailConfirmed = true };
             var result = await userManager.CreateAsync(ctvUser, "Password123!");
             if (result.Succeeded)
             {

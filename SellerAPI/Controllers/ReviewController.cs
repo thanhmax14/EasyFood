@@ -152,7 +152,9 @@ namespace SellerAPI.Controllers
                 }
 
 
+
                 review.Status = false;// từ ẩn -> hiện
+
                 await _reviewService.UpdateAsync(review);
                 await _reviewService.SaveChangesAsync();
 
@@ -179,7 +181,9 @@ namespace SellerAPI.Controllers
                 }
 
 
+
                 review.Status = true; // từ hiện -> ẩn
+
                 await _reviewService.UpdateAsync(review);
                 await _reviewService.SaveChangesAsync();
 
@@ -240,7 +244,6 @@ namespace SellerAPI.Controllers
 
             return Ok(result);
         }
-
 
         //check trùng bằng existingReview
         //[HttpPost("CreateReview")]
@@ -324,6 +327,7 @@ namespace SellerAPI.Controllers
                 return StatusCode(500, new { message = "Thêm đánh giá thất bại!", error = ex.Message });
             }
         }
+
 
     }
 }

@@ -20,6 +20,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Repository.Wishlists;
+using Repository.OrdersRepository;
 
 namespace BusinessLogic.Config
 {
@@ -35,6 +37,15 @@ namespace BusinessLogic.Config
             services.AddScoped<IProductVariantRepository, ProductVariantRepository>();
             services.AddScoped<IReviewRepository, ReviewRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IWishlistRepository, WishlistRepository>();
+            services.AddScoped<IOrdersRepository, OrdersRepository>();
+            services.AddScoped<Repository.StoreDetails.StoreDetailsRepository>();
+            services.AddScoped<Repository.Categorys.CategoryRepository>();
+            services.AddScoped<Repository.Products.ProductsRepository>();
+            services.AddScoped<Repository.ProductImage.ProductImageRepository>();
+            services.AddScoped<Repository.ProductVariants.ProductVariantRepository>();
+
+
         }
 
 

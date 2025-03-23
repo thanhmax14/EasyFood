@@ -25,5 +25,8 @@ namespace Models
         public string UserID { get; set; }
         public virtual AppUser AppUser { get; set; }
         public ICollection<OrderDetail> OrderDetails { get; set; }
+        [ForeignKey("Voucher")]
+        public Guid? VoucherID { get; set; }
+        public virtual Voucher? Voucher { get; set; }
     }
 }

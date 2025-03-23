@@ -2,6 +2,7 @@
 using BusinessLogic.Services.ProductVariants;
 using Models;
 using Repository.ProductVariants;
+using Repository.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,11 +16,13 @@ namespace BusinessLogic.Services.ProductVariantVariants
     {
         private readonly IProductVariantRepository _repository;
         private readonly IMapper _mapper;
+        private readonly ProductVariantRepository _repositorys;
 
-        public ProductVariantService(IProductVariantRepository repository, IMapper mapper)
+        public ProductVariantService(IProductVariantRepository repository, IMapper mapper, ProductVariantRepository repositorys)
         {
             _repository = repository;
             _mapper = mapper;
+            _repositorys = repositorys;
         }
 
         public IQueryable<ProductVariant> GetAll() => _repository.GetAll();
@@ -53,5 +56,22 @@ namespace BusinessLogic.Services.ProductVariantVariants
             Func<IQueryable<ProductVariant>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<ProductVariant, object>> includeProperties = null) =>
             await _repository.ListAsync(filter, orderBy, includeProperties);
         public async Task<int> SaveChangesAsync() => await _repository.SaveChangesAsync();
+        public async Task<List<ProductVariantViewModel>> GetVariantsByProductIdAsync(Guid productId)
+        {
+            return await _repositorys.GetVariantsByProductIdAsync(productId);
+        }
+        public async Task CreateProductVariantAsync(ProductVariantCreateViewModel model)
+        {
+            await _repositorys.CreateProductVariantAsync(model);
+        }
+        public async Task<ProductVariantEditViewModel> GetProductVariantForEditAsync(Guid variantId)
+        {
+            return await _repositorys.GetProductVariantForEditAsync(variantId);
+        }
+
+        public async Task<bool> UpdateProductVariantAsync(ProductVariantEditViewModel model)
+        {
+            return await _repositorys.UpdateProductVariantAsync(model);
+        }
     }
 }
