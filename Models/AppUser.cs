@@ -15,7 +15,7 @@ namespace Models
         public string? LastName  { get; set; } = default;
         public DateTime? Birthday { get; set; }
         public string? Address { get; set; } = default;
-        public string? RequestSeller { get; set; }
+        public string? RequestSeller { get; set; } = "0";
         public string? img { get; set; } = "~/assets/imgs/theme/icons/icon-user.svg";
         public bool isUpdateProfile { get; set; } = false;
         public bool IsBanByadmin { get; set; } = false;

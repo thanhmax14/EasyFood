@@ -691,7 +691,8 @@
                                
                             </table>
                         </div>
-                        <a href="#" class="btn mb-20 w-100">Proceed To CheckOut<i class="fi-rs-sign-out ml-15"></i></a>
+                        @Html.AntiForgeryToken()
+                        <button id="btn-submit" class="btn mb-20 w-100">Proceed To CheckOut<i class="fi-rs-sign-out ml-15"></i></button>
                     </div>
                 </div>
             </div>
@@ -1178,6 +1179,45 @@
             $("input.form-check-input").prop("checked", false);
             $("#cart-total").text(getTotalPrice());
         });
+
+
+
+        $("#btn-submit").click(function () {
+            var token = $("input[name='__RequestVerificationToken']").val();
+            var selectedProducts = [];
+
+            $("input.form-check-input:checked").each(function () {
+                selectedProducts.push($(this).val());
+            });
+
+            if (selectedProducts.length === 0) {
+                alert("Vui lòng chọn ít nhất một sản phẩm!");
+                return;
+            }
+
+            var formData = new FormData();
+            formData.append("__RequestVerificationToken", token);
+
+            selectedProducts.forEach(id => {
+                formData.append("productIds[]", id); // Sử dụng mảng đúng cách
+            });
+
+            $.ajax({
+                url: "/Users/Buy",
+                type: "POST",
+                data: formData,
+                processData: false, // Ngăn jQuery xử lý dữ liệu
+                contentType: false, // Để trình duyệt tự động thiết lập content-type
+                success: function (response) {
+                    console.log(response.message);
+                    console.log(response.selectedProducts);
+                },
+                error: function () {
+                    alert("Gửi danh sách thất bại!");
+                }
+            });
+        });
+
 
 
 

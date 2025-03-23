@@ -23,6 +23,8 @@ using BusinessLogic.Services.Wishlists;
 using BusinessLogic.Hash;
 using Repository.BalanceChange;
 using BusinessLogic.Services.Orders;
+using Repository.OrdersRepository;
+using BusinessLogic.Services.OrderDetailService;
 
 namespace BusinessLogic.Config
 {
@@ -44,6 +46,7 @@ namespace BusinessLogic.Config
             services.AddHttpContextAccessor();
             services.AddScoped<BusinessLogic.Services.Categorys.CategoryService>();
             services.AddScoped<BusinessLogic.Services.Products.ProductService>();
+            services.AddScoped<IOrderDetailService, OrderDetailServices>();
 
 
             var mailSettings = new MailSettings
