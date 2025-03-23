@@ -142,6 +142,8 @@ namespace EasyFood.web.Controllers
 
                 var response = await client.PutAsync(apiUrl, content);
 
+
+                var messBalance = await response.Content.ReadAsStringAsync();
                 if (response.IsSuccessStatusCode)
                 {
                     return Json(new { success = true, message = "Profile updated successfully!" });
