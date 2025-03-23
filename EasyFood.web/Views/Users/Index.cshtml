@@ -327,57 +327,53 @@
                                                 <h3 class="mb-0">Your Orders</h3>
                                             </div>
                                             <div class="card-body">
-                                                <div class="table-responsive" id="table-gridjs1111">
+                                                <div class="table-responsive" id="table-gridjs11112">
                                                   
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <script>
-                                        document.addEventListener("DOMContentLoaded", function () {
-                                            const container = document.getElementById("table-gridjs1111");
+                                  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const container = document.getElementById("table-gridjs11112");
 
+        container.innerHTML = "";
 
-                                            container.innerHTML = "";
+        // Lấy dữ liệu từ Razor Model và parse thành JavaScript object
+        const orderData = @Html.Raw(JsonSerializer.Serialize(Model.OrderViewodels));
 
-                                            new gridjs.Grid({
-                                                columns: [
-                                                    { name: "ID", width: "80px" },
-                                                    { name: "Name", width: "150px" },
-                                                    { name: "Email", width: "220px", formatter: (e) => gridjs.html(`<a href="#">${e}</a>`) },
-                                                    { name: "Position", width: "250px" },
-                                                    { name: "Company", width: "180px" },
-                                                    { name: "Country", width: "180px" },
-                                                    {
-                                                        name: "Actions",
-                                                        width: "150px",
-                                                        formatter: () => gridjs.html("<a href='#' class='text-reset text-decoration-underline'>Details</a>")
-                                                    }
-                                                ],
-                                                pagination: {
-                                                    enabled: true,
-                                                    limit: 5,
-                                                    summary: true
-                                                },
-                                                pageSize: [5, 10, 20, 50],
-                                                sort: true,
-                                                search: true,
-                                                data: [
-                                                    ["01", "Jonathan", "jonathan@example.com", "Senior Implementation Architect", "Hauck Inc", "Holy See"],
-                                                    ["02", "Harold", "harold@example.com", "Forward Creative Coordinator", "Metz Inc", "Iran"],
-                                                    ["03", "Shannon", "shannon@example.com", "Legacy Functionality Associate", "Zemlak Group", "South Georgia"],
-                                                    ["04", "Robert", "robert@example.com", "Product Accounts Technician", "Hoeger", "San Marino"],
-                                                    ["05", "Noel", "noel@example.com", "Customer Data Director", "Howell - Rippin", "Germany"],
-                                                    ["06", "Traci", "traci@example.com", "Corporate Identity Director", "Koelpin - Goldner", "Vanuatu"],
-                                                    ["07", "Kerry", "kerry@example.com", "Lead Applications Associate", "Feeney, Langworth and Tremblay", "Niger"],
-                                                    ["08", "Patsy", "patsy@example.com", "Dynamic Assurance Director", "Streich Group", "Niue"],
-                                                    ["09", "Cathy", "cathy@example.com", "Customer Data Director", "Ebert, Schamberger and Johnston", "Mexico"],
-                                                    ["10", "Tyrone", "tyrone@example.com", "Senior Response Liaison", "Raynor, Rolfson and Daugherty", "Qatar"]
-                                                ]
-                                            }).render(document.getElementById("table-gridjs1111"));
-                                        });
-
-                                    </script>
+        new gridjs.Grid({
+            columns: [
+                { name: "Email", width: "200px" },
+                { name: "Name", width: "200px" },
+                { name: "Order Date", width: "220px", formatter: (e) => gridjs.html(`<a href="#">${e}</a>`) },
+                { name: "Payment Method", width: "220px" },
+                { name: "Status", width: "180px" },
+                { name: "Total", width: "180px" },
+                {
+                    name: "Actions",
+                    width: "150px",
+                    formatter: () => gridjs.html("<a href='#' class='text-reset text-decoration-underline'>Details</a>")
+                }
+            ],
+            pagination: {
+                enabled: true,
+                limit: 5,
+                summary: true
+            },
+            sort: true,
+            search: true,
+            data: orderData.map(o => [
+                o.email,
+                o.name,
+                o.orderDate,
+                o.paymentMethod,
+                o.status,
+                o.total
+            ])
+        }).render(document.getElementById("table-gridjs11112"));
+    });
+</script>
                                     <div class="tab-pane fade" id="track-orders" role="tabpanel"
                                          aria-labelledby="track-orders-tab">
                                         <div class="card">
@@ -1134,15 +1130,15 @@
                 event.preventDefault();
 
                 var birthdayValue = $("#Birthday").val();
-                var formData = {
-                    userView: {
-                        UserName: $("#UserName").val(),
-                        Email: $("#Email").val(),
-                        PhoneNumber: $("#PhoneNumber").val(),
-                        Address: $("#Address").val(),
-                        Birthday: birthdayValue ? birthdayValue : null
-                    }
-                };
+               var formData = {
+    userView: {
+        UserName: $("#UserName").val(),
+        Email: $("#Email").val(),
+        PhoneNumber: $("#PhoneNumber").val(),
+        Address: $("#Address").val(),
+        Birthday: birthdayValue ? birthdayValue : null,
+    }
+};
 
                 $.ajax({
                     url: "/Users/UpdateProfile",
