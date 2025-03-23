@@ -277,19 +277,32 @@ namespace UserAPI.Controllers
         [HttpPost("UpdateCart/{id}")]
         public async Task<IActionResult> UpdateCart([FromBody] CartItem obj)
         {
+            var productVarian = await _productVariantService.FindAsync(x => x.ProductID == obj.ProductID);
             var carItem = await _cartService.FindAsync(x => x.ProductID == obj.ProductID);
-            if(carItem == null)
+
+            if (carItem == null)
             {
                 return BadRequest(new { message = "Cart not found" });
             }
+
+            int currentQuantity = carItem.Quantity;
+
+            // 🚨 Nếu đang tăng số lượng thì kiểm tra tồn kho
+            if (obj.quantity > currentQuantity && obj.quantity > productVarian.Stock)
+            {
+                return BadRequest(new { message = $"Số lượng vượt quá tồn kho! Chỉ còn {productVarian.Stock} sản phẩm." });
+            }
+
+            // Cập nhật số lượng (tăng hoặc giảm)
             carItem.Quantity = obj.quantity;
             await _cartService.UpdateAsync(carItem);
             await _cartService.SaveChangesAsync();
-            var product = await _productService.FindAsync(x => x.ID == obj.ProductID);
-          /*  var Productvar = await _productVariantService.FindAsync(x => x.ProductID == product.ID);
-            decimal subtotal = carItem.Quantity * (Productvar?.Price ?? 0);*/
+
             return Ok(new { success = true });
         }
+
+
+
         [HttpPost("DeleteCart/{id}")]
         public async Task<IActionResult> DeleteCart(Guid id)
         {
