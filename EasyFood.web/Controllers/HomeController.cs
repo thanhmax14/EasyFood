@@ -49,6 +49,7 @@ namespace EasyFood.web.Controllers
         private readonly PayOS _payos;
 
 
+
         public HomeController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, ICategoryService categoryService, IStoreDetailService storeDetailService, IEmailSender emailSender, ICartService cart, IWishlistServices wishlist, IProductService product
 , IProductImageService productimg, IProductVariantService productvarian, IBalanceChangeService balance, IOrdersServices order, PayOS payos)
         {
@@ -789,7 +790,6 @@ namespace EasyFood.web.Controllers
         [HttpGet]
         public async Task<IActionResult> Invoice(string id)
         {
-       /*  await Task.Delay(3000);*/
             var tem = new InvoiceViewModels();
 
             if(int.TryParse(id, out var orderCode))
@@ -891,7 +891,7 @@ namespace EasyFood.web.Controllers
             }
             else
             {
-
+                    
             }
 
             return View(tem);
