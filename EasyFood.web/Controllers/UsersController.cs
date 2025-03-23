@@ -84,7 +84,7 @@ namespace EasyFood.web.Controllers
                 list.BalanceUser = await this._balance.GetBalance(user.Id);
 
                 //var feedbackJson = await feedbackTask.Content.ReadAsStringAsync();
-                ////list.Reivew = JsonSerializer.Deserialize<List<ReivewViewModel>>(feedbackJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
                 //var feedbackOptions = new JsonSerializerOptions
                 //{
                 //    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,

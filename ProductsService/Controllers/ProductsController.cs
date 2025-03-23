@@ -2,12 +2,8 @@
 using BusinessLogic.Services.ProductImages;
 using BusinessLogic.Services.Products;
 using BusinessLogic.Services.ProductVariants;
-using BusinessLogic.Services.ProductVariantVariants;
 using BusinessLogic.Services.StoreDetail;
-using MailKit.Search;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Models;
 using Repository.ViewModels;
 
 namespace ProductsService.Controllers
@@ -16,7 +12,7 @@ namespace ProductsService.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        
+
         private readonly IProductService _productService;
         private readonly IProductImageService _productImageService;
         private readonly IProductVariantService _productVariantService;
@@ -112,7 +108,7 @@ namespace ProductsService.Controllers
         [HttpGet("GetProductDetails")]
         public async Task<IActionResult> ProductDetails(Guid id)
         {
-            
+
             var producct = new ProductDetailsViewModel();
             var romType = await this._productImageService.ListAsync(u => u.ProductID == id);
             if (romType.Any())
@@ -121,9 +117,9 @@ namespace ProductsService.Controllers
                 {
                     producct.Img.Add(item.ImageUrl);
                 }
-                
+
             }
-            
+
             var imgList = await _productImageService.ListAsync(i => i.ProductID == producct.ID);
             var Listimg = imgList.Select(i => i.ImageUrl).ToList(); // Lấy danh sách ImageUrl
             var productDetail = await _productService.FindAsync(x => x.ID == id);
@@ -134,17 +130,17 @@ namespace ProductsService.Controllers
 
             if (price != null)
             {
-<<<<<<< Updated upstream
+
                 var ProductSize = await _productVariantService.FindAsync(s => s.ProductID == id);
-=======
+
                 var getFullsize = await this._productVariantService.ListAsync(s => s.ProductID == id && s.IsActive == true);
 
-                foreach(var item in getFullsize)
+                foreach (var item in getFullsize)
                 {
                     producct.size.Add(item.Size);
 
                 }
->>>>>>> Stashed changes
+
 
                 var storeName = await _storeDetailService.FindAsync(t => t.ID == productDetail.StoreID);
                 var categoryName = await _categoryService.FindAsync(c => c.ID == productDetail.CateID);
@@ -173,7 +169,7 @@ namespace ProductsService.Controllers
                 producct.ShortDescription = productDetail.ShortDescription;
                 producct.LongDescription = productDetail.LongDescription;
                 producct.CreatedDate = productDetail.CreatedDate;
-               
+
             }
 
 
@@ -188,7 +184,7 @@ namespace ProductsService.Controllers
                 return Ok(producct);
             }
         }
-       
+
 
     }
 }

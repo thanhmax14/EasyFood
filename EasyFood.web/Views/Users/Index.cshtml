@@ -291,12 +291,12 @@
                                                 <i class="fi-rs-user mr-10"></i>Wallet
                                             </a>
                                         </li>
-                                        <li class="nav-item">
+                                        @* <li class="nav-item"> 
                                             <a class="nav-link" id="Feedback-tab" data-bs-toggle="tab" href="#Feedback"
                                                role="tab" aria-controls="Feedback" aria-selected="false">
                                                 <i class="fi-rs-shopping-bag mr-10"></i>Your Feedback
                                             </a>
-                                        </li>
+                                        </li>*@
                                         <li class="nav-item">
                                             <a class="nav-link" href="page-login.html">
                                                 <i class="fi-rs-sign-out mr-10"></i>Logout
@@ -770,7 +770,7 @@
                                     </div>
 
                                     @* ///FEEDBACK *@
-                                    <div class="tab-pane fade" id="Feedback" role="tabpanel" aria-labelledby="Feedback-tab">
+                                    @* <div class="tab-pane fade" id="Feedback" role="tabpanel" aria-labelledby="Feedback-tab">
                                         <div class="card">
                                             <div class="card-header">
                                                 <h3 class="mb-0">Your Feedback</h3>
@@ -783,11 +783,11 @@
                                     </div>
                                     <script>
                                         document.addEventListener("DOMContentLoaded", function () {
-                                            const container = document.getElementById("table-feedback");
-                                            var list = @Html.Raw(JsonSerializer.Serialize(Model.Reivew));
+                                            const container = document.getElementById("table-feedback");*@
+                                            @* var list = @Html.Raw(JsonSerializer.Serialize(Model.Reivew)); *@
 
 
-                                            // Hàm khởi tạo bảng
+                                    @* // Hàm khởi tạo bảng
                                             function initializeGrid(data) {
                                                 if (!container.dataset.gridInitialized) {
                                                     container.innerHTML = "";
@@ -823,7 +823,7 @@
 
                                             initializeGrid(list); // Gọi hàm khởi tạo bảng với dữ liệu
                                         });
-                                    </script>
+                                    </script>*@
 
                                 </div>
                             </div>
