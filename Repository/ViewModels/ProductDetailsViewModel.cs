@@ -25,5 +25,8 @@
         public Guid CateID { get; set; }
 
         public Guid StoreID { get; set; }
+
+        public List<CommentViewModels> Comments { get; set; } = new List<CommentViewModels>();
+
     }
 }

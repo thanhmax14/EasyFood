@@ -384,36 +384,58 @@ namespace EasyFood.web.Controllers
         }
 
 
-        public async Task<IActionResult> ProductDetail(Guid iD)
+        public async Task<IActionResult> ProductDetail(Guid id)
         {
-            var FindProduct = await _product.FindAsync(x => x.ID == iD);
-            if (FindProduct != null)
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
             {
-                var FindStore = _storeDetailService.FindAsync(s => s.ID == FindProduct.StoreID);
-                var list = new ProductDetailsViewModel();
-                this._url = $"https://localhost:5555/Gateway/ProductsService/GetProductDetails?id={iD}";
-
-
-                try
-                {
-                    var response = await client.GetAsync(this._url);
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        return View(list);
-                    }
-
-                    var mes = await response.Content.ReadAsStringAsync();
-                    list = JsonSerializer.Deserialize<ProductDetailsViewModel>(mes, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                    return View(list);
-                }
-                catch (Exception ex)
-                {
-                    return View(list);
-                }
+                return RedirectToAction("Login", "Home");
             }
-            return NotFound();
+
+            var FindProduct = await _product.FindAsync(x => x.ID == id);
+            if (FindProduct == null)
+            {
+                return NotFound();
+            }
+
+            var list = new ProductDetailsViewModel();
+            this._url = $"https://localhost:5555/Gateway/ProductsService/GetProductDetails?id={id}";
+            string commentApi = $"https://localhost:5555/Gateway/ProductsService/GetAllComment/{id}";
+
+            try
+            {
+                // Gọi API lấy thông tin sản phẩm
+                var response = await client.GetAsync(this._url);
+                if (response.IsSuccessStatusCode)
+                {
+                    var mes = await response.Content.ReadAsStringAsync();
+                    list = JsonSerializer.Deserialize<ProductDetailsViewModel>(mes, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+                }
+
+                // Gọi API lấy danh sách bình luận
+                var commentResponse = await client.GetAsync(commentApi);
+                if (commentResponse.IsSuccessStatusCode)
+                {
+                    var commentMes = await commentResponse.Content.ReadAsStringAsync();
+                    var comments = JsonSerializer.Deserialize<List<CommentViewModels>>(commentMes, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                    list.Comments = comments ?? new List<CommentViewModels>();
+                }
+
+                return View(list);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Lỗi server", error = ex.Message });
+            }
         }
+
 
 
         public async Task<IActionResult> GetAllStore()
@@ -1062,6 +1084,37 @@ namespace EasyFood.web.Controllers
             {
                 return PartialView("_Cart", new List<CartViewModels>());
             }
+        }
+        [HttpGet]
+        public async Task<IActionResult> Comment(Guid id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if(user == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            string api = $"https://localhost:5555/Gateway/ProductsService/GetAllComment/{id}";
+            List<CommentViewModels> comment = new List<CommentViewModels>();
+            try
+            {
+                var respone = await client.GetAsync(api);
+                if(respone.IsSuccessStatusCode)
+                {
+                    return View(comment);
+                }
+                var mes = await respone.Content.ReadAsStringAsync();
+                comment = JsonSerializer.Deserialize<List<CommentViewModels>>(mes, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                });
+                return View(comment);
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500, new { message = "Lỗi server", error = ex.Message });
+            }
+           
         }
 
 
