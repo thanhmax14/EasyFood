@@ -14,7 +14,6 @@
         //1 (true) → ẩn
         //0 (false) → hiện
 
-        public DateTime? DateRelay { get; set; } = DateTime.Now;
 
         public bool Status { get; set; } = false;
         public int Rating { get; set; } = 5;
