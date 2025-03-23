@@ -89,8 +89,8 @@
                                         $.get("/Home/CartPart", function (data) {
                                             $("#cart-container").html(data);
                                         }).fail(function (xhr) {
-                                            console.error("Lỗi:", xhr.responseText);
-                                            $("#cart-container").html("<p style='color:red;'>Lỗi tải giỏ hàng.</p>");
+                                            console.error("Error:", xhr.responseText);
+                                            $("#cart-container").html("<p style='color:red;'>Failed to load cart.</p>");
                                         });
                                     }
 
@@ -104,7 +104,7 @@
                                                 if (response.success) {
                                                     new Notify({
                                                         status: 'success',
-                                                        title: 'Thành công!',
+                                                        title: 'Success!',
                                                         text: response.message,
                                                         effect: 'fade',
                                                         speed: 300,
@@ -114,11 +114,11 @@
                                                         autotimeout: 3000,
                                                         position: 'right top',
                                                     });
-                                                    loadCart();
+                                                    loadCart(); // Refresh cart
                                                 } else {
                                                     new Notify({
                                                         status: 'error',
-                                                        title: 'Lỗi!',
+                                                        title: 'Error!',
                                                         text: response.message,
                                                         effect: 'fade',
                                                         speed: 300,
@@ -134,8 +134,8 @@
                                                 console.error(xhr.responseText);
                                                 new Notify({
                                                     status: 'error',
-                                                    title: 'Lỗi hệ thống!',
-                                                    text: "Không thể thêm vào giỏ hàng.",
+                                                    title: 'System Error!',
+                                                    text: "Unable to add to cart.",
                                                     effect: 'fade',
                                                     speed: 300,
                                                     showIcon: true,
@@ -143,6 +143,74 @@
                                                     autoclose: true,
                                                     autotimeout: 3000,
                                                     position: 'right top',
+                                                });
+                                            }
+                                        });
+                                    };
+
+                                    // Function to delete product
+                                    window.DeleteFromCart = function (productId) {
+                                        Swal.fire({
+                                            title: "Are you sure?",
+                                            text: "The product will be removed from your cart!",
+                                            icon: "warning",
+                                            showCancelButton: true,
+                                            confirmButtonColor: "#d33",
+                                            cancelButtonColor: "#3085d6",
+                                            confirmButtonText: "Delete!",
+                                            cancelButtonText: "Cancel"
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                $.ajax({
+                                                    type: "POST",
+                                                    url: "/Home/DeleteCart",
+                                                    contentType: "application/json",
+                                                    data: JSON.stringify({ ProductID: productId }),
+                                                    success: function (response) {
+                                                        if (response.success) {
+                                                            new Notify({
+                                                                status: 'success',
+                                                                title: 'Deleted!',
+                                                                text: response.message,
+                                                                effect: 'fade',
+                                                                speed: 300,
+                                                                showIcon: true,
+                                                                showCloseButton: true,
+                                                                autoclose: true,
+                                                                autotimeout: 3000,
+                                                                position: 'right top',
+                                                            });
+                                                            loadCart(); // Refresh cart without reloading page
+                                                        } else {
+                                                            new Notify({
+                                                                status: 'error',
+                                                                title: 'Error!',
+                                                                text: response.message,
+                                                                effect: 'fade',
+                                                                speed: 300,
+                                                                showIcon: true,
+                                                                showCloseButton: true,
+                                                                autoclose: true,
+                                                                autotimeout: 3000,
+                                                                position: 'right top',
+                                                            });
+                                                        }
+                                                    },
+                                                    error: function (xhr) {
+                                                        console.error(xhr.responseText);
+                                                        new Notify({
+                                                            status: 'error',
+                                                            title: 'System Error!',
+                                                            text: "Unable to remove the product from the cart.",
+                                                            effect: 'fade',
+                                                            speed: 300,
+                                                            showIcon: true,
+                                                            showCloseButton: true,
+                                                            autoclose: true,
+                                                            autotimeout: 3000,
+                                                            position: 'right top',
+                                                        });
+                                                    }
                                                 });
                                             }
                                         });

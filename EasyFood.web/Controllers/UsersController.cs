@@ -82,17 +82,17 @@ namespace EasyFood.web.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> UpdateProfile([FromBody] UsersViewModel obj)
+        public async Task<IActionResult> UpdateProfile([FromBody] IndexUserViewModels obj)
         {
-            if (obj == null)
+            if (obj.userView == null)
             {
-                return Json(new { success = false, message = "Dữ liệu không hợp lệ." });
+                return Json(new { success = false, message = "Invalid data." });
             }
 
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return Json(new { success = false, message = "Bạn chưa đăng nhập." });
+                return Json(new { success = false, message = "You are not logged in." });
             }
 
             string apiUrl = $"https://localhost:5555/Gateway/UsersService/{user.Id}";
@@ -105,53 +105,55 @@ namespace EasyFood.web.Controllers
 
                 if (response.IsSuccessStatusCode)
                 {
-                    return Json(new { success = true, message = "Cập nhật thành công!" });
+                    return Json(new { success = true, message = "Profile updated successfully!" });
                 }
                 else
                 {
-                    return Json(new { success = false, message = "Cập nhật thất bại!" });
+                    return Json(new { success = false, message = "Phone number is already registered by another user!" });
                 }
             }
             catch (Exception)
             {
-                return Json(new { success = false, message = "Lỗi kết nối API Gateway!" });
+                return Json(new { success = false, message = "API Gateway connection error!" });
             }
         }
+
         [HttpPost]
-        public async Task<IActionResult> RegisterSeller(UsersViewModel model)
+        public async Task<IActionResult> RegisterSeller(IndexUserViewModels model)
         {
-            if (model == null)
+            if (model.userView == null)
             {
-                return Json(new { success = false, message = "Dữ liệu không hợp lệ." });
+                return Json(new { success = false, message = "Invalid data." });
             }
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return Json(new { success = false, message = "Ban chua dang nhap" });
+                return Json(new { success = false, message = "You are not logged in." });
             }
+
             string apiUrl = $"https://localhost:5555/Gateway/UsersService/register-seller/{user.Id}";
             try
             {
                 var jsonContent = JsonSerializer.Serialize(model);
                 var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
                 var response = await client.PostAsync(apiUrl, content);
+
                 if (response.IsSuccessStatusCode)
                 {
-                    return Json(new { success = true, message = "Cập nhật thành công!" });
-
+                    return Json(new { success = true, message = "Registration successful!" });
                 }
                 else
                 {
-                    return Json(new { success = false, message = "Cập nhật thất bại!" });
-
+                    return Json(new { success = false, message = "Please update all required information before registering as a seller!" });
                 }
             }
             catch (Exception)
             {
-
-                return Json(new { success = false, message = "Lỗi kết nối API Gateway!" }); ;
+                return Json(new { success = false, message = "API Gateway connection error!" });
             }
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
