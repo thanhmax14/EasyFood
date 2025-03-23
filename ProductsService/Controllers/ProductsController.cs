@@ -131,10 +131,15 @@ namespace ProductsService.Controllers
 
 
             var price = await _productVariantService.FindAsync(s => s.ProductID == id && s.IsActive == true);
+          
 
             if (price != null)
             {
-                var ProductSize = await _productVariantService.FindAsync(s => s.ProductID == id);
+                var getFullsize = await this._productVariantService.ListAsync(s => s.ProductID == id && s.IsActive == true);
+                foreach(var item in getFullsize)
+                {
+                    producct.size.Add(item.Size);
+                }
 
                 var storeName = await _storeDetailService.FindAsync(t => t.ID == productDetail.StoreID);
                 var categoryName = await _categoryService.FindAsync(c => c.ID == productDetail.CateID);
@@ -143,12 +148,13 @@ namespace ProductsService.Controllers
                 producct.Name = productDetail.Name;
                 producct.StoreName = storeName.Name;
                 producct.CategoryName = categoryName.Name;
-                producct.Price = price.Price;
+                
                 producct.ShortDescription = productDetail.ShortDescription;
                 producct.LongDescription = productDetail.LongDescription;
                 producct.CreatedDate = productDetail.CreatedDate;
-                producct.Stocks = ProductSize.Stock;
-                producct.Size = price.Size;
+                producct.Stocks = price.Stock;
+             
+                producct.Price = price.Price;
             }
             else
             {
@@ -177,8 +183,11 @@ namespace ProductsService.Controllers
             {
                 return Ok(producct);
             }
+
+         
+
         }
-       
+
 
     }
 }

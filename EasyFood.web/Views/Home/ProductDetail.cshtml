@@ -1005,7 +1005,11 @@
                                                     <div class="attr-detail attr-size mb-30">
                                                         <strong class="mr-10">Size / Weight: </strong>
                                                         <ul class="list-filter size-filter font-small">
-                                                            <li><a href="#">@Model.Size</a></li>
+                                                            @if(Model.size.Any()){
+                                                                foreach(var item in Model.size){
+                                                                <li><a href="#">@item</a></li>
+                                                                }
+                                                            }
 
                                                         </ul>
                                                     </div>
