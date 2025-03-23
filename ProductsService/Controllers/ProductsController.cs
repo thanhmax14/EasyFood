@@ -3,8 +3,14 @@ using BusinessLogic.Services.ProductImages;
 using BusinessLogic.Services.Products;
 using BusinessLogic.Services.ProductVariants;
 using BusinessLogic.Services.StoreDetail;
+
+using BusinessLogic.Services.Reviews;
+using MailKit.Search;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Repository.ViewModels;
+using Models;
 
 namespace ProductsService.Controllers
 {
@@ -18,14 +24,21 @@ namespace ProductsService.Controllers
         private readonly IProductVariantService _productVariantService;
         private readonly ICategoryService _categoryService;
         private readonly IStoreDetailService _storeDetailService;
+        private readonly IReviewService _reviewService;
+        private readonly UserManager<AppUser> _userManager;
 
-        public ProductsController(IProductService productService, IProductImageService productImageService, IProductVariantService productVariantService, ICategoryService categoryService, IStoreDetailService storeDetailService)
+
+       
+
+        public ProductsController(IProductService productService, IProductImageService productImageService, IProductVariantService productVariantService, ICategoryService categoryService, IStoreDetailService storeDetailService, IReviewService reviewService, UserManager<AppUser> userManager)
         {
             _productService = productService;
             _productImageService = productImageService;
             _productVariantService = productVariantService;
             _categoryService = categoryService;
             _storeDetailService = storeDetailService;
+            _reviewService = reviewService;
+            _userManager = userManager;
         }
 
         [HttpGet("GetAllProducts")]
@@ -135,7 +148,12 @@ namespace ProductsService.Controllers
 
                 var getFullsize = await this._productVariantService.ListAsync(s => s.ProductID == id && s.IsActive == true);
 
-                foreach (var item in getFullsize)
+
+              
+
+
+                foreach(var item in getFullsize)
+
                 {
                     producct.size.Add(item.Size);
 
@@ -184,6 +202,50 @@ namespace ProductsService.Controllers
                 return Ok(producct);
             }
         }
+
+        [HttpGet("GetAllComment/{id}")]
+        public async Task<IActionResult> getAllComment(Guid id)
+        {
+            // Tìm sản phẩm có ID được truyền vào
+            var product = (await _productService.ListAsync()).FirstOrDefault(p => p.ID == id);
+            if (product == null)
+            {
+                return NotFound("Product not found");
+            }
+
+            // Lấy danh sách cửa hàng theo StoreID của sản phẩm
+            var storeDetails = await _storeDetailService.ListAsync();
+            var store = storeDetails.FirstOrDefault(x => x.ID == product.StoreID);
+            var storeName = store?.Name ?? "Unknown Store"; // Nếu không tìm thấy cửa hàng, đặt là "Unknown Store"
+
+            // Lấy danh sách review của sản phẩm
+            var reviews = await _reviewService.ListAsync(x => x.ProductID == id);
+            if (!reviews.Any())
+            {
+                return Ok(new { message = "No comments found" });
+            }
+
+            // Lấy danh sách User từ review
+            var userIds = reviews.Select(x => x.UserID).Distinct().ToList();
+            var users = _userManager.Users.Where(x => userIds.Contains(x.Id)).ToList();
+            var userDict = users.ToDictionary(u => u.Id, u => u.UserName);
+
+            // Tạo danh sách CommentViewModels
+            var commentList = reviews.Select(review => new CommentViewModels
+            {
+                storeName = storeName,
+                Username = userDict.ContainsKey(review.UserID) ? userDict[review.UserID] : "Unknown",
+                Cmt = review.Cmt,
+                Datecmt = review.Datecmt,
+                Relay = review.Relay,
+                DateRelay = review.DateRelay,
+                Status = review.Status,
+                Rating = review.Rating
+            }).ToList();
+
+            return Ok(commentList);
+        }
+
 
 
     }
