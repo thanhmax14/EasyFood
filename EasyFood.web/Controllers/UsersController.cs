@@ -2,6 +2,9 @@
 using System.Text;
 using System.Text.Json;
 using BusinessLogic.Services.BalanceChanges;
+using BusinessLogic.Services.Carts;
+using BusinessLogic.Services.Products;
+using BusinessLogic.Services.ProductVariants;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Models;
@@ -16,8 +19,13 @@ namespace EasyFood.web.Controllers
         private string _url;
         private readonly IBalanceChangeService _balance;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IProductService _product;
+        public readonly ICartService _cart;
+        public readonly IProductVariantService _productWarian;
 
-        public UsersController(UserManager<AppUser> userManager, IBalanceChangeService balance, IHttpContextAccessor httpContextAccessor)
+
+
+        public UsersController(UserManager<AppUser> userManager, IBalanceChangeService balance, IHttpContextAccessor httpContextAccessor, IProductService product, ICartService cart, IProductVariantService productWarian)
         {
             _userManager = userManager;
             client = new HttpClient();
@@ -25,6 +33,9 @@ namespace EasyFood.web.Controllers
             client.DefaultRequestHeaders.Accept.Add(contentype);
             _balance = balance;
             _httpContextAccessor = httpContextAccessor;
+            _product = product;
+            _cart = cart;
+            _productWarian = productWarian;
         }
         public async Task<IActionResult> Index()
         {
@@ -300,5 +311,53 @@ namespace EasyFood.web.Controllers
 
 
         }
+
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Buy([FromForm] List<Guid> productIds)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return Json(new ErroMess { msg = "Bạn chưa đăng nhập!!" });
+            }
+
+            if (productIds == null || !productIds.Any())
+            {
+                return Json( new ErroMess { msg="Vui lòng chọn sản phẩm cần mua!"} );
+            }
+            foreach (var id in productIds)
+            {
+                var product = await _product.GetAsyncById(id);
+                if (product == null)
+                {
+                    return Json(new ErroMess { msg = "Sản phẩm mua không tồn tại!" });
+                }
+                var checkcart = await this._cart.FindAsync(u=> u.UserID == user.Id && u.ProductID == id); 
+                if(checkcart == null)
+                {
+                    return Json(new ErroMess { msg = "Sản phẩm mua không tồn tại trong giỏ hàng!" });
+                }
+                var getQuatity = await this._productWarian.FindAsync(u=> u.ProductID == id);
+                if(checkcart.Quantity > getQuatity.Stock)
+                {
+                    return Json(new ErroMess { msg = "Số lượng sản phẩm mua vượt quá số lượng tồn kho!" });
+                }   
+
+            }
+           
+          
+           
+
+
+
+
+
+            return Ok(new { message = "Danh sách sản phẩm đã được xử lý.", selectedProducts = productIds });
+        }
+
+
     }
 }
