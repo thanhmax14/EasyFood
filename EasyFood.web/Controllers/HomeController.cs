@@ -1,6 +1,7 @@
 ﻿   using BusinessLogic.Hash;
 using BusinessLogic.Services.BalanceChanges;
 using BusinessLogic.Services.Carts;
+using BusinessLogic.Services.Categorys;
 using BusinessLogic.Services.Orders;
 using BusinessLogic.Services.ProductImages;
 using BusinessLogic.Services.Products;
@@ -43,13 +44,15 @@ namespace EasyFood.web.Controllers
         private readonly IStoreDetailService _storeDetailService;
         private readonly IBalanceChangeService _balance;
         private readonly IOrdersServices _order;
+        private readonly ICategoryService _categoryService;
 
         private readonly PayOS _payos;
 
 
-        public HomeController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, IStoreDetailService storeDetailService, IEmailSender emailSender, ICartService cart, IWishlistServices wishlist, IProductService product
+        public HomeController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, ICategoryService categoryService, IStoreDetailService storeDetailService, IEmailSender emailSender, ICartService cart, IWishlistServices wishlist, IProductService product
 , IProductImageService productimg, IProductVariantService productvarian, IBalanceChangeService balance, IOrdersServices order, PayOS payos)
         {
+            _categoryService = categoryService;
             _signInManager = signInManager;
             _userManager = userManager;
             _emailSender = emailSender;
@@ -323,6 +326,62 @@ namespace EasyFood.web.Controllers
             }
         }
 
+        public async Task<IActionResult> GetAllCategory()
+
+        {
+            var list = new List<CategoryViewModel>();
+            this._url = "https://localhost:5555/Gateway/CategoryService/GetAllCategory";
+            try
+            {
+                var response = await client.GetAsync(this._url);
+                if (!response.IsSuccessStatusCode)
+                {
+                    return View(list);
+                }
+
+                var mes = await response.Content.ReadAsStringAsync();
+                list = JsonSerializer.Deserialize<List<CategoryViewModel>>(mes, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                return View(list);
+            }
+            catch (Exception ex)
+            {
+                return View(list);
+            }
+        }
+
+
+
+        public async Task<IActionResult> GetAllProductOfCategory(Guid iD)
+        {
+            var FindProduct = await _product.FindAsync(x => x.CateID == iD );
+            if (FindProduct != null)
+            {
+                var FindStore = await _categoryService.FindAsync(s => s.ID == FindProduct.CateID);
+                var list = new CategoryViewModel();
+                this._url = $"https://localhost:5555/Gateway/CategoryService/GetAllProductOfCategory?id{iD}";
+
+
+                try
+                {
+                    var response = await client.GetAsync(this._url);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        return View(list);
+                    }
+
+                    var mes = await response.Content.ReadAsStringAsync();
+                    list = JsonSerializer.Deserialize<CategoryViewModel>(mes, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    return View(list);
+                }
+                catch (Exception ex)
+                {
+                    return View(list);
+                }
+            }
+            return NotFound();
+        }
 
 
         public async Task<IActionResult> ProductDetail(Guid iD)

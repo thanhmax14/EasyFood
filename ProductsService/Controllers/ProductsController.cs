@@ -127,10 +127,10 @@ namespace ProductsService.Controllers
             var imgList = await _productImageService.ListAsync(i => i.ProductID == producct.ID);
             var Listimg = imgList.Select(i => i.ImageUrl).ToList(); // Lấy danh sách ImageUrl
             var productDetail = await _productService.FindAsync(x => x.ID == id);
-            
-            
 
-            var price = await _productVariantService.FindAsync(s => s.ProductID == producct.ID && s.IsActive == true);
+
+
+            var price = await _productVariantService.FindAsync(s => s.ProductID == id && s.IsActive == true);
 
             if (price != null)
             {
@@ -143,12 +143,12 @@ namespace ProductsService.Controllers
                 producct.Name = productDetail.Name;
                 producct.StoreName = storeName.Name;
                 producct.CategoryName = categoryName.Name;
-                producct.Price = ProductSize.Price;
+                producct.Price = price.Price;
                 producct.ShortDescription = productDetail.ShortDescription;
                 producct.LongDescription = productDetail.LongDescription;
                 producct.CreatedDate = productDetail.CreatedDate;
                 producct.Stocks = ProductSize.Stock;
-                producct.Size = ProductSize.Size;
+                producct.Size = price.Size;
             }
             else
             {
