@@ -12,7 +12,10 @@ namespace Repository.ViewModels
         public string Name { get; set; }
 
         public string? Img { get; set; }
-     
+
+        public List<ProductsViewModel> ProductViewModel { get; set; }
+
+        public List<StoreDetailsViewModels> StoreDetailViewModel { get; set; }
         public int Number { get; set; } = 0;
         public float Commission { get; set; }
         public DateTime? CreatedDate { get; set; }
