@@ -34,6 +34,7 @@ namespace Repository.ProductVariants
                     ModifiedDate = v.ModifiedDate,
                     ManufactureDate = v.ManufactureDate,
                     ProductID = v.ProductID,
+                    IsActive = v.IsActive,
                     StoreID = v.Product.StoreID // Lấy StoreID từ Product
                 })
                 .ToListAsync();
@@ -89,6 +90,17 @@ namespace Repository.ProductVariants
             variant.ModifiedDate = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public bool UpdateProductVariantStatus(Guid variantId, bool isActive)
+        {
+            var variant = _context.ProductVariants.FirstOrDefault(v => v.ID == variantId);
+            if (variant == null)
+                return false;
+
+            variant.IsActive = isActive;
+            _context.SaveChanges();
             return true;
         }
     }

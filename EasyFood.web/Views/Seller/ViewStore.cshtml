@@ -311,98 +311,107 @@
                                 <div class="live-preview">
                                     @if (Model != null && Model.Any())
                                     {
+                                        var lockedStore = Model.FirstOrDefault(s => !s.IsActive); // Kiểm tra store bị khóa
                                         var pendingStore = Model.FirstOrDefault(s => s.Status == "PENDING");
 
-                                        if (pendingStore != null)
+                                        if (lockedStore != null)
+                                        {
+                                            <div class="alert alert-danger text-center">
+                                                <p><strong>Your store has been locked due to a policy violation!</strong></p>
+                                                <p>Please contact support for further assistance.</p>
+                                            </div>
+                                        }
+                                        else if (pendingStore != null)
                                         {
                                             <div class="alert alert-warning text-center">
                                                 <p>Your store is pending approval. Please wait for the admin to review and approve it.</p>
                                             </div>
                                         }
-                                        else
+
+                                        @foreach (var store in Model)
                                         {
-                                            @foreach (var store in Model)
-                                            {
-                                                <div class="border rounded p-3 mb-3">
-                                                    <form method="post" asp-page-handler="Update">
-                                                        <input type="hidden" name="ID" value="@store.ID" />
+                                            <div class="border rounded p-3 mb-3">
+                                                <form method="post" asp-page-handler="Update">
+                                                    <input type="hidden" name="ID" value="@store.ID" />
 
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <div class="mb-3">
-                                                                    <label class="form-label">Store Name</label>
-                                                                    <input type="text" class="form-control" value="@store.Name" readonly />
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Store Name</label>
+                                                                <input type="text" class="form-control" value="@store.Name" readonly />
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Created Date</label>
+                                                                <input type="text" class="form-control" value="@store.CreatedDate.ToString("dd-MM-yyyy")" readonly />
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Modified Date</label>
+                                                                <input type="text" class="form-control" value="@store.ModifiedDate?.ToString("dd-MM-yyyy")" readonly />
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-12">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Short Description</label>
+                                                                <input type="text" class="form-control" value="@store.ShortDescriptions" readonly />
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-12">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Long Description</label>
+                                                                <textarea class="form-control" rows="4" readonly>@store.LongDescriptions</textarea>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-12">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Address</label>
+                                                                <input type="text" class="form-control" value="@store.Address" readonly />
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Phone Number</label>
+                                                                <input type="text" class="form-control" value="@store.Phone" readonly />
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Image</label>
+                                                                <div>
+                                                                    @if (!string.IsNullOrEmpty(store.Img))
+                                                                    {
+                                                                        <img src="@store.Img" alt="Store Image" class="img-fluid rounded" style="max-height: 200px;" />
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <p class="text-muted">No image available</p>
+                                                                    }
                                                                 </div>
                                                             </div>
+                                                        </div>
 
-                                                            <div class="col-md-6">
-                                                                <div class="mb-3">
-                                                                    <label class="form-label">Created Date</label>
-                                                                    <input type="text" class="form-control" value="@store.CreatedDate.ToString("dd-MM-yyyy")" readonly />
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="col-md-6">
-                                                                <div class="mb-3">
-                                                                    <label class="form-label">Modified Date</label>
-                                                                    <input type="text" class="form-control" value="@store.ModifiedDate?.ToString("dd-MM-yyyy")" readonly />
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="col-md-12">
-                                                                <div class="mb-3">
-                                                                    <label class="form-label">Short Description</label>
-                                                                    <input type="text" class="form-control" value="@store.ShortDescriptions" readonly />
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="col-md-12">
-                                                                <div class="mb-3">
-                                                                    <label class="form-label">Long Description</label>
-                                                                    <textarea class="form-control" rows="4" readonly>@store.LongDescriptions</textarea>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="col-md-12">
-                                                                <div class="mb-3">
-                                                                    <label class="form-label">Address</label>
-                                                                    <input type="text" class="form-control" value="@store.Address" readonly />
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="col-md-6">
-                                                                <div class="mb-3">
-                                                                    <label class="form-label">Phone Number</label>
-                                                                    <input type="text" class="form-control" value="@store.Phone" readonly />
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="col-md-6">
-                                                                <div class="mb-3">
-                                                                    <label class="form-label">Image</label>
-                                                                    <div>
-                                                                        @if (!string.IsNullOrEmpty(store.Img))
-                                                                        {
-                                                                            <img src="@store.Img" alt="Store Image" class="img-fluid rounded" style="max-height: 200px;" />
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <p class="text-muted">No image available</p>
-                                                                        }
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-
+                                                        @if (store.IsActive)
+                                                        {
                                                             <div class="col-lg-12 text-end">
                                                                 <a asp-action="UpdateStore" asp-route-id="@store.ID" class="btn btn-primary">Update</a>
                                                                 <a href="@Url.Action("ViewProductList", "Seller", new { storeId = store.ID })" class="btn btn-info">
                                                                     View Product List
                                                                 </a>
                                                             </div>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            }
+                                                        }
+                                                    </div>
+                                                </form>
+                                            </div>
                                         }
                                     }
                                     else
@@ -410,8 +419,7 @@
                                         @if (ViewBag.HasPendingStore == null || ViewBag.HasPendingStore == false)
                                         {
                                             <div class="alert alert-warning text-center">
-                                                <p>You don't have any stores. Please register one.</p>
-                                                <a href="/Seller/CreateStore" class="btn btn-success">Register Store</a>
+                                                <p>Thank you for registering. Your store is awaiting admin approval!</p>
                                             </div>
                                         }
                                     }

@@ -123,17 +123,18 @@ namespace EasyFood.web.Controllers
         }
 
         [HttpPost]
-        [Route("AdminStore/UpdateStoreStatus")]
-        public async Task<JsonResult> UpdateStoreStatus(Guid storeId, string newStatus)
+        [Route("AdminStore/UpdateStoreIsActive")]
+        public async Task<JsonResult> UpdateStoreIsActive(Guid storeId, bool isActive)
         {
-            bool isUpdated = await _storeService.UpdateStoreStatusAsync(storeId, newStatus);
+            bool isUpdated = await _storeService.UpdateStoreIsActiveAsync(storeId, isActive);
 
             if (!isUpdated)
             {
                 return Json(new { success = false, message = "Store not found" });
             }
 
-            return Json(new { success = true, message = "Store status updated successfully" });
+            return Json(new { success = true, message = "Store status updated successfully", isActive });
         }
+
     }
 }

@@ -308,39 +308,54 @@
 
                             new gridjs.Grid({
                                 columns: [
-                                    { name: "ID", hidden: true }, // Ẩn ID
-                                    { name: "Size", width: "150px" },
-                                    { name: "Price", width: "120px" },
-                                    { name: "Original Price", width: "120px" },
+                                    { name: "ID", hidden: true },
+                                    { name: "Variant Name", width: "150px" },
+                                    { name: "Price Before Decrease", width: "150px" },
+                                    { name: "Price After Decrease", width: "150px" },
                                     { name: "Stock", width: "100px" },
                                     { name: "Modified Date", width: "150px" },
                                     { name: "Manufacture Date", width: "150px" },
                                     {
+                                        name: "Status",
+                                        width: "100px",
+                                        formatter: (cell) => {
+                                            let statusText = cell ? "Active" : "Disable";
+                                            let statusClass = cell ? "bg-success-subtle text-success" : "bg-danger-subtle text-danger";
+                                            return gridjs.html(`<span class="badge ${statusClass}">${statusText}</span>`);
+                                        }
+                                    },
+                                    {
                                         name: "Actions",
-                                        width: "150px",
+                                        width: "200px",
                                         formatter: (_, row) => {
-                                            let variantId = row.cells[0].data; // Lấy ID của Product Variant
-                                            let productId = row.cells[7].data; // Lấy ProductID từ cột thứ 8 (Index = 7)
+                                            let variantId = row.cells[0].data;
+                                            let isActive = row.cells[7].data;
+
+                                            let toggleButton = isActive
+                                                ? `<button class="dropdown-item update-status-btn" data-id="${variantId}" data-status="false">
+                                                            <i class="ri-eye-off-line text-danger align-bottom me-2"></i> Hide
+                                                       </button>`
+                                                : `<button class="dropdown-item update-status-btn" data-id="${variantId}" data-status="true">
+                                                            <i class="ri-eye-line text-success align-bottom me-2"></i> Show
+                                                       </button>`;
 
                                             return gridjs.html(`
-                                <div class="dropdown">
-                                    <button class="btn btn-soft-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="ri-more-fill align-middle"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li>
-                                                                <a class="dropdown-item edit-item-btn" href="/Seller/UpdateProductVariant?variantId=${row.cells[0].data}">
-                                                <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <button class="dropdown-item delete-item-btn" data-id="${variantId}">
-                                                <i class="ri-delete-bin-fill align-bottom me-2 text-danger"></i> Delete
-                                            </button>
-                                        </li>
-                                    </ul>
-                                </div>
-                            `);
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-soft-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                            <i class="ri-more-fill align-middle"></i>
+                                                        </button>
+                                                        <ul class="dropdown-menu dropdown-menu-end">
+                                                            <li>
+                                                                <a class="dropdown-item edit-item-btn" href="/Seller/UpdateProductVariant?variantId=${variantId}">
+                                                                    <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                ${toggleButton}
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                `);
                                         }
                                     }
                                 ],
@@ -350,41 +365,51 @@
                                 data: productVariants.map(variant => [
                                     variant.id,
                                     variant.size,
-                                    variant.price,
                                     variant.originalPrice,
+                                    variant.price,
                                     variant.stock,
-                                    variant.modifiedDate,
-                                    variant.manufactureDate
+                                    formatDate(variant.modifiedDate),
+                                    formatDate(variant.manufactureDate),
+                                    variant.isActive
                                 ])
                             }).render(document.getElementById("table-product-variants"));
 
-                            // Xử lý sự kiện xóa
+                            function formatDate(dateString) {
+                                if (!dateString) return "";
+                                let date = new Date(dateString);
+                                return date.toLocaleDateString("en-GB");
+                            }
+
                             document.addEventListener("click", function (event) {
-                                let deleteBtn = event.target.closest(".delete-item-btn");
-                                if (deleteBtn) {
-                                    let variantId = deleteBtn.dataset.id;
+                                let toggleBtn = event.target.closest(".update-status-btn");
+                                if (toggleBtn) {
+                                    let variantId = toggleBtn.dataset.id;
+                                    let newStatus = toggleBtn.dataset.status === "true";
+
                                     Swal.fire({
                                         title: "Are you sure?",
-                                        text: "You won't be able to revert this!",
+                                        text: `Do you want to ${newStatus ? "show" : "hide"} this variant?`,
                                         icon: "warning",
                                         showCancelButton: true,
-                                        confirmButtonColor: "#d33",
-                                        cancelButtonColor: "#3085d6",
-                                        confirmButtonText: "Yes, delete it!"
+                                        confirmButtonColor: newStatus ? "#28a745" : "#dc3545",
+                                        cancelButtonColor: "#6c757d",
+                                        confirmButtonText: `Yes, ${newStatus ? "show" : "hide"} it!`
                                     }).then((result) => {
                                         if (result.isConfirmed) {
-                                            fetch(`/ProductVariant/Delete?variantId=${variantId}`, { method: "POST" })
+                                            fetch(`/Seller/UpdateProductVariantStatus?variantId=${variantId}&isActive=${newStatus}`, {
+                                                method: "POST"
+                                            })
                                                 .then(response => response.json())
                                                 .then(data => {
                                                     if (data.success) {
-                                                        Swal.fire("Deleted!", "Product variant has been deleted.", "success").then(() => location.reload());
+                                                        Swal.fire("Success!", "Product variant status updated.", "success").then(() => location.reload());
                                                     } else {
-                                                        Swal.fire("Error!", "Failed to delete product variant.", "error");
+                                                        Swal.fire("Error!", "Failed to update variant status.", "error");
                                                     }
                                                 })
                                                 .catch(error => {
                                                     console.error("Error:", error);
-                                                    Swal.fire("Error!", "Something went wrong!", "error");
+                                                    Swal.fire("Error!", "An unexpected error occurred.", "error");
                                                 });
                                         }
                                     });
