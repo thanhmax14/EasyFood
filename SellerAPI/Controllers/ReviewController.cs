@@ -152,7 +152,9 @@ namespace SellerAPI.Controllers
                 }
 
 
-                review.Status = false;
+
+                review.Status = false;// từ ẩn -> hiện
+
                 await _reviewService.UpdateAsync(review);
                 await _reviewService.SaveChangesAsync();
 
@@ -179,7 +181,9 @@ namespace SellerAPI.Controllers
                 }
 
 
-                review.Status = true;
+
+                review.Status = true; // từ hiện -> ẩn
+
                 await _reviewService.UpdateAsync(review);
                 await _reviewService.SaveChangesAsync();
 
@@ -240,5 +244,90 @@ namespace SellerAPI.Controllers
 
             return Ok(result);
         }
+
+        //check trùng bằng existingReview
+        //[HttpPost("CreateReview")]
+        //public async Task<IActionResult> CreateReview([FromBody] ReivewViewModel model)
+        //{
+        //    // Kiểm tra dữ liệu đầu vào
+        //    if (model == null || string.IsNullOrWhiteSpace(model.Cmt))
+        //    {
+        //        return BadRequest(new { message = "Nội dung bình luận không được để trống!" });
+        //    }
+        //    // Kiểm tra xem sản phẩm có tồn tại không
+        //    var product = await _productService.GetAsyncById(model.ProductID);
+        //    if (product == null)
+        //    {
+        //        return NotFound(new { message = "Sản phẩm không tồn tại!" });
+        //    }
+        //    // Kiểm tra xem User đã đánh giá sản phẩm này chưa
+        //    var existingReview = await _reviewService.FindAsync(r => r.UserID == model.UserID && r.ProductID == model.ProductID);
+        //    if (existingReview != null)
+        //    {
+        //        return BadRequest(new { message = "Người dùng đã đánh giá sản phẩm này rồi!" });
+        //    }
+        //    // Tạo review mới
+        //    var newReview = new Review
+        //    {
+        //        ID = Guid.NewGuid(),
+        //        Cmt = model.Cmt,
+        //        Datecmt = DateTime.UtcNow,
+        //        Relay = model.Relay,
+        //        DateRelay = model.DateRelay ?? DateTime.UtcNow,
+        //        Status = model.Status,
+        //        Rating = model.Rating,
+        //        UserID = model.UserID,
+        //        ProductID = model.ProductID
+        //    };
+        //    // Lưu vào database
+        //    await _reviewService.AddAsync(newReview);
+        //    return Ok(new { message = "Thêm đánh giá thành công!", review = newReview });
+        //}
+
+        //add khong can check
+        [HttpPost("CreateReview")]
+        public async Task<IActionResult> CreateReview([FromBody] ReivewViewModel model)
+        {
+            if (model == null || string.IsNullOrWhiteSpace(model.Cmt))
+            {
+                return BadRequest(new { message = "Nội dung bình luận không được để trống!" });
+            }
+            // Kiểm tra Rating không được để trống và phải nằm trong khoảng hợp lệ
+            if (model.Rating <= 0 || model.Rating > 5)
+            {
+                return BadRequest(new { message = "Điểm đánh giá không hợp lệ! Giá trị phải từ 1 đến 5." });
+            }
+            var product = await _productService.GetAsyncById(model.ProductID);
+            if (product == null)
+            {
+                return NotFound(new { message = "Sản phẩm không tồn tại!" });
+            }
+
+            var newReview = new Review
+            {
+                ID = Guid.NewGuid(),
+                Cmt = model.Cmt,
+                Datecmt = DateTime.UtcNow,
+                //Relay = model.Relay,
+                //DateRelay = model.DateRelay ?? DateTime.UtcNow,
+                Status = model.Status = false, //hiện
+                Rating = model.Rating,
+                UserID = model.UserID,
+                ProductID = model.ProductID
+            };
+
+            try
+            {
+                await _reviewService.AddAsync(newReview);
+                await _reviewService.SaveChangesAsync();
+                return Ok(new { message = "Thêm đánh giá thành công!", review = newReview });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Thêm đánh giá thất bại!", error = ex.Message });
+            }
+        }
+
+
     }
 }

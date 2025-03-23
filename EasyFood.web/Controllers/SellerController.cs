@@ -175,8 +175,6 @@ namespace EasyFood.web.Controllers
             return View(stores);
         }
 
-
-
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
