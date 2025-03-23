@@ -226,13 +226,11 @@
                                   
                                     <div class="vendor-img-action-wrap">
                                         <div class="vendor-img">
-                                            <a href="vendor-details-1.html">
-                                                <img class="default-img" src="~/assets/imgs/vendor/vendor-1.png" alt="" />
+                                            <a asp-action="GetStoreDetail" asp-controller="Home" asp-route-id="@item.ID">
+                                                <img class="default-img" src="@item.Img" alt="" />
                                             </a>
                                         </div>
-                                        <div class="mt-10">
-                                            <span class="font-small total-product">$$$$$$</span>
-                                        </div>
+                                      
                                     </div>
                                     <div class="vendor-content-wrap">
                                         <div class="mb-30">
@@ -275,7 +273,7 @@
                                     </div>
 
                                     <div class="vendor-content-wrap mt-170">
-                                        <a href="vendor-details-1.html" class="btn btn-xs">
+                                        <a asp-action="GetStoreDetail" asp-controller="Home" asp-route-id="@item.ID" class="btn btn-xs">
                                             Visit Store <i class="fi-rs-arrow-small-right"></i>
                                         </a>
                                     </div>

@@ -224,7 +224,7 @@
                                         <div class="heading_s1">
                                             <h1 class="mb-5">Login</h1>
                                             <p class="mb-30">
-                                                Don't have an account? <a href="page-register.html">
+                                                Don't have an account? <a asp-controller="Home" asp-action="Register">
                                                     Create
                                                     here
                                                 </a>
@@ -246,17 +246,7 @@
                                                        placeholder="Your password *" />
                                             </div>
                                         </form>
-                                            <div class="login_footer form-group">
-                                                <div class="chek-form">
-                                                    <button>Login With gg</button>
-                                                </div>
-                                                <span class="security-code">
-                                                    <b class="text-new">8</b>
-                                                    <b class="text-hot">6</b>
-                                                    <b class="text-sale">7</b>
-                                                    <b class="text-best">5</b>
-                                                </span>
-                                            </div>
+                                           
                                             <div class="login_footer form-group mb-50">
                                                 <div class="chek-form">
                                                     <div class="custome-checkbox">
@@ -266,7 +256,7 @@
                                                            for="remembers_me"><span>Remember me</span></label>
                                                     </div>
                                                 </div>
-                                                <a class="text-muted" href="#">Forgot password?</a>
+                                            <a asp-controller ="Home" asp-action="Forgot">Forgot password?</a>
                                             </div>
                                             <div class="form-group">
                                             <button type="button" id="btnLogin" class="btn btn-heading btn-block hover-up"
