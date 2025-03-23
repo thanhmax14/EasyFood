@@ -1,21 +1,16 @@
-﻿using Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Repository.ViewModels
+﻿namespace Repository.ViewModels
 {
     public class IndexUserViewModels
     {
         public IndexUserViewModels()
         {
             userView = new UsersViewModel();
-            Balance = new List<BalanceListViewModels>(); 
+            Balance = new List<BalanceListViewModels>();
+            Reivew = new List<ReivewViewModel>();
         }
         public UsersViewModel userView { get; set; }
         public List<BalanceListViewModels> Balance { get; set; }
+        public List<ReivewViewModel> Reivew { get; set; }
         public decimal BalanceUser { get; set; } = 0;
 
     }

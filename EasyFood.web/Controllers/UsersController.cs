@@ -5,6 +5,8 @@ using BusinessLogic.Services.BalanceChanges;
 using BusinessLogic.Services.Carts;
 using BusinessLogic.Services.Products;
 using BusinessLogic.Services.ProductVariants;
+using BusinessLogic.Services.Reviews;
+using BusinessLogic.Services.StoreDetail;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Models;
@@ -22,10 +24,13 @@ namespace EasyFood.web.Controllers
         private readonly IProductService _product;
         public readonly ICartService _cart;
         public readonly IProductVariantService _productWarian;
+        private readonly IStoreDetailService _storeDetailService;
+        private readonly IReviewService _reviewService;
 
 
 
-        public UsersController(UserManager<AppUser> userManager, IBalanceChangeService balance, IHttpContextAccessor httpContextAccessor, IProductService product, ICartService cart, IProductVariantService productWarian)
+        public UsersController(UserManager<AppUser> userManager, IBalanceChangeService balance, IHttpContextAccessor httpContextAccessor,
+            IProductService product, ICartService cart, IProductVariantService productWarian, IStoreDetailService storeDetail, IReviewService reviewService)
         {
             _userManager = userManager;
             client = new HttpClient();
@@ -36,6 +41,8 @@ namespace EasyFood.web.Controllers
             _product = product;
             _cart = cart;
             _productWarian = productWarian;
+            _storeDetailService = storeDetail;
+            _reviewService = reviewService;
         }
         public async Task<IActionResult> Index()
         {
@@ -53,11 +60,13 @@ namespace EasyFood.web.Controllers
             // Gọi API Gateway để lấy thông tin user theo ID
             string apiUrl = $"https://localhost:5555/Gateway/UsersService/View-Profile/{userId}";
             var urlBalace = $"https://localhost:5555/Gateway/WalletService/GetWallet";
+            string urlFeedback = $"https://localhost:5555/Gateway/ReviewService/GetReviewByUserId/{userId}";
             try
             {
                 var response = await client.GetAsync(apiUrl);
                 var responceBalance = await this.client.GetAsync($"{urlBalace}/{user.Id}");
-                if (!response.IsSuccessStatusCode || !responceBalance.IsSuccessStatusCode)
+                var feedbackTask = await client.GetAsync(urlFeedback);
+                if (!response.IsSuccessStatusCode || !responceBalance.IsSuccessStatusCode || !feedbackTask.IsSuccessStatusCode)
                 {
                     return View(list);
                 }
@@ -73,6 +82,15 @@ namespace EasyFood.web.Controllers
                 var dataRepone = JsonSerializer.Deserialize<List<BalanceListViewModels>>(messBalance, options);
                 list.Balance = dataRepone;
                 list.BalanceUser = await this._balance.GetBalance(user.Id);
+
+                var feedbackJson = await feedbackTask.Content.ReadAsStringAsync();
+                //list.Reivew = JsonSerializer.Deserialize<List<ReivewViewModel>>(feedbackJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var feedbackOptions = new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    PropertyNameCaseInsensitive = true
+                };
+                list.Reivew = JsonSerializer.Deserialize<List<ReivewViewModel>>(feedbackJson, feedbackOptions);
 
                 return View(list);
             }
@@ -326,7 +344,7 @@ namespace EasyFood.web.Controllers
 
             if (productIds == null || !productIds.Any())
             {
-                return Json( new ErroMess { msg="Vui lòng chọn sản phẩm cần mua!"} );
+                return Json(new ErroMess { msg = "Vui lòng chọn sản phẩm cần mua!" });
             }
             foreach (var id in productIds)
             {
@@ -335,21 +353,21 @@ namespace EasyFood.web.Controllers
                 {
                     return Json(new ErroMess { msg = "Sản phẩm mua không tồn tại!" });
                 }
-                var checkcart = await this._cart.FindAsync(u=> u.UserID == user.Id && u.ProductID == id); 
-                if(checkcart == null)
+                var checkcart = await this._cart.FindAsync(u => u.UserID == user.Id && u.ProductID == id);
+                if (checkcart == null)
                 {
                     return Json(new ErroMess { msg = "Sản phẩm mua không tồn tại trong giỏ hàng!" });
                 }
-                var getQuatity = await this._productWarian.FindAsync(u=> u.ProductID == id);
-                if(checkcart.Quantity > getQuatity.Stock)
+                var getQuatity = await this._productWarian.FindAsync(u => u.ProductID == id);
+                if (checkcart.Quantity > getQuatity.Stock)
                 {
                     return Json(new ErroMess { msg = "Số lượng sản phẩm mua vượt quá số lượng tồn kho!" });
-                }   
+                }
 
             }
-           
-          
-           
+
+
+
 
 
 
@@ -359,5 +377,71 @@ namespace EasyFood.web.Controllers
         }
 
 
+        //public async Task<IActionResult> FeedbackListByUserId()
+        //{
+        //    // Kiểm tra người dùng có đăng nhập hay không
+        //    var user = await _userManager.GetUserAsync(User);
+        //    if (user == null)
+        //    {
+        //        return RedirectToAction("Login", "Home");
+        //    }
+
+        //    // Lấy ID của user đăng nhập
+        //    string userId = user.Id;
+        //    var list = new IndexUserViewModels();
+
+        //    // Gọi API Gateway để lấy thông tin user theo ID
+        //    string apiUrl = $"https://localhost:5555/Gateway/UsersService/View-Profile/{userId}";
+        //    string urlBalance = $"https://localhost:5555/Gateway/WalletService/GetWallet/{userId}";
+        //    string urlFeedback = $"https://localhost:5555/Gateway/ReviewService/GetReviewByUserId/{userId}";
+
+        //    try
+        //    {
+        //        // Gọi API song song để tối ưu hiệu suất
+        //        var userTask = client.GetAsync(apiUrl);
+        //        var balanceTask = client.GetAsync(urlBalance);
+        //        var feedbackTask = client.GetAsync(urlFeedback);
+
+        //        await Task.WhenAll(userTask, balanceTask, feedbackTask);
+
+        //        var responseUser = userTask.Result;
+        //        var responseBalance = balanceTask.Result;
+        //        var responseFeedback = feedbackTask.Result;
+
+        //        if (!responseUser.IsSuccessStatusCode || !responseBalance.IsSuccessStatusCode || !responseFeedback.IsSuccessStatusCode)
+        //        {
+        //            return View(list);
+        //        }
+
+        //        // Xử lý API User
+        //        //var userJson = await responseUser.Content.ReadAsStringAsync();
+        //        //list.userView = JsonSerializer.Deserialize<UsersViewModel>(userJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+        //        // Xử lý API Balance
+        //        //var balanceJson = await responseBalance.Content.ReadAsStringAsync();
+        //        //var balanceOptions = new JsonSerializerOptions
+        //        //{
+        //        //    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        //        //    PropertyNameCaseInsensitive = true
+        //        //};
+        //        //list.Balance = JsonSerializer.Deserialize<List<BalanceListViewModels>>(balanceJson, balanceOptions);
+        //        //list.BalanceUser = await _balance.GetBalance(user.Id);
+
+        //        // Xử lý API Feedback
+        //        var feedbackJson = await responseFeedback.Content.ReadAsStringAsync();
+        //        //list.Reivew = JsonSerializer.Deserialize<List<ReivewViewModel>>(feedbackJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        //        var feedbackOptions = new JsonSerializerOptions
+        //        {
+        //            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        //            PropertyNameCaseInsensitive = true
+        //        };
+        //        list.Reivew = JsonSerializer.Deserialize<List<ReivewViewModel>>(feedbackJson, feedbackOptions);
+        //        return View(list);
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return View(list);
+        //    }
+        //}
     }
 }
