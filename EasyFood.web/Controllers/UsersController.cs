@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using BusinessLogic.Services.BalanceChanges;
 using BusinessLogic.Services.Carts;
+using BusinessLogic.Services.Orders;
 using BusinessLogic.Services.ProductImages;
 using BusinessLogic.Services.Products;
 using BusinessLogic.Services.ProductVariants;
@@ -27,6 +28,7 @@ namespace EasyFood.web.Controllers
         public readonly ICartService _cart;
         public readonly IProductVariantService _productWarian;
         private readonly IProductImageService _img;
+        private readonly IOrdersServices _order;
 
         public UsersController(UserManager<AppUser> userManager, HttpClient client, IBalanceChangeService balance, IHttpContextAccessor httpContextAccessor, IProductService product, ICartService cart, IProductVariantService productWarian, IProductImageService img)
         {
@@ -87,6 +89,27 @@ namespace EasyFood.web.Controllers
                 //    PropertyNameCaseInsensitive = true
                 //};
                 //list.Reivew = JsonSerializer.Deserialize<List<ReivewViewModel>>(feedbackJson, feedbackOptions);
+
+                var getOrder = await this._order.ListAsync(u => u.UserID ==user.Id);
+                if (getOrder.Any())
+                {
+                    foreach(var item in getOrder)
+                    {
+                        list.OrderViewodels.Add(new OrderViewModel
+                        {
+                            Address = user.Address,
+                            Email = user.Email,
+                            Name = user.FirstName + ", "+user.LastName,
+                            OrderDate = item.CreatedDate,
+                            PaymentMethod = item.MethodPayment,
+                            Status = item.Status,
+                            Total = item.TotalsPrice,
+                        }); ;
+                    }
+                }
+
+
+
 
                 return View(list);
             }

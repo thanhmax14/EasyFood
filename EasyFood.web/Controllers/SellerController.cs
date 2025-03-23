@@ -627,5 +627,10 @@ namespace EasyFood.web.Controllers
             var result = _variantService.UpdateProductVariantStatus(variantId, isActive);
             return Json(new { success = result });
         }
+
+        public async Task<IActionResult> Index()
+        {
+            return View();
+        }
     }
 }

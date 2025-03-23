@@ -12,6 +12,7 @@
         public List<BalanceListViewModels> Balance { get; set; }
         public List<ReivewViewModel> Reivew { get; set; }
         public decimal BalanceUser { get; set; } = 0;
+        public List<OrderViewModel> OrderViewodels { get; set; }
 
     }
 }
