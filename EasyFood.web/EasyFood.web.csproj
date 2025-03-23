@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\assetsAdmin\" />
+    <Folder Include="wwwroot\uploads\CategoryImage\" />
   </ItemGroup>
 
   <ItemGroup>

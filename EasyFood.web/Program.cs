@@ -4,6 +4,7 @@ using BusinessLogic.Config;
 using BusinessLogic.Mapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Models;
 using Models.DBContext;
 
@@ -99,7 +100,12 @@ app.UseExceptionHandler("/Error/404");
 await SeedDataAsync(app);
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/CategoryImage")),
+    RequestPath = "/uploads/CategoryImage"
+});
 app.UseRouting();
 
 app.UseAuthentication();
