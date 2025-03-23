@@ -1,15 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Models.DBContext
 {
-    public class EasyFoodDbContext:IdentityDbContext<AppUser>
+    public class EasyFoodDbContext : IdentityDbContext<AppUser>
     {
         public EasyFoodDbContext(DbContextOptions<EasyFoodDbContext> options) : base(options)
         {
@@ -31,10 +25,10 @@ namespace Models.DBContext
         public DbSet<RecipeReview> RecipeReviews { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Voucher> Vouchers { get; set; }
-        
 
 
-        
+
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
 
@@ -50,8 +44,8 @@ namespace Models.DBContext
             }
 
             builder.Entity<StoreDetails>()
-            .HasOne(h => h.AppUser) 
-            .WithOne(u => u.StoreDetails) 
+            .HasOne(h => h.AppUser)
+            .WithOne(u => u.StoreDetails)
             .HasForeignKey<StoreDetails>(h => h.UserID).OnDelete(DeleteBehavior.NoAction);
 
             builder.Entity<Product>()
@@ -87,7 +81,7 @@ namespace Models.DBContext
             builder.Entity<Wishlist>()
             .HasOne(h => h.Product)
             .WithMany(h => h.Wishlists)
-            .HasForeignKey(h => h.ProductID).OnDelete(DeleteBehavior.NoAction); 
+            .HasForeignKey(h => h.ProductID).OnDelete(DeleteBehavior.NoAction);
 
 
             builder.Entity<Cart>()
@@ -139,13 +133,13 @@ namespace Models.DBContext
             builder.Entity<FavoriteRecipe>()
            .HasOne(h => h.Recipe)
            .WithMany(h => h.FavoriteRecipes)
-           .HasForeignKey(h => h.RecipeID).OnDelete(DeleteBehavior.NoAction);  
+           .HasForeignKey(h => h.RecipeID).OnDelete(DeleteBehavior.NoAction);
 
             builder.Entity<RecipeReview>()
            .HasOne(h => h.Recipe)
            .WithMany(h => h.RecipeReviews)
-           .HasForeignKey(h => h.RecipeID).OnDelete(DeleteBehavior.NoAction); 
-            
+           .HasForeignKey(h => h.RecipeID).OnDelete(DeleteBehavior.NoAction);
+
             builder.Entity<FavoriteRecipe>()
            .HasOne(h => h.AppUser)
            .WithMany(h => h.FavoriteRecipes)
@@ -170,8 +164,8 @@ namespace Models.DBContext
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-      => optionsBuilder.UseSqlServer("Server=tcp:easyfood.database.windows.net,1433;Initial Catalog=EasyFood;Persist Security Info=False;User ID=easyfood;Password=Xinchao123@;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+      => optionsBuilder.UseSqlServer("Server=tcp:easyfoodpro.database.windows.net,1433;Initial Catalog=Easyfood;Persist Security Info=False;User ID=huy;Password=Xinchao123@;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
 
 
-}
+    }
 }
