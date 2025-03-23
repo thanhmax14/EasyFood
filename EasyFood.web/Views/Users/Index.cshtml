@@ -363,14 +363,14 @@
             },
             sort: true,
             search: true,
-            data: orderData.map(o => [
-                o.email,
-                o.name,
-                o.orderDate,
-                o.paymentMethod,
-                o.status,
-                o.total
-            ])
+           data: orderData.map(o => [
+    o.Email,           // Changed from o.email
+    o.Name,            // Changed from o.name
+    o.OrderDate,       // Changed from o.orderDate
+    o.PaymentMethod,   // Changed from o.paymentMethod
+    o.Status,          // Changed from o.status
+    o.Total            // Changed from o.total
+])
         }).render(document.getElementById("table-gridjs11112"));
     });
 </script>
