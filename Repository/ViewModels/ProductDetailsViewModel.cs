@@ -18,14 +18,9 @@ namespace Repository.ViewModels
         public bool IsActive { get; set; } = false;
         public bool IsOnSale { get; set; } // Có đang giảm giá?
         public string? StoreName { get; set; }
-        
 
-<<<<<<< Updated upstream
-        public string Size { get; set; }
-=======
         public Dictionary<string, decimal> SizeWithPrice { get; set; } = new Dictionary<string, decimal>();
         public List<string> size { get; set; } = new List<string>();
->>>>>>> Stashed changes
         public int Stocks { get; set; }
         public string CategoryName { get; set; }
         public decimal Price { get; set; } = 0;

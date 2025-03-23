@@ -134,9 +134,9 @@ namespace ProductsService.Controllers
 
             if (price != null)
             {
-<<<<<<< Updated upstream
+
                 var ProductSize = await _productVariantService.FindAsync(s => s.ProductID == id);
-=======
+
                 var getFullsize = await this._productVariantService.ListAsync(s => s.ProductID == id && s.IsActive == true);
 
                 foreach(var item in getFullsize)
@@ -144,7 +144,7 @@ namespace ProductsService.Controllers
                     producct.size.Add(item.Size);
 
                 }
->>>>>>> Stashed changes
+
 
                 var storeName = await _storeDetailService.FindAsync(t => t.ID == productDetail.StoreID);
                 var categoryName = await _categoryService.FindAsync(c => c.ID == productDetail.CateID);
@@ -158,7 +158,7 @@ namespace ProductsService.Controllers
                 producct.LongDescription = productDetail.LongDescription;
                 producct.CreatedDate = productDetail.CreatedDate;
                 producct.Stocks = ProductSize.Stock;
-                producct.Size = price.Size;
+              
             }
             else
             {
