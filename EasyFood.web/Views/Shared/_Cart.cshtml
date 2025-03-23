@@ -1,11 +1,11 @@
 ﻿@model List<Repository.ViewModels.CartViewModels>
 
 <div class="header-action-icon-2">
-    <a class="mini-cart-icon" href="shop-cart.html">
+    <a class="mini-cart-icon" asp-controller="Home" asp-action="Cart">
         <img alt="Nest" src="~/assets/imgs/theme/icons/icon-cart.svg" />
         <span class="pro-count blue">@(Model?.Count ?? 0)</span>
     </a>
-    <a href="shop-cart.html"><span class="lable">Cart</span></a>
+    <a asp-controller="Home" asp-action="Cart"><span class="lable">Cart</span></a>
 
     <div class="cart-dropdown-wrap cart-dropdown-hm2">
         @if (Model == null || !Model.Any())
@@ -19,12 +19,12 @@
                 {
                     <li>
                         <div class="shopping-cart-img">
-                            <a href="shop-product-right.html">
+                            <a asp-controller="Home" asp-action="Cart">
                                 <img alt="@item.ProductName" src="@item.img" />
                             </a>
                         </div>
                         <div class="shopping-cart-title">
-                            <h4><a href="shop-product-right.html">@item.ProductName</a></h4>
+                            <h4><a asp-controller="Home" asp-action="Cart">@item.ProductName</a></h4>
                             <h4><span>@item.quantity × </span>@item.price</h4>
                         </div>
                         <div class="shopping-cart-delete">
