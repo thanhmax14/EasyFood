@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Models;
 using Repository.ViewModels;
 using System.Runtime.InteropServices;
@@ -102,9 +103,9 @@ namespace UserAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Edit(string id, [FromBody] UsersViewModel obj)
+        public async Task<IActionResult> Edit(string id, [FromBody] IndexUserViewModels obj)
         {
-            if (obj == null)
+            if (obj.userView == null)
             {
                 return BadRequest(new { message = "Dữ liệu không hợp lệ." });
             }
@@ -114,17 +115,25 @@ namespace UserAPI.Controllers
             {
                 return NotFound(new { message = "Không tìm thấy user." });
             }
+            if(!string.IsNullOrEmpty(obj.userView.PhoneNumber))
+            {
+                var existPhone = await _userManager.Users.Where(x => x.PhoneNumber == obj.userView.PhoneNumber && x.Id != id).FirstOrDefaultAsync();
+
+                if (existPhone != null)
+                {
+                    return BadRequest(new { success = false, message = "Số điện thoại đã được sử dụng bởi người dùng khác." });
+                }
+            }
 
             // Cập nhật thông tin
-            user.Birthday = obj.Birthday;
-            user.Address = obj.Address;
-            user.img = obj.img;
-            user.RequestSeller = obj.RequestSeller;
-            user.isUpdateProfile = obj.isUpdateProfile;
+            user.Birthday = obj.userView.Birthday;
+            user.Address = obj.userView.Address;
+            user.img = obj.userView.img;
+            user.isUpdateProfile = obj.userView.isUpdateProfile;
             user.ModifyUpdate = DateTime.UtcNow;
-            user.PhoneNumber = obj.PhoneNumber;
-            user.UserName = obj.UserName;
-            user.Email = obj.Email;
+            user.PhoneNumber = obj.userView.PhoneNumber;
+            user.UserName = obj.userView.UserName;
+            user.Email = obj.userView.Email;
             /*   _mapper.Map(obj, user);*/
 
             var result = await _userManager.UpdateAsync(user);
@@ -160,6 +169,13 @@ namespace UserAPI.Controllers
             if (user == null)
             {
                 return NotFound(new { message = "Không tìm thấy user." });
+            }
+            // Kiểm tra rỗng Address, PhoneNumber, Birthday
+            if (string.IsNullOrEmpty(user.Address) ||
+                string.IsNullOrEmpty(user.PhoneNumber) ||
+                user.Birthday == null || user.Birthday == DateTime.MinValue)
+            {
+                return BadRequest(new { message = "Vui lòng cập nhật đầy đủ thông tin trước khi đăng ký seller." });
             }
             // Cập nhật trạng thái RequestSeller
             user.RequestSeller = "1"; // Đánh dấu yêu cầu đăng ký seller
@@ -277,19 +293,32 @@ namespace UserAPI.Controllers
         [HttpPost("UpdateCart/{id}")]
         public async Task<IActionResult> UpdateCart([FromBody] CartItem obj)
         {
+            var productVarian = await _productVariantService.FindAsync(x => x.ProductID == obj.ProductID);
             var carItem = await _cartService.FindAsync(x => x.ProductID == obj.ProductID);
-            if(carItem == null)
+
+            if (carItem == null)
             {
                 return BadRequest(new { message = "Cart not found" });
             }
+
+            int currentQuantity = carItem.Quantity;
+
+            // 🚨 Nếu đang tăng số lượng thì kiểm tra tồn kho
+            if (obj.quantity > currentQuantity && obj.quantity > productVarian.Stock)
+            {
+                return BadRequest(new { message = $"Số lượng vượt quá tồn kho! Chỉ còn {productVarian.Stock} sản phẩm." });
+            }
+
+            // Cập nhật số lượng (tăng hoặc giảm)
             carItem.Quantity = obj.quantity;
             await _cartService.UpdateAsync(carItem);
             await _cartService.SaveChangesAsync();
-            var product = await _productService.FindAsync(x => x.ID == obj.ProductID);
-          /*  var Productvar = await _productVariantService.FindAsync(x => x.ProductID == product.ID);
-            decimal subtotal = carItem.Quantity * (Productvar?.Price ?? 0);*/
+
             return Ok(new { success = true });
         }
+
+
+
         [HttpPost("DeleteCart/{id}")]
         public async Task<IActionResult> DeleteCart(Guid id)
         {

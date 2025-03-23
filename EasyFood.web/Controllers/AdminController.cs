@@ -2,6 +2,7 @@
 using System.Text.Json;
 using AutoMapper;
 using BusinessLogic.Services.BalanceChanges;
+using BusinessLogic.Services.ProductVariants;
 using BusinessLogic.Services.StoreDetail;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +23,7 @@ namespace EasyFood.web.Controllers
         private readonly StoreDetailsRepository _storeRepository;
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        
         public AdminController(UserManager<AppUser> userManager, IStoreDetailService storeService, IMapper mapper, IWebHostEnvironment webHostEnvironment, StoreDetailsRepository storeRepository, IBalanceChangeService balance)
         {
             _userManager = userManager;
@@ -97,6 +99,8 @@ namespace EasyFood.web.Controllers
                 {
                     PropertyNameCaseInsensitive = true
                 });
+                usersViews = usersViews.OrderByDescending(x => x.RequestSeller == "1").ToList();
+
                 return View(usersViews);
             }
             catch (Exception ex)
@@ -164,9 +168,8 @@ namespace EasyFood.web.Controllers
                 return Json(new { success = false, message = "Lỗi kết nối API Gateway!" });
             }
         }
-
-
-        public async Task<IActionResult> Hidden([FromBody] UsersViewModel obj)
+     
+        public async Task<IActionResult> HiddenAccount([FromBody] UsersViewModel obj)
         {
             var admin = await _userManager.GetUserAsync(User);
             if (admin == null)
@@ -178,7 +181,7 @@ namespace EasyFood.web.Controllers
                 return RedirectToAction("Login", "Home");
             }
 
-            string apiURL = $"https://localhost:5555/Gateway/ManagementSellerService/Admin-Hiden{obj.Email}";
+            string apiURL = $"https://localhost:5555/Gateway/ManagementSellerService/Admin-Hiden/{obj.Email}";
             try
             {
                 var jsonContent = JsonSerializer.Serialize(obj);
@@ -200,7 +203,7 @@ namespace EasyFood.web.Controllers
                 return Json(new { success = false, message = "Lỗi kết nối API Gateway!" }); ;
             }
         }
-        public async Task<IActionResult> Show([FromBody] UsersViewModel obj)
+        public async Task<IActionResult> ShowAccount([FromBody] UsersViewModel obj)
         {
             var admin = await _userManager.GetUserAsync(User);
             if (admin == null)
@@ -395,7 +398,7 @@ namespace EasyFood.web.Controllers
         }
 
         [HttpPost]
-        [Route("Admin/UpdateStoreStatus")]
+        [Route("Admin/UpdateStoreStatus/{storeId}/{newStatus}")]
         public async Task<JsonResult> UpdateStoreStatus(Guid storeId, string newStatus)
         {
             bool isUpdated = await _storeService.UpdateStoreStatusAsync(storeId, newStatus);
@@ -405,7 +408,7 @@ namespace EasyFood.web.Controllers
                 return Json(new { success = false, message = "Store not found" });
             }
 
-            return Json(new { success = true, message = "Store status updated successfully" });
+            return Json(new { success = true, message = "Store status updated successfully", newStatus });
         }
 
         public async Task<IActionResult> WithdrawList()
@@ -561,6 +564,22 @@ namespace EasyFood.web.Controllers
             }
 
         }
+
+        [HttpPost]
+        [Route("Admin/UpdateStoreIsActive")]
+        public async Task<JsonResult> UpdateStoreIsActive(Guid storeId, bool isActive)
+        {
+            bool isUpdated = await _storeService.UpdateStoreIsActiveAsync(storeId, isActive);
+
+            if (!isUpdated)
+            {
+                return Json(new { success = false, message = "Store not found" });
+            }
+
+            return Json(new { success = true, message = "Store status updated successfully", isActive });
+        }
+
+        
     }
 }
 

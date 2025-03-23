@@ -1,5 +1,6 @@
 ﻿@using System.Text.Json
 @model Repository.ViewModels.IndexUserViewModels
+
 <!DOCTYPE html>
 <html class="no-js" lang="en">
 
@@ -273,7 +274,7 @@
                                         } else
                                         {
                                             <li class="nav-item">
-                                                <a class="nav-link" id="address-tab" target="_blank" asp-controller="Seller" asp-action="FeedbackList" asp-route-id="@Model.userView.StoreDeatilId"
+                                                <a class="nav-link" id="address-tab" target="_blank" asp-controller="Seller" asp-action="viewstore"
                                                    role="tab" aria-controls="address" aria-selected="true">
                                                     <i class="fi-rs-marker mr-10"></i>Management Seller
                                                 </a>
@@ -290,6 +291,12 @@
                                                 <i class="fi-rs-user mr-10"></i>Wallet
                                             </a>
                                         </li>
+                                        @* <li class="nav-item"> 
+                                            <a class="nav-link" id="Feedback-tab" data-bs-toggle="tab" href="#Feedback"
+                                               role="tab" aria-controls="Feedback" aria-selected="false">
+                                                <i class="fi-rs-shopping-bag mr-10"></i>Your Feedback
+                                            </a>
+                                        </li>*@
                                         <li class="nav-item">
                                             <a class="nav-link" href="page-login.html">
                                                 <i class="fi-rs-sign-out mr-10"></i>Logout
@@ -368,7 +375,7 @@
                                          aria-labelledby="address-tab">
                                         <div class="row justify-content-center">
                                             <div class="col-lg-8">
-                                                @if (Model.userView.RequestSeller == "1" || Model.userView.RequestSeller == "0") // Nếu chưa đăng ký seller
+                                                @if (Model.userView.RequestSeller == "0") // Nếu chưa đăng ký seller
                                                 {
                                                     <div class="card shadow-sm border-0">
                                                         <div class="card-header bg-warning text-dark text-center">
@@ -381,6 +388,13 @@
                                                             <button class="btn btn-success mt-2" id="btnRegisterSeller">Register as Seller</button>
                                                         </div>
                                                     </div>
+                                                }
+                                                else if (Model.userView.RequestSeller == "1")
+                                                {
+                                                       <div class="alert alert-info mt-3" id="approvalMessage">
+                                                <h5>Announcement!</h5>
+                                                <p>Your request has been submitted. Please wait for admin approval.</p>
+                                                </div> 
                                                 }
                                                 else if (Model.userView.RequestSeller == "3") // Nếu đã đăng ký và chờ duyệt
                                                  {
@@ -430,17 +444,17 @@
                                                         </div>
                                                         <div class="form-group col-md-12">
                                                             <label>Phone Number <span class="required">*</span></label>
-                                                            <input required class="form-control" id="PhoneNumber" name="PhoneNumber" type="text" value="@Model.userView.PhoneNumber" />
+                                                            <input  class="form-control" id="PhoneNumber" name="PhoneNumber" type="text" value="@Model.userView.PhoneNumber" />
 
                                                         </div>
                                                         <div class="form-group col-md-12">
                                                             <label>Address <span class="required">*</span></label>
-                                                            <input required class="form-control" id="Address" name="Address" type="text" value="@Model.userView.Address" />
+                                                            <input  class="form-control" id="Address" name="Address" type="text" value="@Model.userView.Address" />
 
                                                         </div>
                                                         <div class="form-group col-md-12">
                                                             <label>Birthday <span class="required">*</span></label>
-                                                            <input required class="form-control" id="Birthday" name="Birthday" type="date" value="@(Model.userView.Birthday != null ? Model.userView.Birthday.Value.ToString("yyyy-MM-dd") : "")" />
+                                                            <input  class="form-control" id="Birthday" name="Birthday" type="date" value="@(Model.userView.Birthday != null ? Model.userView.Birthday.Value.ToString("yyyy-MM-dd") : "")" />
 
 
                                                         </div>
@@ -755,7 +769,61 @@
                                         </style>
                                     </div>
 
+                                    @* ///FEEDBACK *@
+                                    @* <div class="tab-pane fade" id="Feedback" role="tabpanel" aria-labelledby="Feedback-tab">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h3 class="mb-0">Your Feedback</h3>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="table-responsive" id="table-feedback">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <script>
+                                        document.addEventListener("DOMContentLoaded", function () {
+                                            const container = document.getElementById("table-feedback");*@
+                                            @* var list = @Html.Raw(JsonSerializer.Serialize(Model.Reivew)); *@
 
+
+                                    @* // Hàm khởi tạo bảng
+                                            function initializeGrid(data) {
+                                                if (!container.dataset.gridInitialized) {
+                                                    container.innerHTML = "";
+                                                    gridInstance = new gridjs.Grid({
+                                                        columns: [
+                                                            { name: "ID", hidden: true },
+                                                            { name: "Product Name" },
+                                                            { name: "Comment" },
+                                                            { name: "Comment Date" },
+                                                            { name: "Rating" },
+                                                            { name: "Reply" }
+                                                        ],
+                                                        pagination: {
+                                                            enabled: true,
+                                                            limit: 5,
+                                                            summary: true
+                                                        },
+                                                        sort: true,
+                                                        search: true,
+                                                        data: data.map(u => [
+                                                            u.ID,
+                                                            u.ProductName,
+                                                            u.Cmt,
+                                                            new Date(u.Datecmt).toLocaleDateString(), // Sửa 'review.Datecmt' thành 'u.Datecmt'
+                                                            u.Rating,
+                                                            u.Relay // Thêm Reply vào dữ liệu
+                                                        ])
+                                                    }).render(container);
+
+                                                    container.dataset.gridInitialized = "true"; // Đánh dấu đã khởi tạo grid
+                                                }
+                                            }
+
+                                            initializeGrid(list); // Gọi hàm khởi tạo bảng với dữ liệu
+                                        });
+                                    </script>*@
 
                                 </div>
                             </div>
@@ -1064,12 +1132,15 @@
             $("#updateProfileForm").submit(function (event) {
                 event.preventDefault();
 
+                var birthdayValue = $("#Birthday").val();
                 var formData = {
-                    UserName: $("#UserName").val(),
-                    Email: $("#Email").val(),
-                    PhoneNumber: $("#PhoneNumber").val(),
-                    Address: $("#Address").val(),
-                    Birthday: $("#Birthday").val()
+                    userView: {
+                        UserName: $("#UserName").val(),
+                        Email: $("#Email").val(),
+                        PhoneNumber: $("#PhoneNumber").val(),
+                        Address: $("#Address").val(),
+                        Birthday: birthdayValue ? birthdayValue : null
+                    }
                 };
 
                 $.ajax({
@@ -1077,6 +1148,15 @@
                     type: "POST",
                     contentType: "application/json",
                     data: JSON.stringify(formData),
+                    beforeSend: function () {
+                        Swal.fire({
+                            title: "Đang cập nhật...",
+                            text: "Vui lòng chờ...",
+                            icon: "info",
+                            showConfirmButton: false,
+                            allowOutsideClick: false
+                        });
+                    },
                     success: function (response) {
                         if (response.success) {
                             Swal.fire({
@@ -1088,15 +1168,20 @@
                                 $("#account-detail").load(location.href + " #account-detail > *");
                             });
                         } else {
-                            Swal.fire("Lỗi!", response.message, "error");
+                            Swal.fire("Lỗi!", response.message || "Cập nhật thất bại!", "error");
                         }
                     },
-                    error: function () {
-                        Swal.fire("Lỗi!", "Không thể kết nối với máy chủ.", "error");
+                    error: function (xhr) {
+                        let errorMessage = "Không thể kết nối với máy chủ.";
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage = xhr.responseJSON.message;
+                        }
+                        Swal.fire("Lỗi!", errorMessage, "error");
                     }
                 });
             });
         });
+
     </script>
     <script>
         $(document).ready(function () {
@@ -1109,19 +1194,45 @@
                     contentType: "application/json",
                     success: function (response) {
                         if (response.success) {
-                            $("#approvalMessage").removeClass("d-none"); // Hiện thông báo
-                            $("#btnRegisterSeller").prop("disabled", true).text("Request Sent");
+                            Swal.fire({
+                                icon: "success",
+                                title: "Success",
+                                text: "Your seller registration request has been sent successfully!",
+                                confirmButtonText: "OK"
+                            }).then(() => {
+                                // Cập nhật #address khi đăng ký thành công
+                                $("#address").load(location.href + " #address > *");
+                            });
                         } else {
-                            alert(response.message); // Hiển thị lỗi
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error",
+                                text: response.message,
+                                confirmButtonText: "OK"
+                            }).then(() => {
+                                // Nếu lỗi do thiếu thông tin => Cập nhật lại #account-detail
+                                if (response.message.includes("Please update all required information")) {
+                                    $('#account-detail-tab').tab('show'); // Nếu bạn dùng Bootstrap tabs
+                                }
+                            });
                         }
                     },
                     error: function () {
-                        alert("Có lỗi xảy ra! Vui lòng thử lại.");
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: "An error occurred! Please try again.",
+                            confirmButtonText: "OK"
+                        });
                     }
                 });
             });
         });
+
+
+
     </script>
+
 
 
     <!-- Vendor JS-->

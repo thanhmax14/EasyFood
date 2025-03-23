@@ -196,44 +196,74 @@
                         <li class="menu-title"><span data-key="t-menu">Menu</span></li>
                         <li class="nav-item">
                             <a class="nav-link menu-link" href="">
+                                <i class="ri-bar-chart-box-line"></i> <span>User and Seller Statistics</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="">
                                 <i class=" ri-pie-chart-line"></i> <span>Revenue Statistics</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link menu-link" href="">
+                            <a class="nav-link menu-link" asp-controller="Admin" asp-action="Index">
+                                <i class="ri-account-circle-line"></i> <span>User Accounts</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" asp-controller="Admin" asp-action="ManagementSeller">
+                                <i class="ri-user-add-line"></i> <span>Seller Registration Requests</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" asp-controller="Admin" asp-action="ViewAdminStore">
                                 <i class="ri-store-2-line"></i> <span>Store</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link menu-link" href="">
-                                <i class="ri-restaurant-2-fill"></i> <span>Products</span>
+                            <a class="nav-link menu-link" asp-controller="Admin" asp-action="ViewStoreRegistration">
+                                <i class="ri-file-add-line"></i> <span>Store Registration Requests</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link menu-link" href="">
-                                <i class="ri-error-warning-line"></i> <span>Order Complaint</span>
+                            <a class="nav-link menu-link" asp-controller="Admin" asp-action="ViewCategories">
+                                <i class="ri-folder-2-line"></i> <span>Categories</span>
                             </a>
                         </li>
+                        @* <li class="nav-item"> *@
+                        @*     <a class="nav-link menu-link" href=""> *@
+                        @*         <i class=" ri-store-3-line"></i> <span>Store Types</span> *@
+                        @*     </a> *@
+                        @* </li> *@
                         <li class="nav-item">
-                            <a class="nav-link menu-link" href="">
-                                <i class="ri-question-answer-line"></i> <span>Feedback</span>
+                            <a class="nav-link menu-link" asp-controller="Admin" asp-action="WithdrawList">
+                                <i class="ri-exchange-dollar-line"></i> <span>Withdrawal Requests From Users</span>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="">
-                                <i class=" ri-file-copy-2-line"></i> <span>Sales History</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="">
-                                <i class="ri-price-tag-3-line"></i> <span>Vouchers</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="">
-                                <i class=" ri-chat-3-line"></i> <span>Chat</span>
-                            </a>
-                        </li>
+                        @* <li class="nav-item"> *@
+                        @*     <a class="nav-link menu-link" href=""> *@
+                        @*         <i class="ri-alert-line"></i> <span>Store Reports Form User</span> *@
+                        @*     </a> *@
+                        @* </li> *@
+                        @* <li class="nav-item"> *@
+                        @*     <a class="nav-link menu-link" href=""> *@
+                        @*         <i class="ri-error-warning-line"></i> <span>Order Complaint Reports From Seller</span> *@
+                        @*     </a> *@
+                        @* </li> *@
+                        @* <li class="nav-item"> *@
+                        @*     <a class="nav-link menu-link" href=""> *@
+                        @*         <i class="ri-restaurant-2-line"></i> <span>Cooking Recipes</span> *@
+                        @*     </a> *@
+                        @* </li> *@
+                        @* <li class="nav-item"> *@
+                        @*     <a class="nav-link menu-link" href=""> *@
+                        @*         <i class=" ri-chat-3-line"></i> <span>Chat</span> *@
+                        @*     </a> *@
+                        @* </li> *@
+                        @* <li class="nav-item"> *@
+                        @*     <a class="nav-link menu-link" href=""> *@
+                        @*         <i class="ri-notification-2-line"></i> <span>Notifications</span> *@
+                        @*     </a> *@
+                        @* </li> *@
                     </ul>
                 </div>
                 </li>
@@ -290,158 +320,194 @@
                 </div>
                 <!-- end row -->
 
+                <table id="table-stores"></table>
+
                 <script>
                     document.addEventListener("DOMContentLoaded", function () {
-                        if (document.getElementById("table-stores")) {
-                            var stores = @Html.Raw(JsonSerializer.Serialize(Model, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }));
+                        const tableStores = document.getElementById("table-stores");
+                        if (!tableStores) return;
 
-                            function updateStoreStatus(storeId, action, buttonElement) {
-                                let url = action === "hide" ? "/Admin/Hidden" : "/Admin/Show";
+                        // Lấy danh sách store từ Model (chuyển sang JSON)
+                        const stores = @Html.Raw(JsonSerializer.Serialize(Model, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }));
 
-                                fetch(url, {
-                                    method: "POST",
-                                    headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify(storeId)
-                                })
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        if (data.success) {
-                                            Swal.fire({
-                                                icon: "success",
-                                                title: action === "hide" ? "Store hidden successfully" : "Store shown successfully",
-                                                timer: 1500,
-                                                showConfirmButton: false
-                                            });
-
-                                            // Cập nhật trực tiếp trên UI
-                                            let statusBadge = buttonElement.closest("tr").querySelector(".status-badge");
-                                            let hideBtn = buttonElement.closest("tr").querySelector(".hide-store-btn");
-                                            let showBtn = buttonElement.closest("tr").querySelector(".show-store-btn");
-
-                                            if (action === "hide") {
-                                                statusBadge.classList.remove("bg-success-subtle", "text-success");
-                                                statusBadge.classList.add("bg-danger-subtle", "text-danger");
-                                                statusBadge.textContent = "Disabled";
-                                                hideBtn.style.display = "none";
-                                                showBtn.style.display = "block";
-                                            } else {
-                                                statusBadge.classList.remove("bg-danger-subtle", "text-danger");
-                                                statusBadge.classList.add("bg-success-subtle", "text-success");
-                                                statusBadge.textContent = "Active";
-                                                showBtn.style.display = "none";
-                                                hideBtn.style.display = "block";
-                                            }
-                                        } else {
-                                            Swal.fire({
-                                                icon: "error",
-                                                title: "Error",
-                                                text: "Failed to update store status."
-                                            });
-                                        }
-                                    })
-                                    .catch(error => {
-                                        console.error("Error:", error);
-                                        Swal.fire({
-                                            icon: "error",
-                                            title: "Error",
-                                            text: "Something went wrong!"
-                                        });
-                                    });
-                            }
-
-                            new gridjs.Grid({
-                                columns: [
-                                    // Không thêm cột ID vào đây để nó không hiển thị trên bảng
-                                    { name: "ID", hidden: true }, // Cột ID ẩn
-                                    { name: "Store Name", width: "200px" },
-                                    { name: "User Name", width: "150px" },
-                                    { name: "Created Date", width: "150px" },
-                                    { name: "Modified Date", width: "150px" },
-                                    { name: "Short Description", width: "250px" },
-                                    { name: "Long Description", width: "250px" },
-                                    { name: "Address", width: "200px" },
-                                    { name: "Phone", width: "150px" },
-                                    {
-                                        name: "Image",
-                                        width: "100px",
-                                        formatter: (cell) => gridjs.html(`<img src="${cell}" width="50" height="50" class="rounded-circle" />`)
-                                    },
-                                    {
-                                        name: "Status",
-                                        width: "150px",
-                                        formatter: (cell) => {
-                                            let statusText = cell ? "Active" : "Disabled";
-                                            let statusClass = cell ? "bg-success-subtle text-success" : "bg-danger-subtle text-danger";
-                                            return gridjs.html(`<span class="badge status-badge ${statusClass}">${statusText}</span>`);
-                                        }
-                                    },
-                                    {
-                                        name: "Actions",
-                                        width: "100px",
-                                        formatter: (_, row) => {
-                                            let storeId = row._cells[0].data; // Lấy ID từ dòng (ẩn trong UI)
-                                            let isActive = row._cells[row._cells.length - 1].data;
-                                            return gridjs.html(`
-                                            <div class="dropdown">
-                                                <button class="btn btn-soft-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                    <i class="ri-more-fill align-middle"></i>
-                                                </button>
-                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                    <li>
-                                                        <a class="dropdown-item hide-store-btn" data-id="${storeId}" style="${isActive ? '' : 'display:none;'}">
-                                                            <i class="ri-eye-off-fill align-bottom me-2 text-muted"></i> Hide
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item show-store-btn" data-id="${storeId}" style="${isActive ? 'display:none;' : ''}">
-                                                            <i class="ri-eye-fill align-bottom me-2 text-muted"></i> Show
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        `);
-                                        }
+                        // Hiển thị bảng với Grid.js
+                        new gridjs.Grid({
+                            columns: [
+                                { name: "ID", hidden: true },
+                                { name: "Store Name", width: "200px" },
+                                { name: "User Name", width: "150px" },
+                                { name: "Created Date", width: "150px" },
+                                { name: "Modified Date", width: "150px" },
+                                { name: "Short Description", width: "250px" },
+                                { name: "Long Description", width: "250px" },
+                                { name: "Address", width: "200px" },
+                                { name: "Phone", width: "150px" },
+                                {
+                                    name: "Image",
+                                    width: "100px",
+                                    formatter: (cell) => gridjs.html(`<img src="${cell}" width="50" height="50" class="rounded-circle" />`)
+                                },
+                                {
+                                    name: "Status",
+                                    width: "150px",
+                                    formatter: (cell) => {
+                                        let statusText = cell ? "Active" : "Disabled";
+                                        let statusClass = cell ? "bg-success-subtle text-success" : "bg-danger-subtle text-danger";
+                                        return gridjs.html(`<span class="badge status-badge ${statusClass}">${statusText}</span>`);
                                     }
-                                ],
-                                pagination: { enabled: true, limit: 10 },
-                                search: true,
-                                sort: true,
-                                data: stores.map(store => [
-                                    store.id, // Giữ ID ở đây nhưng không hiển thị nó trên bảng
-                                    store.name,
-                                    store.userName,
-                                    store.createdDate,
-                                    store.modifiedDate ?? "N/A",
-                                    store.shortDescriptions,
-                                    store.longDescriptions,
-                                    store.address,
-                                    store.phone,
-                                    store.img,
-                                    store.isActive
-                                ])
-                            }).render(document.getElementById("table-stores"));
+                                },
+                                {
+                                    name: "Actions",
+                                    width: "100px",
+                                    formatter: (_, row) => {
+                                        let storeId = row._cells[0].data;
+                                        let isActive = row._cells[10].data; // Lấy chính xác trạng thái
 
+                                        // Nếu isActive = true (cửa hàng đang Active) thì hiển thị nút "Hide", ngược lại hiển thị "Show"
+                                        let actionButton = isActive
+                                            ? `<a class="dropdown-item toggle-store-btn" data-id="${storeId}" data-active="true">
+                                        <i class="ri-eye-off-fill align-bottom me-2 text-muted"></i> Hide
+                                   </a>`
+                                            : `<a class="dropdown-item toggle-store-btn" data-id="${storeId}" data-active="false">
+                                        <i class="ri-eye-fill align-bottom me-2 text-muted"></i> Show
+                                   </a>`;
 
-                            document.addEventListener("click", function (event) {
-                                let hideBtn = event.target.closest(".hide-store-btn");
-                                let showBtn = event.target.closest(".show-store-btn");
-
-                                if (hideBtn) {
-                                    let storeId = hideBtn.dataset.id;
-                                    updateStoreStatus(storeId, "hide", hideBtn);
+                                        return gridjs.html(`
+                                <div class="dropdown">
+                                    <button class="btn btn-soft-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="ri-more-fill align-middle"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li>${actionButton}</li>
+                                    </ul>
+                                </div>
+                            `);
+                                    }
                                 }
+                            ],
+                            pagination: { enabled: true, limit: 10 },
+                            search: true,
+                            sort: true,
+                            data: stores.map(store => [
+                                store.id,
+                                store.name,
+                                store.userName,
+                                formatDate(store.createdDate),
+                                formatDate(store.modifiedDate) ?? "N/A",
+                                store.shortDescriptions,
+                                store.longDescriptions,
+                                store.address,
+                                store.phone,
+                                store.img,
+                                store.isActive
+                            ])
+                        }).render(tableStores);
 
-                                if (showBtn) {
-                                    let storeId = showBtn.dataset.id;
-                                    updateStoreStatus(storeId, "show", showBtn);
+                        // Format ngày (dd/MM/yyyy)
+                        function formatDate(dateString) {
+                            if (!dateString) return "";
+                            let date = new Date(dateString);
+                            return date.toLocaleDateString("en-GB");
+                        }
+
+                        // Lắng nghe sự kiện click vào nút Show/Hide
+                        document.addEventListener("click", function (event) {
+                            let button = event.target.closest(".toggle-store-btn");
+                            if (!button) return;
+
+                            let storeId = button.dataset.id;
+                            let isActive = button.dataset.active === "true" ? false : true;
+
+                            confirmUpdate(storeId, isActive, button);
+                        });
+
+                        // Hiển thị hộp thoại xác nhận
+                        function confirmUpdate(storeId, isActive, button) {
+                            let action = isActive ? "Show" : "Hide";
+                            let icon = isActive ? "success" : "warning";
+
+                            Swal.fire({
+                                title: `Are you sure you want to ${action} this store?`,
+                                icon: icon,
+                                showCancelButton: true,
+                                confirmButtonText: `Yes, ${action}`,
+                                cancelButtonText: "Cancel"
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    updateStoreStatus(storeId, isActive, button);
                                 }
                             });
+                        }
+
+                        // Gửi request cập nhật trạng thái Store
+                        function updateStoreStatus(storeId, isActive, button) {
+                            fetch(`/Admin/UpdateStoreIsActive?storeId=${storeId}&isActive=${isActive}`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' }
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        Swal.fire({
+                                            title: "Success!",
+                                            text: "Store status updated successfully.",
+                                            icon: "success",
+                                            timer: 2000,
+                                            showConfirmButton: false
+                                        });
+
+                                        // Cập nhật giao diện
+                                        updateUIAfterToggle(button, isActive);
+                                    } else {
+                                        Swal.fire({ title: "Error!", text: data.message, icon: "error" });
+                                    }
+                                })
+                                .catch(error => {
+                                    Swal.fire({ title: "Error!", text: "An unexpected error occurred.", icon: "error" });
+                                    console.error('Error:', error);
+                                });
+                        }
+
+                        // Cập nhật UI sau khi cập nhật trạng thái Store
+                        function updateUIAfterToggle(button, isActive) {
+                            button.dataset.active = isActive;
+                            button.innerHTML = isActive
+                                ? `<i class="ri-eye-off-fill align-bottom me-2 text-muted"></i> Hide`
+                                : `<i class="ri-eye-fill align-bottom me-2 text-muted"></i> Show`;
+
+                            // Cập nhật badge trạng thái (Active/Disabled)
+                            let statusBadge = button.closest("tr").querySelector(".status-badge");
+                            if (statusBadge) {
+                                statusBadge.classList.remove("bg-success-subtle", "text-success", "bg-danger-subtle", "text-danger");
+                                if (isActive) {
+                                    statusBadge.classList.add("bg-success-subtle", "text-success");
+                                    statusBadge.textContent = "Active";
+                                } else {
+                                    statusBadge.classList.add("bg-danger-subtle", "text-danger");
+                                    statusBadge.textContent = "Disabled";
+                                }
+                            }
+
+                            // Cập nhật lại nút Show/Hide trong dropdown
+                            let dropdownMenu = button.closest(".dropdown-menu");
+                            if (dropdownMenu) {
+                                dropdownMenu.innerHTML = isActive
+                                    ? `<li><a class="dropdown-item toggle-store-btn" data-id="${button.dataset.id}" data-active="true">
+                                                    <i class="ri-eye-off-fill align-bottom me-2 text-muted"></i> Hide
+                                               </a></li>`
+                                    : `<li><a class="dropdown-item toggle-store-btn" data-id="${button.dataset.id}" data-active="false">
+                                                    <i class="ri-eye-fill align-bottom me-2 text-muted"></i> Show
+                                               </a></li>`;
+                            }
                         }
                     });
                 </script>
 
+                <!-- SweetAlert2 -->
+                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-
+                <!-- SweetAlert2 -->
+                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
                 <!-- end row -->
 

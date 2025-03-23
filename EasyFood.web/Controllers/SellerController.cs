@@ -1,21 +1,20 @@
 ﻿using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Text.Json;
 using AutoMapper;
 using BusinessLogic.Services.Products;
+using BusinessLogic.Services.ProductVariants;
+using BusinessLogic.Services.ProductVariantVariants;
 using BusinessLogic.Services.Reviews;
 using BusinessLogic.Services.StoreDetail;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis;
 using Models;
 using Repository.StoreDetails;
 using Repository.ViewModels;
-using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using BusinessLogic.Services.ProductVariantVariants;
-using BusinessLogic.Services.ProductVariants;
-using Microsoft.CodeAnalysis;
 
 namespace EasyFood.web.Controllers
 {
@@ -157,27 +156,26 @@ namespace EasyFood.web.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Lấy UserId của người đăng nhập
             if (userId == null)
             {
-                return RedirectToAction("Login", "Account"); // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
+                return RedirectToAction("Login", "Account");
             }
 
-            bool isSeller = await _storeRepository.IsUserSellerAsync(userId); // Kiểm tra xem có phải seller không
+            bool isSeller = await _storeRepository.IsUserSellerAsync(userId);
             if (!isSeller)
             {
                 TempData["ErrorMessage"] = "Bạn không phải là seller!";
-                return RedirectToAction("Index", "Home"); // Chuyển hướng nếu không phải seller
+                return RedirectToAction("Index", "Home");
             }
 
-            var stores = await _storeDetailService.GetStoresByUserIdAsync(userId); // Lấy danh sách store của user
+            var stores = await _storeDetailService.GetStoresByUserIdAsync(userId);
 
-            //if (stores == null || !stores.Any()) // Kiểm tra nếu không có store nào
-            //{
-            //    TempData["NoStoreMessage"] = "Bạn chưa có store nào. Hãy đăng ký ngay!";
-            //    return RedirectToAction("CreateStore", "Seller"); // Chuyển hướng đến trang đăng ký store
-            //}
-
+            // Kiểm tra nếu có store nhưng đang chờ duyệt
+            bool hasPendingStore = stores.Any(s => s.Status == "PENDING");
+            // Kiểm tra nếu có store bị khóa
+            bool hasLockedStore = stores.Any(s => !s.IsActive);
+            ViewBag.HasPendingStore = hasPendingStore; // Truyền thông tin ra View
+            ViewBag.HasLockedStore = hasLockedStore;
             return View(stores);
         }
-
 
         [Authorize]
         [HttpPost]
@@ -398,6 +396,7 @@ namespace EasyFood.web.Controllers
             ViewBag.ProductId = productId; // Lưu ProductId để sử dụng trong View
             return View(variants);
         }
+
         [HttpGet]
         public IActionResult CreateProductVariant(Guid productId)
         {
@@ -620,6 +619,13 @@ namespace EasyFood.web.Controllers
             {
                 return StatusCode(500, new ErroMess { success = false, msg = "Lỗi kết nối API Gateway!" });
             }
+        }
+
+        [HttpPost]
+        public JsonResult UpdateProductVariantStatus(Guid variantId, bool isActive)
+        {
+            var result = _variantService.UpdateProductVariantStatus(variantId, isActive);
+            return Json(new { success = result });
         }
     }
 }

@@ -144,9 +144,9 @@ namespace BusinessLogic.Services.StoreDetail
             return await _repositorys.GetStoresAsync();
         }
 
-        public async Task UpdateStoreStatusAsync(int storeId, bool isActive)
+        public async Task<bool> UpdateStoreIsActiveAsync(Guid storeId, bool isActive)
         {
-            await _repositorys.UpdateStoreStatusAsync(storeId, isActive);
+            return await _repositorys.UpdateStoreIsActiveAsync(storeId, isActive);
         }
 
         public Task<List<StoreViewModel>> GetStoreRegistrationRequestsAsync()
@@ -180,7 +180,12 @@ namespace BusinessLogic.Services.StoreDetail
         public async Task<IEnumerable<StoreViewModel>> GetStoresByUserIdAsync(string? userId)
         {
             var stores = await _repositorys.GetStoresByUserIdAsync(userId);
-            return stores.Where(s => s.Status.ToLower() == "approved" && s.IsActive);
+            return stores.Where(s => s.Status.ToLower() == "approved");
         }
+
+        //public Task<bool> UpdateStoreStatusAsync(Guid storeId, bool newStatus)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

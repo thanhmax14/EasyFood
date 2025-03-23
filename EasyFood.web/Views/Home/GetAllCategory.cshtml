@@ -1,4 +1,4 @@
-﻿@model List<Repository.ViewModels.StoreViewModel>;
+﻿@model List<Repository.ViewModels.CategoryViewModel>;
 <!DOCTYPE html>
 <html class="no-js" lang="en">
 
@@ -16,33 +16,20 @@
     <link rel="shortcut icon" type="image/x-icon" href="~/assets/imgs/theme/favicon.svg" />
     <!-- Template CSS -->
     <link rel="stylesheet" href="~/assets/css/main.css?v=6.0" />
-   
+
 </head>
 
 <body>
     @await Html.PartialAsync("_Header")
-   
+  
     <!--End header-->
     <main class="main pages mb-80">
-        <div class="page-header breadcrumb-wrap">
-           
-        </div>
+       
         <div class="page-content pt-50">
             <div class="container">
                 <div class="archive-header-2 text-center">
-                    <h1 class="display-2 mb-50">Stores List</h1>
-                    <div class="row">
-                        <div class="col-lg-5 mx-auto">
-                            <div class="sidebar-widget-2 widget_search mb-50">
-                                @* <div class="search-form"> *@
-                                @*     <form action="#"> *@
-                                @*         <input type="text" placeholder="Search stores by name" /> *@
-                                @*         <button type="submit"><i class="fi-rs-search"></i></button> *@
-                                @*     </form> *@
-                                @* </div> *@
-                            </div>
-                        </div>
-                    </div>
+                    <h1 class="display-2 mb-50">Categories List</h1>
+                   
                 </div>
                 <div class="row mb-50">
                     <div class="col-12 col-lg-8 mx-auto">
@@ -51,29 +38,31 @@
                     </div>
                 </div>
                 <div class="row vendor-grid">
-                   
-                    @if(Model.Any()){
 
-                        foreach(var item in Model){
+                    @if (Model.Any())
+                    {
+
+                        foreach (var item in Model)
+                        {
 
                             <div class="col-lg-6 col-md-6 col-12 col-sm-6">
                                 <div class="vendor-wrap style-2 mb-40">
-                                  
+
                                     <div class="vendor-img-action-wrap">
                                         <div class="vendor-img">
-                                            <a asp-action="GetStoreDetail" asp-controller="Home" asp-route-id="@item.ID">
+                                            <a asp-action="GetAllProductOfCategory" asp-controller="Home" asp-route-id="@item.ID">
                                                 <img class="default-img" src="@item.Img" alt="" />
                                             </a>
                                         </div>
-                                      
+                                       
                                     </div>
                                     <div class="vendor-content-wrap">
                                         <div class="mb-30">
                                             <div class="product-category">
-                                                <span class="text-muted">@(item.CreatedDate.ToString("dd/MM/yyyy") ?? "N/A")</span>
+                                                <span class="text-muted">@(item.CreatedDate?.ToString("dd/MM/yyyy") ?? "N/A")</span>
                                             </div>
 
-                                            <h4><a asp-action="GetStoreDetail" asp-controller="Home" asp-route-id="@item.ID">@item.Name</a></h4>
+                                            <h4><a href="#">@item.Name</a></h4>
                                             <div class="product-rate-cover">
                                                 <div class="product-rate d-inline-block">
                                                     <div class="product-rating" style="width: 90%"></div>
@@ -81,35 +70,15 @@
                                                 <span class="font-small ml-5 text-muted"> (4.0)</span>
                                             </div>
                                             <div class="vendor-info d-flex justify-content-between align-items-end mt-30">
-                                                <ul class="contact-infor text-muted">
-                                                    <li>
-                                                        <img src="~/assets/imgs/theme/icons/icon-location.svg"
-                                                             alt="" /><strong>Shop: </strong> <span>
-                                                            @item.Address
-                                                        </span>
-                                                    </li>
-                                                  
-                                                    <li>
-                                                        <img src="~/assets/imgs/theme/icons/icon-contact.svg"
-                                                             alt="" /><strong>Call Us:</strong><span>
-                                                            @item.Phone
-                                                        </span>
-                                                    </li>
-                                                    <li>
-                                                        <img src="~/assets/imgs/theme/icons/icon-location.svg"
-                                                             alt="" /><strong>Description :</strong> <span>
-                                                            @item.ShortDescriptions
-                                                        </span>
-                                                    </li>
-                                                </ul>
+                                              
 
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="vendor-content-wrap mt-170">
-                                        <a asp-action="GetStoreDetail" asp-controller="Home" asp-route-id="@item.ID" class="btn btn-xs">
-                                            Visit Store <i class="fi-rs-arrow-small-right"></i>
+                                        <a href="vendor-details-1.html" class="btn btn-xs">
+                                            Details <i class="fi-rs-arrow-small-right"></i>
                                         </a>
                                     </div>
                                 </div>
@@ -118,29 +87,29 @@
                         }
                     }
 
-                        
-                    
-                    
+
+
+
                     <!--end vendor card-->
                     <!--end vendor card-->
 
-                    @* <div class="pagination-area mt-20 mb-20"> *@
-                    @*     <nav aria-label="Page navigation example"> *@
-                    @*         <ul class="pagination justify-content-start"> *@
-                    @*             <li class="page-item"> *@
-                    @*                 <a class="page-link" href="#"><i class="fi-rs-arrow-small-left"></i></a> *@
-                    @*             </li> *@
-                    @*             <li class="page-item"><a class="page-link" href="#">1</a></li> *@
-                    @*             <li class="page-item active"><a class="page-link" href="#">2</a></li> *@
-                    @*             <li class="page-item"><a class="page-link" href="#">3</a></li> *@
-                    @*             <li class="page-item"><a class="page-link dot" href="#">...</a></li> *@
-                    @*             <li class="page-item"><a class="page-link" href="#">6</a></li> *@
-                    @*             <li class="page-item"> *@
-                    @*                 <a class="page-link" href="#"><i class="fi-rs-arrow-small-right"></i></a> *@
-                    @*             </li> *@
-                    @*         </ul> *@
-                    @*     </nav> *@
-                    @* </div> *@
+                    <div class="pagination-area mt-20 mb-20">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-start">
+                                <li class="page-item">
+                                    <a class="page-link" href="#"><i class="fi-rs-arrow-small-left"></i></a>
+                                </li>
+                                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item active"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                                <li class="page-item"><a class="page-link" href="#">6</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#"><i class="fi-rs-arrow-small-right"></i></a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
             </div>
     </main>

@@ -176,7 +176,7 @@ namespace Repository.Products
             product.LongDescription = model.LongDescription;
             product.ManufactureDate = model.ManufactureDate;
             product.ModifiedDate = DateTime.UtcNow;
-            product.IsActive = model.IsActive;
+            //product.IsActive = model.IsActive;
             product.IsOnSale = model.IsOnSale;
             product.CateID = model.CateID;
 

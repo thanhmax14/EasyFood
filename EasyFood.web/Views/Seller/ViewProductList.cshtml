@@ -200,40 +200,40 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link menu-link" href="">
+                            <a class="nav-link menu-link" asp-controller="seller" asp-action="ViewStore">
                                 <i class="ri-store-2-line"></i> <span>Store</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link menu-link" href="">
+                            <a class="nav-link menu-link" asp-controller="seller" asp-action="ViewProductList">
                                 <i class="ri-restaurant-2-fill"></i> <span>Products</span>
                             </a>
                         </li>
+                        @* <li class="nav-item"> *@
+                        @*     <a class="nav-link menu-link" href=""> *@
+                        @*         <i class="ri-error-warning-line"></i> <span>Order Complaint</span> *@
+                        @*     </a> *@
+                        @* </li> *@
                         <li class="nav-item">
-                            <a class="nav-link menu-link" href="">
-                                <i class="ri-error-warning-line"></i> <span>Order Complaint</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="">
+                            <a class="nav-link menu-link" asp-controller="seller" asp-action="feedbacklist">
                                 <i class="ri-question-answer-line"></i> <span>Feedback</span>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="">
-                                <i class=" ri-file-copy-2-line"></i> <span>Sales History</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="">
-                                <i class="ri-price-tag-3-line"></i> <span>Vouchers</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="">
-                                <i class=" ri-chat-3-line"></i> <span>Chat</span>
-                            </a>
-                        </li>
+                        @* <li class="nav-item"> *@
+                        @*     <a class="nav-link menu-link" href=""> *@
+                        @*         <i class=" ri-file-copy-2-line"></i> <span>Sales History</span> *@
+                        @*     </a> *@
+                        @* </li> *@
+                        @* <li class="nav-item"> *@
+                        @*     <a class="nav-link menu-link" href=""> *@
+                        @*         <i class="ri-price-tag-3-line"></i> <span>Vouchers</span> *@
+                        @*     </a> *@
+                        @* </li> *@
+                        @* <li class="nav-item"> *@
+                        @*     <a class="nav-link menu-link" href=""> *@
+                        @*         <i class=" ri-chat-3-line"></i> <span>Chat</span> *@
+                        @*     </a> *@
+                        @* </li> *@
                     </ul>
                 </div>
                 </li>
@@ -276,8 +276,11 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card">
-                            <div class="card-header">
+                            <div class="card-header d-flex justify-content-between align-items-center">
                                 <h4 class="card-title mb-0">Product List</h4>
+                                <button onclick="goBack()" class="btn btn-secondary">
+                                    <i class="ri-arrow-left-line"></i> Back to List
+                                </button>
                             </div>
                             <div class="card-body">
                                 <div class="d-flex justify-content-start mb-3">
@@ -297,13 +300,11 @@
                     </div>
                 </div>
 
-
-
                 <script>
                     document.addEventListener("DOMContentLoaded", function () {
                         var products = @Html.Raw(Json.Serialize(Model));
 
-                        if (products.length === 0) {
+                        if (!products || products.length === 0) {
                             document.getElementById("table-product").innerHTML = "<div class='alert alert-warning text-center'><p>No products available.</p></div>";
                             return;
                         }
@@ -346,6 +347,17 @@
                                     name: "Actions",
                                     width: "150px",
                                     formatter: (_, row) => {
+                                        let productId = row.cells[0].data;
+                                        let isActive = row.cells[7].data; // Cột IsActive
+
+                                        let actionButton = isActive
+                                            ? `<button class="dropdown-item" onclick="toggleProductStatus('${productId}', false)">
+                                        <i class="ri-eye-off-line text-danger align-bottom me-2"></i> Hide
+                                   </button>`
+                                            : `<button class="dropdown-item" onclick="toggleProductStatus('${productId}', true)">
+                                        <i class="ri-eye-line text-success align-bottom me-2"></i> Show
+                                   </button>`;
+
                                         return gridjs.html(`
                                 <div class="dropdown">
                                     <button class="btn btn-soft-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -353,27 +365,18 @@
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li>
-                                            <a class="dropdown-item edit-item-btn" href="/Seller/UpdateProduct?productId=${row.cells[0].data}">
+                                            <a class="dropdown-item" href="/Seller/UpdateProduct?productId=${productId}">
                                                 <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit
                                             </a>
                                         </li>
-                                                            <li>
-                                <a class="dropdown-item view-variants-btn" href="/Seller/ViewProductVariants?productId=${row.cells[0].data}">
-                                    <i class="ri-list-unordered align-bottom me-2 text-primary"></i> View Variants
-                                </a>
-                            </li>
-                                                            <!--
                                         <li>
-                                            <button class="dropdown-item" onclick="toggleProductStatus('${row.cells[0].data}', true)">
-                                                <i class="ri-eye-line align-bottom me-2 text-success"></i> Show
-                                            </button>
+                                            <a class="dropdown-item" href="/Seller/ViewProductVariants?productId=${productId}">
+                                                <i class="ri-list-unordered align-bottom me-2 text-primary"></i> View Variants
+                                            </a>
                                         </li>
                                         <li>
-                                            <button class="dropdown-item" onclick="toggleProductStatus('${row.cells[0].data}', false)">
-                                                <i class="ri-eye-off-line align-bottom me-2 text-danger"></i> Hide
-                                            </button>
+                                            ${actionButton} <!-- Chỉ hiển thị Hide hoặc Show, không hiển thị cả hai -->
                                         </li>
-                                                            -->
                                     </ul>
                                 </div>
                             `);
@@ -384,20 +387,32 @@
                             sort: true,
                             search: true,
                             data: products.map(p => [
-                                p.productId, p.name, p.shortDescription, p.longDescription, p.createdDate, p.modifiedDate,
-                                p.manufactureDate, p.isActive, p.isOnSale, p.cateName, p.storeName, p.imageUrl
+                                p.productId, p.name, p.shortDescription, p.longDescription, formatDate(p.createdDate), formatDate(p.modifiedDate),
+                                formatDate(p.manufactureDate), p.isActive, p.isOnSale, p.cateName, p.storeName, p.imageUrl
                             ])
                         }).render(document.getElementById("table-product"));
                     });
+
+                    function formatDate(dateString) {
+                        if (!dateString) return ""; // Xử lý trường hợp null hoặc undefined
+                        let date = new Date(dateString);
+                        let day = date.getDate().toString().padStart(2, '0'); // Lấy ngày, đảm bảo 2 chữ số
+                        let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Lấy tháng (bắt đầu từ 0 nên +1)
+                        let year = date.getFullYear(); // Lấy năm
+                        return `${day}/${month}/${year}`; // Ghép thành chuỗi dd/MM/yyyy
+                    }
+
+
                     function toggleProductStatus(productId, isActive) {
                         let actionText = isActive ? "show" : "hide";
+                        let confirmButtonColor = isActive ? "#28a745" : "#dc3545";
 
                         Swal.fire({
                             title: `Are you sure?`,
                             text: `Do you want to ${actionText} this product?`,
                             icon: "warning",
                             showCancelButton: true,
-                            confirmButtonColor: isActive ? "#28a745" : "#dc3545",
+                            confirmButtonColor: confirmButtonColor,
                             cancelButtonColor: "#6c757d",
                             confirmButtonText: `Yes, ${actionText} it!`
                         }).then((result) => {
@@ -429,6 +444,7 @@
                         });
                     }
                 </script>
+
 
                 <!-- end row -->
 

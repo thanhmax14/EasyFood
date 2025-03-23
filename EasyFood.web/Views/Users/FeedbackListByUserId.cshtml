@@ -1,7 +1,5 @@
-﻿@model List<Repository.ViewModels.StoreViewModel>
-@* @using Newtonsoft.Json *@
+﻿@model Repository.ViewModels.IndexUserViewModels
 @using System.Text.Json
-
 <!doctype html>
 <html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg"
       data-sidebar-image="none" data-preloader="disable" data-theme="default" data-theme-colors="default">
@@ -32,6 +30,7 @@
     <link href="~/assetsAdmin/css/app.min.css" rel="stylesheet" type="text/css" />
     <!-- custom Css-->
     <link href="~/assetsAdmin/css/custom.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/simple-notify/simple-notify.css" rel="stylesheet" />
 
 </head>
 
@@ -196,74 +195,44 @@
                         <li class="menu-title"><span data-key="t-menu">Menu</span></li>
                         <li class="nav-item">
                             <a class="nav-link menu-link" href="">
-                                <i class="ri-bar-chart-box-line"></i> <span>User and Seller Statistics</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="">
                                 <i class=" ri-pie-chart-line"></i> <span>Revenue Statistics</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link menu-link" asp-controller="Admin" asp-action="Index">
-                                <i class="ri-account-circle-line"></i> <span>User Accounts</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" asp-controller="Admin" asp-action="ManagementSeller">
-                                <i class="ri-user-add-line"></i> <span>Seller Registration Requests</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" asp-controller="Admin" asp-action="ViewAdminStore">
+                            <a class="nav-link menu-link" href="">
                                 <i class="ri-store-2-line"></i> <span>Store</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link menu-link" asp-controller="Admin" asp-action="ViewStoreRegistration">
-                                <i class="ri-file-add-line"></i> <span>Store Registration Requests</span>
+                            <a class="nav-link menu-link" href="">
+                                <i class="ri-restaurant-2-fill"></i> <span>Products</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link menu-link" asp-controller="Admin" asp-action="ViewCategories">
-                                <i class="ri-folder-2-line"></i> <span>Categories</span>
+                            <a class="nav-link menu-link" href="">
+                                <i class="ri-error-warning-line"></i> <span>Order Complaint</span>
                             </a>
                         </li>
-                        @* <li class="nav-item"> *@
-                        @*     <a class="nav-link menu-link" href=""> *@
-                        @*         <i class=" ri-store-3-line"></i> <span>Store Types</span> *@
-                        @*     </a> *@
-                        @* </li> *@
                         <li class="nav-item">
-                            <a class="nav-link menu-link" asp-controller="Admin" asp-action="WithdrawList">
-                                <i class="ri-exchange-dollar-line"></i> <span>Withdrawal Requests From Users</span>
+                            <a class="nav-link menu-link" href="">
+                                <i class="ri-question-answer-line"></i> <span>Feedback</span>
                             </a>
                         </li>
-                        @* <li class="nav-item"> *@
-                        @*     <a class="nav-link menu-link" href=""> *@
-                        @*         <i class="ri-alert-line"></i> <span>Store Reports Form User</span> *@
-                        @*     </a> *@
-                        @* </li> *@
-                        @* <li class="nav-item"> *@
-                        @*     <a class="nav-link menu-link" href=""> *@
-                        @*         <i class="ri-error-warning-line"></i> <span>Order Complaint Reports From Seller</span> *@
-                        @*     </a> *@
-                        @* </li> *@
-                        @* <li class="nav-item"> *@
-                        @*     <a class="nav-link menu-link" href=""> *@
-                        @*         <i class="ri-restaurant-2-line"></i> <span>Cooking Recipes</span> *@
-                        @*     </a> *@
-                        @* </li> *@
-                        @* <li class="nav-item"> *@
-                        @*     <a class="nav-link menu-link" href=""> *@
-                        @*         <i class=" ri-chat-3-line"></i> <span>Chat</span> *@
-                        @*     </a> *@
-                        @* </li> *@
-                        @* <li class="nav-item"> *@
-                        @*     <a class="nav-link menu-link" href=""> *@
-                        @*         <i class="ri-notification-2-line"></i> <span>Notifications</span> *@
-                        @*     </a> *@
-                        @* </li> *@
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="">
+                                <i class=" ri-file-copy-2-line"></i> <span>Sales History</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="">
+                                <i class="ri-price-tag-3-line"></i> <span>Vouchers</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="">
+                                <i class=" ri-chat-3-line"></i> <span>Chat</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
                 </li>
@@ -289,25 +258,31 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-galaxy-transparent">
-                            <h4 class="mb-sm-0">Grid Js</h4>
+                            <h4 class="mb-sm-0">Feedback List</h4>
 
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Tables</a></li>
-                                    <li class="breadcrumb-item active">Grid Js</li>
+                                    <li class="breadcrumb-item"><a href="feedbackList.html">Tables</a></li>
+                                    <li class="breadcrumb-item active">Feedback List</li>
+                                    @* <a class="dropdown-item" target="_blank" asp-controller="Seller" asp-action="ReplyFeedback" asp-route-id="@Model." *@
+                                    @*    role="tab" aria-controls="address" aria-selected="true"> *@
+                                    @*     <i class="fi-rs-marker mr-10"></i>Management Seller *@
+                                    @* </a> *@
                                 </ol>
                             </div>
 
                         </div>
                     </div>
                 </div>
+                @Html.AntiForgeryToken()
+
                 <!-- end page title -->
 
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title mb-0 flex-grow-1">Base Example</h4>
+                                <h4 class="card-title mb-0 flex-grow-1">Feedback List</h4>
                             </div><!-- end card header -->
 
                             <div class="card-body">
@@ -323,145 +298,47 @@
 
                 <script>
                     document.addEventListener("DOMContentLoaded", function () {
-                        if (document.getElementById("table-feedback")) {
-                            let storeData = @Html.Raw(Json.Serialize(Model));
+                        const container = document.getElementById("table-feedback");
+                        var list = @Html.Raw(JsonSerializer.Serialize(Model.Reivew));
+                        
 
-                            new gridjs.Grid({
-                                columns: [
-                                    { name: "ID", hidden: true },
-                                    { name: "Store Name", width: "200px" },
-                                    { name: "UserName", width: "150px" },
-                                    { name: "Created Date", width: "150px" },
-                                    { name: "Modified Date", width: "150px" },
-                                    { name: "Short Descriptions", width: "250px" },
-                                    { name: "Long Descriptions", width: "300px" },
-                                    { name: "Address", width: "250px" },
-                                    { name: "Phone", width: "150px" },
-                                    {
-                                        name: "Image",
-                                        width: "100px",
-                                        formatter: (cell) => gridjs.html(`
-                                            <img src="${cell}" alt="Store Image" width="50" height="50" style="border-radius: 5px;">
-                                        `)
+                        // Hàm khởi tạo bảng
+                        function initializeGrid(data) {
+                            if (!container.dataset.gridInitialized) {
+                                container.innerHTML = "";
+                                gridInstance = new gridjs.Grid({
+                                    columns: [
+                                        { name: "ID", hidden: true },
+                                        { name: "Product Name" },
+                                        { name: "Comment" },
+                                        { name: "Comment Date" },
+                                        { name: "Rating" },
+                                        { name: "Reply" }
+                                    ],
+                                    pagination: {
+                                        enabled: true,
+                                        limit: 5,
+                                        summary: true
                                     },
-                                    {
-                                        name: "Status",
-                                        width: "150px",
-                                        formatter: (cell) => {
-                                            let statusClass = {
-                                                "Approved": "bg-success-subtle text-success",
-                                                "Rejected": "bg-danger-subtle text-danger",
-                                                "Pending": "bg-warning-subtle text-warning"
-                                            }[cell] || "bg-secondary-subtle text-secondary";
+                                    sort: true,
+                                    search: true,
+                                    data: data.map(u => [
+                                        u.ID,
+                                        u.ProductName,
+                                        u.Cmt,
+                                        new Date(u.Datecmt).toLocaleDateString(), // Sửa 'review.Datecmt' thành 'u.Datecmt'
+                                        u.Rating,
+                                        u.Relay // Thêm Reply vào dữ liệu
+                                    ])
+                                }).render(container);
 
-                                            return gridjs.html(`<span class="badge ${statusClass}">${cell}</span>`);
-                                        }
-                                    },
-                                    {
-                                        name: "Actions",
-                                        width: "120px",
-                                        formatter: (_, row) => {
-                                            let storeId = row.cells[0].data;
-                                            let status = row.cells[10].data; // Lấy trạng thái từ cột Status
-
-                                            let actionButton = "";
-                                            if (status === "Approved") {
-                                                actionButton = `
-                                                    <button class="dropdown-item" onclick="updateStoreStatus('${storeId}', 'Rejected')">
-                                                        <i class="ri-close-line align-bottom me-2 text-danger"></i> Reject
-                                                    </button>`;
-                                            } else if (status === "Rejected") {
-                                                actionButton = `
-                                                    <button class="dropdown-item" onclick="updateStoreStatus('${storeId}', 'Approved')">
-                                                        <i class="ri-check-line align-bottom me-2 text-success"></i> Accept
-                                                    </button>`;
-                                            }
-
-                                            return gridjs.html(`
-                                                <div class="dropdown">
-                                                    <button class="btn btn-soft-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                        <i class="ri-more-fill align-middle"></i>
-                                                    </button>
-                                                    <ul class="dropdown-menu dropdown-menu-end">
-                                                        ${actionButton}
-                                                    </ul>
-                                                </div>
-                                            `);
-                                        }
-                                    }
-                                ],
-                                pagination: {
-                                    enabled: true,
-                                    limit: 10,
-                                    summary: true
-                                },
-                                search: true,
-                                sort: true,
-                                data: storeData.map(store => [
-                                    store.id,
-                                    store.name,
-                                    store.userName,
-                                    formatDate(store.createdDate),
-                                    formatDate(store.modifiedDate) ?? "N/A",
-                                    store.shortDescriptions,
-                                    store.longDescriptions,
-                                    store.address,
-                                    store.phone,
-                                    store.img,
-                                    store.status
-                                ])
-                            }).render(document.getElementById("table-feedback"));
-                        }
-                    });
-
-                    function updateStoreStatus(storeId, newStatus) {
-                        let actionText = newStatus === "Approved" ? "Accept" : "Reject";
-
-                        Swal.fire({
-                            title: `Are you sure?`,
-                            text: `Do you want to ${actionText} this store?`,
-                            icon: "warning",
-                            showCancelButton: true,
-                            confirmButtonColor: newStatus === "Approved" ? "#28a745" : "#dc3545",
-                            cancelButtonColor: "#6c757d",
-                            confirmButtonText: `Yes, ${actionText.toLowerCase()} it!`
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                fetch(`/Admin/UpdateStoreStatus/${storeId}/${newStatus}`, {  // Truyền storeId vào URL
-                                    method: "POST",
-                                    headers: { "Content-Type": "application/json" }
-                                })
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        if (data.success) {
-                                            Swal.fire({
-                                                title: "Success!",
-                                                text: `Store has been ${newStatus.toLowerCase()} successfully.`,
-                                                icon: "success",
-                                                timer: 1500,
-                                                showConfirmButton: false
-                                            }).then(() => location.reload());
-                                        } else {
-                                            Swal.fire("Error!", "Failed to update store status.", "error");
-                                        }
-                                    })
-                                    .catch(error => {
-                                        console.error("Error updating store status:", error);
-                                        Swal.fire("Error!", "An unexpected error occurred.", "error");
-                                    });
+                                container.dataset.gridInitialized = "true"; // Đánh dấu đã khởi tạo grid
                             }
-                        });
-                    }
+                        }
 
-                    // Format ngày (dd/MM/yyyy)
-                    function formatDate(dateString) {
-                        if (!dateString) return "";
-                        let date = new Date(dateString);
-                        return date.toLocaleDateString("en-GB");
-                    }
-
+                        initializeGrid(list); // Gọi hàm khởi tạo bảng với dữ liệu
+                    });
                 </script>
-
                 <!-- end row -->
 
             </div>
@@ -521,7 +398,12 @@
 
     <!-- App js -->
     <script src="~/assetsAdmin/js/app.js"></script>
-
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="~/assets/cute-alert/cute-alert.js"></script>
+    <script src="~/assets/sweetalert2/sweetalert2.js"></script>
+    <link rel="stylesheet" href="~/assets/cute-alert/style.css" />
+    <link href="~/assets/sweetalert2/default.css" rel="stylesheet" />
+    <script src="~/assets/simple-notify/simple-notify.min.js"></script>
 </body>
 
 

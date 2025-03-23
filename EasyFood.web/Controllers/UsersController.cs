@@ -6,6 +6,8 @@ using BusinessLogic.Services.Carts;
 using BusinessLogic.Services.ProductImages;
 using BusinessLogic.Services.Products;
 using BusinessLogic.Services.ProductVariants;
+using BusinessLogic.Services.Reviews;
+using BusinessLogic.Services.StoreDetail;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -24,23 +26,12 @@ namespace EasyFood.web.Controllers
         private readonly IProductService _product;
         public readonly ICartService _cart;
         public readonly IProductVariantService _productWarian;
+
         private readonly IProductImageService _img;
 
 
 
-        public UsersController(UserManager<AppUser> userManager, IBalanceChangeService balance, IHttpContextAccessor httpContextAccessor, IProductService product, ICartService cart, IProductVariantService productWarian, IProductImageService img)
-        {
-            _userManager = userManager;
-            client = new HttpClient();
-            var contentype = new MediaTypeWithQualityHeaderValue("application/json");
-            client.DefaultRequestHeaders.Accept.Add(contentype);
-            _balance = balance;
-            _httpContextAccessor = httpContextAccessor;
-            _product = product;
-            _cart = cart;
-            _productWarian = productWarian;
-            _img = img;
-        }
+
         public async Task<IActionResult> Index()
         {
             // Kiểm tra người dùng có đăng nhập hay không
@@ -57,10 +48,12 @@ namespace EasyFood.web.Controllers
             // Gọi API Gateway để lấy thông tin user theo ID
             string apiUrl = $"https://localhost:5555/Gateway/UsersService/View-Profile/{userId}";
             var urlBalace = $"https://localhost:5555/Gateway/WalletService/GetWallet";
+            //string urlFeedback = $"https://localhost:5555/Gateway/ReviewService/GetReviewByUserId/{userId}";
             try
             {
                 var response = await client.GetAsync(apiUrl);
                 var responceBalance = await this.client.GetAsync($"{urlBalace}/{user.Id}");
+                //var feedbackTask = await client.GetAsync(urlFeedback);
                 if (!response.IsSuccessStatusCode || !responceBalance.IsSuccessStatusCode)
                 {
                     return View(list);
@@ -78,6 +71,15 @@ namespace EasyFood.web.Controllers
                 list.Balance = dataRepone;
                 list.BalanceUser = await this._balance.GetBalance(user.Id);
 
+                //var feedbackJson = await feedbackTask.Content.ReadAsStringAsync();
+
+                //var feedbackOptions = new JsonSerializerOptions
+                //{
+                //    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                //    PropertyNameCaseInsensitive = true
+                //};
+                //list.Reivew = JsonSerializer.Deserialize<List<ReivewViewModel>>(feedbackJson, feedbackOptions);
+
                 return View(list);
             }
             catch (Exception)
@@ -86,17 +88,17 @@ namespace EasyFood.web.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> UpdateProfile([FromBody] UsersViewModel obj)
+        public async Task<IActionResult> UpdateProfile([FromBody] IndexUserViewModels obj)
         {
-            if (obj == null)
+            if (obj.userView == null)
             {
-                return Json(new { success = false, message = "Dữ liệu không hợp lệ." });
+                return Json(new { success = false, message = "Invalid data." });
             }
 
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return Json(new { success = false, message = "Bạn chưa đăng nhập." });
+                return Json(new { success = false, message = "You are not logged in." });
             }
 
 
@@ -110,53 +112,55 @@ namespace EasyFood.web.Controllers
 
                 if (response.IsSuccessStatusCode)
                 {
-                    return Json(new { success = true, message = "Cập nhật thành công!" });
+                    return Json(new { success = true, message = "Profile updated successfully!" });
                 }
                 else
                 {
-                    return Json(new { success = false, message = "Cập nhật thất bại!" });
+                    return Json(new { success = false, message = "Phone number is already registered by another user!" });
                 }
             }
             catch (Exception)
             {
-                return Json(new { success = false, message = "Lỗi kết nối API Gateway!" });
+                return Json(new { success = false, message = "API Gateway connection error!" });
             }
         }
+
         [HttpPost]
-        public async Task<IActionResult> RegisterSeller(UsersViewModel model)
+        public async Task<IActionResult> RegisterSeller(IndexUserViewModels model)
         {
-            if (model == null)
+            if (model.userView == null)
             {
-                return Json(new { success = false, message = "Dữ liệu không hợp lệ." });
+                return Json(new { success = false, message = "Invalid data." });
             }
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return Json(new { success = false, message = "Ban chua dang nhap" });
+                return Json(new { success = false, message = "You are not logged in." });
             }
+
             string apiUrl = $"https://localhost:5555/Gateway/UsersService/register-seller/{user.Id}";
             try
             {
                 var jsonContent = JsonSerializer.Serialize(model);
                 var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
                 var response = await client.PostAsync(apiUrl, content);
+
                 if (response.IsSuccessStatusCode)
                 {
-                    return Json(new { success = true, message = "Cập nhật thành công!" });
-
+                    return Json(new { success = true, message = "Registration successful!" });
                 }
                 else
                 {
-                    return Json(new { success = false, message = "Cập nhật thất bại!" });
-
+                    return Json(new { success = false, message = "Please update all required information before registering as a seller!" });
                 }
             }
             catch (Exception)
             {
-
-                return Json(new { success = false, message = "Lỗi kết nối API Gateway!" }); ;
+                return Json(new { success = false, message = "API Gateway connection error!" });
             }
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -351,6 +355,7 @@ namespace EasyFood.web.Controllers
                 {
                     return Json(new ErroMess { msg = "Số lượng sản phẩm mua vượt quá số lượng tồn kho!" });
                 }
+
                 var getImg = await this._img.FindAsync(u => u.ProductID == id);
 
                 var img = "https://nest-frontend-v6.vercel.app/assets/imgs/shop/product-1-1.jpg";
@@ -380,8 +385,7 @@ namespace EasyFood.web.Controllers
                 phone = user.PhoneNumber,
                 itemCheck = listItem
             };
-
-
+            }
             HttpContext.Session.Set("BillingTourInfo", JsonSerializer.SerializeToUtf8Bytes(temInfo));
 
             return Json(new { success = true, message = "Danh sách sản phẩm đã được xử lý.", selectedProducts = productIds, redirectUrl = "/Users/CheckOut" });
@@ -412,8 +416,6 @@ namespace EasyFood.web.Controllers
             {
                 return Json(new ErroMess { msg = "Bạn chưa đăng nhập!!" });
             }
-
-
             if (string.IsNullOrWhiteSpace(paymentOption))
             {
                 return Json(new ErroMess { msg = "Vui lòng chọn phương thức thanh toán!" });
@@ -499,5 +501,73 @@ namespace EasyFood.web.Controllers
             }
             return Json(new ErroMess { msg = "Bạn chưa đăng nhập!!" });
         }
+
+        //public async Task<IActionResult> FeedbackListByUserId()
+        //{
+        //    // Kiểm tra người dùng có đăng nhập hay không
+        //    var user = await _userManager.GetUserAsync(User);
+        //    if (user == null)
+        //    {
+        //        return RedirectToAction("Login", "Home");
+        //    }
+
+        //    // Lấy ID của user đăng nhập
+        //    string userId = user.Id;
+        //    var list = new IndexUserViewModels();
+
+        //    // Gọi API Gateway để lấy thông tin user theo ID
+        //    string apiUrl = $"https://localhost:5555/Gateway/UsersService/View-Profile/{userId}";
+        //    string urlBalance = $"https://localhost:5555/Gateway/WalletService/GetWallet/{userId}";
+        //    string urlFeedback = $"https://localhost:5555/Gateway/ReviewService/GetReviewByUserId/{userId}";
+
+        //    try
+        //    {
+        //        // Gọi API song song để tối ưu hiệu suất
+        //        var userTask = client.GetAsync(apiUrl);
+        //        var balanceTask = client.GetAsync(urlBalance);
+        //        var feedbackTask = client.GetAsync(urlFeedback);
+
+        //        await Task.WhenAll(userTask, balanceTask, feedbackTask);
+
+        //        var responseUser = userTask.Result;
+        //        var responseBalance = balanceTask.Result;
+        //        var responseFeedback = feedbackTask.Result;
+
+        //        if (!responseUser.IsSuccessStatusCode || !responseBalance.IsSuccessStatusCode || !responseFeedback.IsSuccessStatusCode)
+        //        {
+        //            return View(list);
+        //        }
+
+        //        // Xử lý API User
+        //        //var userJson = await responseUser.Content.ReadAsStringAsync();
+        //        //list.userView = JsonSerializer.Deserialize<UsersViewModel>(userJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+        //        // Xử lý API Balance
+        //        //var balanceJson = await responseBalance.Content.ReadAsStringAsync();
+        //        //var balanceOptions = new JsonSerializerOptions
+        //        //{
+        //        //    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        //        //    PropertyNameCaseInsensitive = true
+        //        //};
+        //        //list.Balance = JsonSerializer.Deserialize<List<BalanceListViewModels>>(balanceJson, balanceOptions);
+        //        //list.BalanceUser = await _balance.GetBalance(user.Id);
+
+        //        // Xử lý API Feedback
+        //        var feedbackJson = await responseFeedback.Content.ReadAsStringAsync();
+        //        //list.Reivew = JsonSerializer.Deserialize<List<ReivewViewModel>>(feedbackJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        //        var feedbackOptions = new JsonSerializerOptions
+        //        {
+        //            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        //            PropertyNameCaseInsensitive = true
+        //        };
+        //        list.Reivew = JsonSerializer.Deserialize<List<ReivewViewModel>>(feedbackJson, feedbackOptions);
+        //        return View(list);
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return View(list);
+        //    }
+        //}
+
     }
 }

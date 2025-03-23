@@ -73,5 +73,10 @@ namespace BusinessLogic.Services.ProductVariantVariants
         {
             return await _repositorys.UpdateProductVariantAsync(model);
         }
+
+        public bool UpdateProductVariantStatus(Guid variantId, bool isActive)
+        {
+            return _repositorys.UpdateProductVariantStatus(variantId, isActive);
+        }
     }
 }

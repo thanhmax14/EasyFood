@@ -33,5 +33,6 @@ namespace BusinessLogic.Services.ProductVariants
         Task CreateProductVariantAsync(ProductVariantCreateViewModel model);
         Task<bool> UpdateProductVariantAsync(ProductVariantEditViewModel model);
         Task<ProductVariantEditViewModel> GetProductVariantForEditAsync(Guid variantId);
+        bool UpdateProductVariantStatus(Guid variantId, bool isActive);
     }
 }

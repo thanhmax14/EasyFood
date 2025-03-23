@@ -8,6 +8,8 @@ using BusinessLogic.Services.StoreDetail;
 using BusinessLogic.Services.ProductVariantVariants;
 using BusinessLogic.Services.ProductVariants;
 using BusinessLogic.Services.ProductImages;
+using BusinessLogic.Services.Categorys;
+using Repository.Categorys;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +24,8 @@ builder.Services.AddScoped<ProductVariantService, ProductVariantService>();
 builder.Services.AddScoped<IProductVariantService, ProductVariantService>();
 builder.Services.AddScoped<ProductImageService, ProductImageService>();
 builder.Services.AddScoped<IProductImageService, ProductImageService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<CategoryRepository, CategoryRepository>();
 
 
 

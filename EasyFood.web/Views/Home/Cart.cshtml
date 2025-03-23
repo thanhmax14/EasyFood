@@ -292,7 +292,7 @@
                                             <label class="form-check-label" for="checkbox-@item.ProductID"></label>
                                         </td>
                                         <td class="image product-thumbnail">
-                                            <img src="~/assets/imgs/shop/product-3-1.jpg" alt="#">
+                                            <img src="@item.img" alt="@item.ProductName">
                                         </td>
                                         <td class="product-des product-name">
                                             <h6 class="mb-5"><a class="product-name mb-10 text-heading" href="">@item.ProductName</a></h6>
@@ -995,10 +995,14 @@
 
                         if (response.success) {
                             inputField.val(newQty);
+                            if (response.isMaxStock) {
+                                alert("⚠️ " + response.message); // Hiển thị cảnh báo nếu đạt giới hạn kho
+                            }
 
                             // Kiểm tra nếu số lượng mới không vượt quá kho
                             if (newQty >= stockQty) {
                                 $(".qty-up[data-id='" + productId + "']").hide(); // Ẩn nút tăng khi đạt giới hạn kho
+                                // alert("⚠️ Số lượng đặt hàng đã đạt giới hạn kho (" + stockQty + ")");
                             } else {
                                 $(".qty-up[data-id='" + productId + "']").show(); // Hiển thị lại nút tăng
                             }
@@ -1033,16 +1037,29 @@
                 });
             });
 
-            // Hàm cập nhật tổng tiền
             function updateTotalPrice() {
                 var total = 0;
+                var hasCheckedItems = $("input.form-check-input:checked").length > 0;
 
-                $("td.price h4.text-brand").each(function () {
-                    var subtotal = parseFloat($(this).text().replace(/,/g, '')) || 0;
-                    total += subtotal;
-                });
+                if (hasCheckedItems) {
+                    // Nếu có checkbox được chọn, chỉ tính tổng các sản phẩm được chọn
+                    $("input.form-check-input:checked").each(function () {
+                        var row = $(this).closest("tr");
+                        if (!row.hasClass("outofstock")) { // Bỏ qua sản phẩm bị mờ
+                            var subtotal = parseFloat(row.find("td.price h4.text-brand").text().replace(/,/g, '')) || 0;
+                            total += subtotal;
+                        }
+                    });
+                } else {
+                    // Nếu không có checkbox nào được chọn, tính tổng tất cả sản phẩm không bị mờ
+                    $("tr").not(".outofstock").each(function () {
+                        var subtotal = parseFloat($(this).find("td.price h4.text-brand").text().replace(/,/g, '')) || 0;
+                        total += subtotal;
+                    });
+                }
 
                 $("#cart-total").text(total.toFixed(2));
+                console.log("💰 Tổng giỏ hàng đã cập nhật:", total.toFixed(2));
             }
 
             // Kiểm tra trạng thái khi load trang
@@ -1141,7 +1158,7 @@
         $(document).ready(function () {
             function getTotalPrice() {
                 var total = 0;
-                $("td.price h4.text-brand").each(function () {
+                $("tr").not(".outofstock").find("td.price h4.text-brand").each(function () {
                     var subtotal = parseFloat($(this).text().replace(/,/g, '')) || 0;
                     total += subtotal;
                 });
@@ -1152,15 +1169,21 @@
                 var total = 0;
                 var checkedItems = $("input.form-check-input:checked");
 
-                if (checkedItems.length === 0) {
-                    total = getTotalPrice(); // Nếu không chọn gì, hiển thị tổng của tất cả
-                } else {
+                console.log("🟢 Số lượng checkbox được chọn:", checkedItems.length);
+
+                if (checkedItems.length > 0) {
                     checkedItems.each(function () {
                         var row = $(this).closest("tr");
-                        var subtotalText = row.find("td.price h4.text-brand").text().replace(/,/g, '');
-                        var subtotal = parseFloat(subtotalText) || 0;
-                        total += subtotal;
+                        if (!row.hasClass("outofstock")) { // Chỉ tính tổng sản phẩm không bị mờ
+                            var subtotalText = row.find("td.price h4.text-brand").text().replace(/,/g, '');
+                            var subtotal = parseFloat(subtotalText) || 0;
+                            total += subtotal;
+                        }
                     });
+                    console.log("⚡ Tổng tiền của các sản phẩm đã chọn:", total);
+                } else {
+                    total = parseFloat(getTotalPrice());
+                    console.log("⚡ Không có checkbox nào được chọn. Tổng tiền = 0");
                 }
 
                 $("#cart-total").text(total.toFixed(2));
@@ -1172,12 +1195,12 @@
 
             $("#exampleCheckbox11").change(function () {
                 var isChecked = $(this).prop("checked");
-                $("input.form-check-input").prop("checked", isChecked);
-                updateSelectedTotal();
+                $("input.form-check-input").prop("checked", isChecked).trigger("change");
             });
 
+            // Đảm bảo tổng giá trị được cập nhật đúng khi tải trang
             $("input.form-check-input").prop("checked", false);
-            $("#cart-total").text(getTotalPrice());
+            updateSelectedTotal();
         });
 
 

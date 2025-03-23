@@ -38,7 +38,7 @@ namespace BusinessLogic.Services.StoreDetail
         Task<bool> UpdateStoreAsync(StoreDetails store);
         Task<bool> ShowStoreAsync(Guid storeId);
         Task<List<StoreDetails>> GetStoresAsync();
-        Task UpdateStoreStatusAsync(int storeId, bool isActive);
+        Task<bool> UpdateStoreIsActiveAsync(Guid storeId, bool isActive);
         Task<List<StoreViewModel>> GetStoreRegistrationRequestsAsync();
         Task<bool> AcceptStoreAsync(Guid id);
         Task<bool> RejectStoreAsync(Guid id);
