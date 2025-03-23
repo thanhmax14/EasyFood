@@ -14,9 +14,6 @@
         public string? StoreName { get; set; }
 
 
-
-        public string Size { get; set; }
-
         public Dictionary<string, decimal> SizeWithPrice { get; set; } = new Dictionary<string, decimal>();
         public List<string> size { get; set; } = new List<string>();
 

@@ -154,7 +154,7 @@ namespace ProductsService.Controllers
                 producct.LongDescription = productDetail.LongDescription;
                 producct.CreatedDate = productDetail.CreatedDate;
                 producct.Stocks = ProductSize.Stock;
-                producct.Size = price.Size;
+              
             }
             else
             {
