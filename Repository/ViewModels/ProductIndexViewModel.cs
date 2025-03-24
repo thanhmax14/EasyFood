@@ -20,5 +20,6 @@ namespace Repository.ViewModels
         public string CateName { get; set; }
         public string StoreName { get; set; }
         public string ImageUrl { get; set; } // Hình ảnh nào là IsMain
+        public Guid StoreId { get; set; } // Thêm StoreId
     }
 }

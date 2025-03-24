@@ -51,7 +51,8 @@ namespace Repository.Categorys
                 throw new Exception("The display order (Number) already exists. Please choose another.");
             }
 
-            string imagePath = null;
+            string fileName = null; // Chỉ lưu tên file
+
             if (model.Image != null && model.Image.Length > 0)
             {
                 var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/CategoryImage");
@@ -60,15 +61,13 @@ namespace Repository.Categorys
                     Directory.CreateDirectory(uploadsFolder);
                 }
 
-                string uniqueFileName = $"{Guid.NewGuid()}_{model.Image.FileName}";
-                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                fileName = $"{Guid.NewGuid()}_{Path.GetFileName(model.Image.FileName)}"; // Tạo tên file duy nhất
+                string filePath = Path.Combine(uploadsFolder, fileName);
 
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     model.Image.CopyTo(stream);
                 }
-
-                imagePath = $"/uploads/CategoryImage/{uniqueFileName}"; // Lưu đường dẫn tương đối
             }
 
             var category = new Categories
@@ -77,7 +76,7 @@ namespace Repository.Categorys
                 Name = model.Name,
                 Commission = model.Commission,
                 Number = model.Number,
-                Img = imagePath, // Lưu đường dẫn ảnh vào DB
+                Img = fileName, // Chỉ lưu tên file vào database
                 CreatedDate = DateTime.UtcNow,
                 ModifiedDate = null
             };
@@ -85,6 +84,7 @@ namespace Repository.Categorys
             _context.Categories.Add(category);
             _context.SaveChanges();
         }
+
 
         public bool IsNumberExists(int number)
         {

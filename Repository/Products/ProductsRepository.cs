@@ -261,6 +261,39 @@ namespace Repository.Products
 
             return true;
         }
+        public List<ProductIndexViewModel> GetProductsByCurrentUser(string userId)
+        {
+            var store = _context.StoreDetails.FirstOrDefault(s => s.UserID == userId);
+            if (store == null)
+            {
+                return new List<ProductIndexViewModel>(); // Trả về danh sách rỗng nếu user không có store
+            }
+
+            var products = (from p in _context.Products
+                            join c in _context.Categories on p.CateID equals c.ID
+                            join i in _context.ProductImages.Where(img => img.IsMain)
+                                on p.ID equals i.ProductID into imgGroup
+                            from img in imgGroup.DefaultIfEmpty()
+                            where p.StoreID == store.ID
+                            select new ProductIndexViewModel
+                            {
+                                ProductId = p.ID,
+                                Name = p.Name,
+                                ShortDescription = p.ShortDescription,
+                                LongDescription = p.LongDescription,
+                                CreatedDate = p.CreatedDate,
+                                ModifiedDate = p.ModifiedDate,
+                                ManufactureDate = p.ManufactureDate,
+                                IsActive = p.IsActive,
+                                IsOnSale = p.IsOnSale,
+                                CateName = c.Name,
+                                StoreName = store.Name,
+                                StoreId = store.ID, // Gán StoreId
+                                ImageUrl = img != null ? img.ImageUrl : "/images/default.png"
+                            }).ToList();
+
+            return products;
+        }
 
     }
 }

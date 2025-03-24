@@ -182,5 +182,9 @@ namespace BusinessLogic.Services.Products
             return await _repositorys.UpdateStatusAsync(productId, newStatus);
         }
 
+        public List<ProductIndexViewModel> GetProductsByCurrentUser(string userId)
+        {
+            return  _repositorys.GetProductsByCurrentUser(userId);
+        }
     }
 }

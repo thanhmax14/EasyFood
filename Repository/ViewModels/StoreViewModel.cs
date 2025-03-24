@@ -16,7 +16,7 @@ namespace Repository.ViewModels
         public string? Phone { get; set; }
         public string? Img { get; set; }  // Hình ảnh cửa hàng
         public string? Status { get; set; } = "PENDING"; // Trạng thái mặc định
-        public bool IsActive { get; set; } = false; // Mặc định chưa hoạt động
+        public bool IsActive { get; set; } = true; // Mặc định chưa hoạt động
         public DateTime CreatedDate { get; set; } = DateTime.Now; // Ngày tạo mặc định
         public DateTime? ModifiedDate { get; set; }
         public string? UserID { get; set; } // ID của chủ cửa hàng (nếu cần)
