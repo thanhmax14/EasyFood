@@ -1,4 +1,7 @@
-﻿   using BusinessLogic.Hash;
+﻿using System.Net.Http.Headers;
+using System.Security.Claims;
+using System.Text;
+using System.Text.Json;
 using BusinessLogic.Services.BalanceChanges;
 using BusinessLogic.Services.Carts;
 using BusinessLogic.Services.Categorys;
@@ -8,24 +11,13 @@ using BusinessLogic.Services.Products;
 using BusinessLogic.Services.ProductVariants;
 using BusinessLogic.Services.StoreDetail;
 using BusinessLogic.Services.Wishlists;
-using EasyFood.web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Models;
 using Net.payOS;
-using Net.payOS.Types;
-using Org.BouncyCastle.Pqc.Crypto.Lms;
 using Repository.ViewModels;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Net.Http.Headers;
-using System.Runtime.InteropServices;
-using System.Security.Claims;
-using System.Text;
-using System.Text.Json;
 
 namespace EasyFood.web.Controllers
 {
@@ -154,8 +146,22 @@ namespace EasyFood.web.Controllers
 
                 if (response.IsSuccessStatusCode)
                 {
+
+
                     var user = await _userManager.FindByNameAsync(username) ?? await _userManager.FindByEmailAsync(username);
+                    var roles = await _userManager.GetRolesAsync(user);
+
+
                     await _signInManager.SignInAsync(user, isPersistent: rememberMe ?? false);
+                    if (roles.Contains("Admin"))
+                    {
+                        return Json(new
+                        {
+                            status,
+                            msg,
+                            redirectUrl = "/admin"
+                        });
+                    }
                     return Json(new
                     {
                         status,
@@ -355,7 +361,7 @@ namespace EasyFood.web.Controllers
 
         public async Task<IActionResult> GetAllProductOfCategory(Guid iD)
         {
-            var FindProduct = await _product.FindAsync(x => x.CateID == iD );
+            var FindProduct = await _product.FindAsync(x => x.CateID == iD);
             if (FindProduct != null)
             {
                 var FindStore = await _categoryService.FindAsync(s => s.ID == FindProduct.CateID);
@@ -492,9 +498,9 @@ namespace EasyFood.web.Controllers
                     return View(list);
                 }
             }
-          
 
-           
+
+
 
 
             return NotFound();
@@ -636,29 +642,29 @@ namespace EasyFood.web.Controllers
         }
 
 
-       /* public async Task<IActionResult> Cart()
-        {
-            var getCart = this._cart.GetCartFromSession();
-            var listtem = new List<CartViewModels>();
+        /* public async Task<IActionResult> Cart()
+         {
+             var getCart = this._cart.GetCartFromSession();
+             var listtem = new List<CartViewModels>();
 
-            if (getCart.Any())
-            {
-                foreach (var item in getCart)
-                {
-
-
+             if (getCart.Any())
+             {
+                 foreach (var item in getCart)
+                 {
 
 
-                    listtem.Add(new CartViewModels
-                    {
-
-                    });
-                }
-            }
 
 
-            return View();
-        }*/
+                     listtem.Add(new CartViewModels
+                     {
+
+                     });
+                 }
+             }
+
+
+             return View();
+         }*/
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -792,10 +798,10 @@ namespace EasyFood.web.Controllers
         {
             var tem = new InvoiceViewModels();
 
-            if(int.TryParse(id, out var orderCode))
+            if (int.TryParse(id, out var orderCode))
             {
                 var flagBalance = await this._balance.FindAsync(u => u.orderCode == orderCode);
-                if(flagBalance != null)
+                if (flagBalance != null)
                 {
                     var getUser = await this._userManager.FindByIdAsync(flagBalance.UserID);
                     if (getUser == null)
@@ -805,7 +811,7 @@ namespace EasyFood.web.Controllers
                     if (!flagBalance.IsComplele)
                     {
                         var checkORder = await this._payos.getPaymentLinkInformation(orderCode);
-                        var status = checkORder.status.ToUpper();                     
+                        var status = checkORder.status.ToUpper();
                         switch (status)
                         {
                             case "CANCELLED":
@@ -832,11 +838,11 @@ namespace EasyFood.web.Controllers
                             case "FAILED":
                                 flagBalance.DueTime = DateTime.Now;
                                 flagBalance.Status = status;
-                                break;                          
+                                break;
                             default:
                                 break;
 
-                             
+
                         }
                         await this._balance.UpdateAsync(flagBalance);
                         try
@@ -871,18 +877,19 @@ namespace EasyFood.web.Controllers
                         tem.orderCoce = id;
                         tem.invoiceDate = flagBalance.StartTime;
                         tem.DueDate = flagBalance.DueTime;
-                        tem.NameUse =  getUser.FirstName +" "+getUser.LastName;
+                        tem.NameUse = getUser.FirstName + " " + getUser.LastName;
                         tem.paymentMethod = "Online Banking";
                         tem.status = flagBalance.Status;
                         tem.emailUser = getUser.Email;
                         tem.phoneUser = getUser.PhoneNumber;
                         tem.tax = 0;
                         tem.AddressUse = getUser.Address;
-                        tem.itemList.Add(new ItemInvoice {
-                        nameItem= $"Deposit to {getUser.UserName}",
-                        amount = flagBalance.MoneyChange,
-                        quantity=1,
-                        unitPrice = flagBalance.MoneyChange
+                        tem.itemList.Add(new ItemInvoice
+                        {
+                            nameItem = $"Deposit to {getUser.UserName}",
+                            amount = flagBalance.MoneyChange,
+                            quantity = 1,
+                            unitPrice = flagBalance.MoneyChange
                         });
                         tem.invoiceDate = flagBalance.StartTime;
                     }
@@ -891,7 +898,7 @@ namespace EasyFood.web.Controllers
             }
             else
             {
-                    
+
             }
 
             return View(tem);
@@ -969,15 +976,15 @@ namespace EasyFood.web.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return Json(new ErroMess { msg= "Bạn phải đăng nhập thể thực hiện hành động này!" });
+                return Json(new ErroMess { msg = "Bạn phải đăng nhập thể thực hiện hành động này!" });
             }
             var balance = await this._balance.GetBalance(user.Id);
-            return Json(new ErroMess { success =true, msg = $"{balance}" });
+            return Json(new ErroMess { success = true, msg = $"{balance}" });
         }
         public async Task<IActionResult> DeleteCart([FromBody] CartItem obj)
         {
             var user = await _userManager.GetUserAsync(User);
-            if(user == null)
+            if (user == null)
             {
                 return RedirectToAction("Home", "Login");
             }
@@ -1090,7 +1097,7 @@ namespace EasyFood.web.Controllers
         public async Task<IActionResult> Comment(Guid id)
         {
             var user = await _userManager.GetUserAsync(User);
-            if(user == null)
+            if (user == null)
             {
                 return RedirectToAction("Login", "Home");
             }
@@ -1099,7 +1106,7 @@ namespace EasyFood.web.Controllers
             try
             {
                 var respone = await client.GetAsync(api);
-                if(respone.IsSuccessStatusCode)
+                if (respone.IsSuccessStatusCode)
                 {
                     return View(comment);
                 }
@@ -1115,7 +1122,7 @@ namespace EasyFood.web.Controllers
 
                 return StatusCode(500, new { message = "Lỗi server", error = ex.Message });
             }
-           
+
         }
 
 
