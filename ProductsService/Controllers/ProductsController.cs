@@ -220,31 +220,34 @@ namespace ProductsService.Controllers
 
             // Lấy danh sách review của sản phẩm
             var reviews = await _reviewService.ListAsync(x => x.ProductID == id);
-            if (!reviews.Any())
+
+            // Danh sách bình luận (mặc định rỗng)
+            var commentList = new List<CommentViewModels>();
+
+            if (reviews.Any())
             {
-                return Ok(new { message = "No comments found" });
+                // Lấy danh sách User từ review
+                var userIds = reviews.Select(x => x.UserID).Distinct().ToList();
+                var users = _userManager.Users.Where(x => userIds.Contains(x.Id)).ToList();
+                var userDict = users.ToDictionary(u => u.Id, u => u.UserName);
+
+                // Tạo danh sách CommentViewModels
+                commentList = reviews.Select(review => new CommentViewModels
+                {
+                    storeName = storeName,
+                    Username = userDict.ContainsKey(review.UserID) ? userDict[review.UserID] : "Unknown",
+                    Cmt = review.Cmt,
+                    Datecmt = review.Datecmt,
+                    Relay = review.Relay,
+                    DateRelay = review.DateRelay,
+                    Status = review.Status,
+                    Rating = review.Rating
+                }).ToList();
             }
-
-            // Lấy danh sách User từ review
-            var userIds = reviews.Select(x => x.UserID).Distinct().ToList();
-            var users = _userManager.Users.Where(x => userIds.Contains(x.Id)).ToList();
-            var userDict = users.ToDictionary(u => u.Id, u => u.UserName);
-
-            // Tạo danh sách CommentViewModels
-            var commentList = reviews.Select(review => new CommentViewModels
-            {
-                storeName = storeName,
-                Username = userDict.ContainsKey(review.UserID) ? userDict[review.UserID] : "Unknown",
-                Cmt = review.Cmt,
-                Datecmt = review.Datecmt,
-                Relay = review.Relay,
-                DateRelay = review.DateRelay,
-                Status = review.Status,
-                Rating = review.Rating
-            }).ToList();
 
             return Ok(commentList);
         }
+
 
 
 

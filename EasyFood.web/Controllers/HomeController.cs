@@ -1067,6 +1067,7 @@ namespace EasyFood.web.Controllers
             try
             {
                 var response = await client.GetAsync(apiUrl);
+                
                 if (!response.IsSuccessStatusCode)
                 {
                     return PartialView("_Cart", new List<CartViewModels>());
