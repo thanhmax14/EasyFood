@@ -118,6 +118,53 @@ namespace ProductsService.Controllers
             }
             return BadRequest(false);
         }
+
+        [HttpGet("SearchProductByName")]
+        public async Task<IActionResult> SearchProductByName(string searchName)
+        {
+            if (string.IsNullOrWhiteSpace(searchName))
+                return BadRequest("Product name is required");
+
+            var list = new List<ProductsViewModel>();
+            var products = await _productService.ListAsync(
+                u => u.IsActive && u.Name.ToLower().Contains(searchName),
+                orderBy: x => x.OrderByDescending(s => s.CreatedDate)
+            );
+
+            if (!products.Any())
+                return NotFound("No products found");
+
+            foreach (var item in products)
+            {
+                var price = await _productVariantService.FindAsync(s => s.ProductID == item.ID && s.IsActive);
+                var storeName = await _storeDetailService.FindAsync(x => x.ID == item.StoreID);
+                var categoryName = await _categoryService.FindAsync(c => c.ID == item.CateID);
+                var imgList = await _productImageService.ListAsync(i => i.ProductID == item.ID);
+                var Listimg = imgList.Select(i => i.ImageUrl).ToList();
+
+                list.Add(new ProductsViewModel
+                {
+                    CategoryName = categoryName?.Name ?? "Unknown",
+                    StoreName = storeName?.Name ?? "Unknown",
+                    Price = price?.Price ?? 0,
+                    CateID = item.CateID,
+                    CreatedDate = item.CreatedDate,
+                    ID = item.ID,
+                    IsActive = item.IsActive,
+                    IsOnSale = item.IsOnSale,
+                    LongDescription = item.LongDescription,
+                    ManufactureDate = item.ManufactureDate,
+                    ModifiedDate = item.ModifiedDate,
+                    Name = item.Name,
+                    ShortDescription = item.ShortDescription,
+                    StoreId = item.StoreID,
+                    Img = Listimg
+                });
+            }
+
+            return Ok(list);
+        }
+
         [HttpGet("GetProductDetails")]
         public async Task<IActionResult> ProductDetails(Guid id)
         {

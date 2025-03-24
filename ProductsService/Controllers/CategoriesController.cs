@@ -57,6 +57,43 @@ namespace ProductsService.Controllers
             }
             return BadRequest(false);
         }
+        [HttpGet("SearchCategoryByName")]
+        public async Task<IActionResult> SearchCategoryByName(string searchName)
+        {
+            if (string.IsNullOrWhiteSpace(searchName))
+                return BadRequest("Product name is required");
+
+            var list = new List<CategoryViewModel>();
+            var category = await _categoryService.ListAsync(
+                u => u.Name.ToLower().Contains(searchName),
+                orderBy: x => x.OrderByDescending(s => s.CreatedDate)
+            );
+
+            if (!category.Any())
+                return NotFound("No Category found");
+
+            if (category.Any())
+            {
+                foreach (var item in category)
+                {
+                    list.Add(new CategoryViewModel
+                    {
+                        ID = item.ID,
+                        Name = item.Name,
+                        CreatedDate = item.CreatedDate,
+                        Commission = item.Commission,
+                        Img = item.Img,
+                        ModifiedDate = item.ModifiedDate,
+                        Number = item.Number,
+
+                    });
+
+                }
+                return Ok(list);
+
+            }
+            return BadRequest(false);
+        }
 
         [HttpGet("GetAllProductOfCategory")]
 

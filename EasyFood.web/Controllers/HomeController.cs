@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
+using Azure;
 using BusinessLogic.Services.BalanceChanges;
 using BusinessLogic.Services.Carts;
 using BusinessLogic.Services.Categorys;
@@ -309,11 +310,15 @@ namespace EasyFood.web.Controllers
             }
         }
 
-        public async Task<IActionResult> ListProducts()
+        public async Task<IActionResult> ListProducts(string searchName)
 
         {
             var list = new List<ProductsViewModel>();
             this._url = "https://localhost:5555/Gateway/ProductsService/GetAllProducts";
+            if (!string.IsNullOrEmpty(searchName))
+            {
+                this._url = $"https://localhost:5555/Gateway/ProductsService/SearchProductByName?searchName={searchName}";
+            }
             try
             {
                 var response = await client.GetAsync(this._url);
@@ -333,11 +338,16 @@ namespace EasyFood.web.Controllers
             }
         }
 
-        public async Task<IActionResult> GetAllCategory()
+
+        public async Task<IActionResult> GetAllCategory(string searchName)
 
         {
             var list = new List<CategoryViewModel>();
             this._url = "https://localhost:5555/Gateway/CategoryService/GetAllCategory";
+            if (!string.IsNullOrEmpty(searchName))
+            {
+                this._url = $"https://localhost:5555/Gateway/CategoryService/SearchCategoryByName?searchName={searchName}";
+            }
             try
             {
                 var response = await client.GetAsync(this._url);
@@ -445,10 +455,14 @@ namespace EasyFood.web.Controllers
 
 
 
-        public async Task<IActionResult> GetAllStore()
+        public async Task<IActionResult> GetAllStore(string searchName)
         {
             var list = new List<StoreViewModel>();
             this._url = "https://localhost:5555/Gateway/StoreDetailService/GetAllStores";
+            if (!string.IsNullOrEmpty(searchName))
+            {
+                this._url = $"https://localhost:5555/Gateway/StoreDetailService/SearchStoreByName?searchName={searchName}";
+            }
             try
             {
                 var response = await client.GetAsync(this._url);

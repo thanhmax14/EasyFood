@@ -315,7 +315,13 @@
                 <div class="row">
                     <div class="col-lg-5 mx-auto">
                         <div class="sidebar-widget-2 widget_search mb-50">
-                            
+                            <div class="search-form">
+                                <form action="#">
+                                    <input type="text" placeholder="Search product by Store" />
+                                    <button type="submit"><i class="fi-rs-search"></i></button>
+                                </form>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -335,7 +341,7 @@
                             <div class="product-cart-wrap mb-30">
                                 <div class="product-img-action-wrap">
                                     <div class="product-img product-img-zoom">
-                                        <a href="shop-product-right.html">
+                                            <a asp-action="ProductDetail" asp-controller="Home" asp-route-id="@item.ID">
                                             <img class="default-img" src="@item.Img.FirstOrDefault()" alt="" />
 
                                            
@@ -401,23 +407,24 @@
                     }
                     </div>
                     <!--product grid-->
-                    @* <div class="pagination-area mt-20 mb-20"> *@
-                    @*     <nav aria-label="Page navigation example"> *@
-                    @*         <ul class="pagination justify-content-start"> *@
-                    @*             <li class="page-item"> *@
-                    @*                 <a class="page-link" href="#"><i class="fi-rs-arrow-small-left"></i></a> *@
-                    @*             </li> *@
-                    @*             <li class="page-item"><a class="page-link" href="#">1</a></li> *@
-                    @*             <li class="page-item active"><a class="page-link" href="#">2</a></li> *@
-                    @*             <li class="page-item"><a class="page-link" href="#">3</a></li> *@
-                    @*             <li class="page-item"><a class="page-link dot" href="#">...</a></li> *@
-                    @*             <li class="page-item"><a class="page-link" href="#">6</a></li> *@
-                    @*             <li class="page-item"> *@
-                    @*                 <a class="page-link" href="#"><i class="fi-rs-arrow-small-right"></i></a> *@
-                    @*             </li> *@
-                    @*         </ul> *@
-                    @*     </nav> *@
-                    @* </div> *@
+                    <div class="pagination-area mt-20 mb-20">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-start">
+                                <li class="page-item">
+                                    <a class="page-link" href="#"><i class="fi-rs-arrow-small-left"></i></a>
+                                </li>
+                                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item active"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                                <li class="page-item"><a class="page-link" href="#">6</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#"><i class="fi-rs-arrow-small-right"></i></a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+
                     @* <section class="section-padding pb-5"> *@
                     @*     <div class="section-title"> *@
                     @*         <h3 class="">Deals Of The Day</h3> *@
