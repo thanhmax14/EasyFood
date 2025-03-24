@@ -163,43 +163,30 @@ namespace Repository.StoreDetails
             {
                 foreach (var product in products)
                 {
-                    if (product.IsActive) // Chỉ tắt những product đang bật
-                    {
-                        product.IsActive = false;
-                    }
+                    product.IsActive = false; // Tắt tất cả sản phẩm
                 }
 
                 foreach (var variant in productVariants)
                 {
-                    if (variant.IsActive) // Chỉ tắt những variant đang bật
-                    {
-                        variant.IsActive = false;
-                    }
+                    variant.IsActive = false; // Tắt tất cả biến thể sản phẩm
                 }
             }
             else // Nếu store được mở khóa
             {
                 foreach (var product in products)
                 {
-                    if (!product.IsActive && product.ModifiedDate >= store.ModifiedDate)
-                    {
-                        product.IsActive = true; // Bật lại những product bị tắt do store bị khóa
-                    }
+                    product.IsActive = true; // Bật tất cả sản phẩm
                 }
 
                 foreach (var variant in productVariants)
                 {
-                    if (!variant.IsActive && variant.ModifiedDate >= store.ModifiedDate)
-                    {
-                        variant.IsActive = true; // Bật lại những variant bị tắt do store bị khóa
-                    }
+                    variant.IsActive = true; // Bật tất cả biến thể sản phẩm
                 }
             }
 
             await _context.SaveChangesAsync();
             return true;
         }
-
 
         public async Task<List<Models.StoreDetails>> GetStoresAsync()
         {

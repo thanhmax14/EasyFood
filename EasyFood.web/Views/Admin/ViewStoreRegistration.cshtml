@@ -363,29 +363,38 @@
                                             let storeId = row.cells[0].data;
                                             let status = row.cells[10].data; // Lấy trạng thái từ cột Status
 
-                                            let actionButton = "";
+                                            let actionButtons = "";
+
                                             if (status === "Approved") {
-                                                actionButton = `
-                                                    <button class="dropdown-item" onclick="updateStoreStatus('${storeId}', 'Rejected')">
-                                                        <i class="ri-close-line align-bottom me-2 text-danger"></i> Reject
-                                                    </button>`;
+                                                actionButtons = `
+                                    <button class="dropdown-item" onclick="updateStoreStatus('${storeId}', 'Rejected')">
+                                        <i class="ri-close-line align-bottom me-2 text-danger"></i> Reject
+                                    </button>`;
                                             } else if (status === "Rejected") {
-                                                actionButton = `
-                                                    <button class="dropdown-item" onclick="updateStoreStatus('${storeId}', 'Approved')">
-                                                        <i class="ri-check-line align-bottom me-2 text-success"></i> Accept
-                                                    </button>`;
+                                                actionButtons = `
+                                    <button class="dropdown-item" onclick="updateStoreStatus('${storeId}', 'Approved')">
+                                        <i class="ri-check-line align-bottom me-2 text-success"></i> Accept
+                                    </button>`;
+                                            } else if (status === "Pending") {
+                                                actionButtons = `
+                                    <button class="dropdown-item" onclick="updateStoreStatus('${storeId}', 'Approved')">
+                                        <i class="ri-check-line align-bottom me-2 text-success"></i> Accept
+                                    </button>
+                                    <button class="dropdown-item" onclick="updateStoreStatus('${storeId}', 'Rejected')">
+                                        <i class="ri-close-line align-bottom me-2 text-danger"></i> Reject
+                                    </button>`;
                                             }
 
                                             return gridjs.html(`
-                                                <div class="dropdown">
-                                                    <button class="btn btn-soft-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                        <i class="ri-more-fill align-middle"></i>
-                                                    </button>
-                                                    <ul class="dropdown-menu dropdown-menu-end">
-                                                        ${actionButton}
-                                                    </ul>
-                                                </div>
-                                            `);
+                                <div class="dropdown">
+                                    <button class="btn btn-soft-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="ri-more-fill align-middle"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        ${actionButtons}
+                                    </ul>
+                                </div>
+                            `);
                                         }
                                     }
                                 ],

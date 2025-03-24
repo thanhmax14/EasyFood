@@ -151,32 +151,25 @@ namespace EasyFood.web.Controllers
             return View(model);
         }
 
-        [Authorize]
         public async Task<IActionResult> ViewStore()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Lấy UserId của người đăng nhập
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null)
             {
                 return RedirectToAction("Login", "Account");
             }
 
-            bool isSeller = await _storeRepository.IsUserSellerAsync(userId);
-            if (!isSeller)
-            {
-                TempData["ErrorMessage"] = "Bạn không phải là seller!";
-                return RedirectToAction("Index", "Home");
-            }
+            var store = await _storeDetailService.GetStoresByUserIdAsync(userId);
 
-            var stores = await _storeDetailService.GetStoresByUserIdAsync(userId);
+            var storeData = store.FirstOrDefault();
 
-            // Kiểm tra nếu có store nhưng đang chờ duyệt
-            bool hasPendingStore = stores.Any(s => s.Status == "PENDING");
-            // Kiểm tra nếu có store bị khóa
-            bool hasLockedStore = stores.Any(s => !s.IsActive);
-            ViewBag.HasPendingStore = hasPendingStore; // Truyền thông tin ra View
-            ViewBag.HasLockedStore = hasLockedStore;
-            return View(stores);
+            ViewBag.HasStore = storeData != null;
+            ViewBag.StoreStatus = storeData?.Status?.ToUpper() ?? "NONE"; // NONE nếu không có store
+            ViewBag.IsActive = storeData?.IsActive ?? false; // false nếu không có store
+
+            return View(storeData);
         }
+
 
         [Authorize]
         [HttpPost]
@@ -284,14 +277,21 @@ namespace EasyFood.web.Controllers
 
         //[HttpGet]
         //[Route("Seller/ViewProductList/{storeId}")]
-        public IActionResult ViewProductList(Guid storeId)
+        public IActionResult ViewProductList()
         {
-            var products = _productService.GetProductsByStoreId(storeId);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
 
-            ViewBag.StoreId = storeId; // Giữ StoreId để dùng cho nút "Create"
+            var products = _productService.GetProductsByCurrentUser(userId);
+
+            ViewBag.StoreId = products.FirstOrDefault()?.StoreId ?? Guid.Empty; // Lấy StoreId từ danh sách sản phẩm
 
             return View(products);
         }
+
 
         [HttpGet]
         public async Task<IActionResult> CreateProduct(Guid storeId)
