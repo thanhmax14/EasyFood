@@ -589,6 +589,14 @@ namespace EasyFood.web.Controllers
         }
 
         [HttpGet]
+        public IActionResult CheckNumberExists(int number)
+        {
+            bool exists = _categoryService.CheckNumberExists(number);
+            return Json(new { exists });
+        }
+
+
+        [HttpGet]
         public IActionResult CreateCategory()
         {
             return View();

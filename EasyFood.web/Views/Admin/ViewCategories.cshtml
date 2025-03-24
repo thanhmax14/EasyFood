@@ -1,7 +1,7 @@
 ﻿@model List<Repository.ViewModels.CategoryListViewModel>
-@{
+@* @{
     var storeId = ViewBag.StoreId;
-}
+} *@
 <!doctype html>
 <html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg"
       data-sidebar-image="none" data-preloader="disable" data-theme="default" data-theme-colors="default">
@@ -369,19 +369,11 @@
                             sort: true,
                             search: true,
                             data: categories.map(c => [
-                                c.id, c.number, c.name, c.commission, formatDate(c.createdDate), formatDate(c.modifiedDate), c.img
+                                c.id, c.number, c.name, c.commission, c.createdDate, c.modifiedDate, c.img
                             ])
                         }).render(document.getElementById("table-category"));
                     });
 
-                    function formatDate(dateString) {
-                        if (!dateString) return "";
-                        let date = new Date(dateString);
-                        let day = date.getDate().toString().padStart(2, '0');
-                        let month = (date.getMonth() + 1).toString().padStart(2, '0');
-                        let year = date.getFullYear();
-                        return `${day}/${month}/${year}`;
-                    }
                 </script>
 
                 <!-- end row -->

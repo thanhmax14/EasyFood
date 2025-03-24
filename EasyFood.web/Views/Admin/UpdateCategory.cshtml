@@ -373,6 +373,15 @@
                                                     <input type="file" name="ImageFile" class="form-control" accept=".png, .jpeg, .jpg" id="imgInput">
                                                     <small class="text-muted">Supported formats: PNG, JPEG, JPG</small>
 
+                                                    @if (!string.IsNullOrEmpty(Model.Img))
+                                                    {
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Current Image</label>
+                                                            <br />
+                                                            <img src="~/uploads/CategoryImage/@Model.Img" alt="Current Image" class="img-thumbnail" width="150" />
+                                                        </div>
+                                                    }
+
                                                     <!-- Ảnh Xem Trước -->
                                                     <div class="mt-2">
                                                         <img id="previewImage" src="" class="img-thumbnail d-none" style="max-width: 200px; max-height: 150px;">
