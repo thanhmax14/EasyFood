@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using BusinessLogic.Services.BalanceChanges;
 using BusinessLogic.Services.Carts;
+using BusinessLogic.Services.OrderDetailService;
 using BusinessLogic.Services.Orders;
 using BusinessLogic.Services.ProductImages;
 using BusinessLogic.Services.Products;
@@ -29,8 +30,9 @@ namespace EasyFood.web.Controllers
         public readonly IProductVariantService _productWarian;
         private readonly IProductImageService _img;
         private readonly IOrdersServices _order;
+        private readonly IOrderDetailService _orderDetailService;
 
-        public UsersController(UserManager<AppUser> userManager, HttpClient client, IBalanceChangeService balance, IHttpContextAccessor httpContextAccessor, IProductService product, ICartService cart, IProductVariantService productWarian, IProductImageService img, IOrdersServices orders)
+        public UsersController(UserManager<AppUser> userManager, HttpClient client, IBalanceChangeService balance, IHttpContextAccessor httpContextAccessor, IProductService product, ICartService cart, IProductVariantService productWarian, IProductImageService img, IOrdersServices orders, IOrderDetailService orderDetailService)
         {
             _userManager = userManager;
             this.client = client;
@@ -41,6 +43,7 @@ namespace EasyFood.web.Controllers
             _productWarian = productWarian;
             _img = img;
             _order = orders;
+            _orderDetailService = orderDetailService;
         }
 
         public async Task<IActionResult> Index()
@@ -105,10 +108,32 @@ namespace EasyFood.web.Controllers
                             PaymentMethod = item.MethodPayment,
                             Status = item.Status,
                             Total = item.TotalsPrice,
+                            OrderId = item.ID
                         }); ;
                     }
                 }
 
+             
+                var OrderId = getOrder.FirstOrDefault()?.ID;
+                var getOrderDetail = await _orderDetailService.ListAsync(x => x.OrderID == OrderId);
+                if(getOrderDetail.Any())
+                {
+                    var productList = await _product.ListAsync();
+
+                    foreach (var item in getOrderDetail)
+                    {
+                        var product = productList.FirstOrDefault(x => x.ID == item.ProductID);
+                        var productName = product?.Name;
+                        list.orderDetailsViewModels.Add(new OrderDetailsViewModel
+                        {
+                            productName = productName,
+                            ProductPrice= item.ProductPrice,
+                            TotalPrice= item.TotalPrice,
+                            Quantity = item.Quantity,
+                            Status = item.Status,
+                        });
+                    }
+                 }
 
 
 
@@ -604,5 +629,38 @@ namespace EasyFood.web.Controllers
         //    }
         //}
 
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetOrderDetails(Guid orderId)
+        {
+            try
+            {
+                var orderDetails = await _orderDetailService.ListAsync(x => x.OrderID == orderId);
+                if (!orderDetails.Any())
+                    return Json(new { success = false, message = "No details found" });
+
+                var productList = await _product.ListAsync();
+                var detailsViewModels = orderDetails.Select(item =>
+                {
+                    var product = productList.FirstOrDefault(x => x.ID == item.ProductID);
+                    return new OrderDetailsViewModel
+                    {
+                        productName = product?.Name,
+                        ProductPrice = item.ProductPrice,
+                        TotalPrice = item.TotalPrice,
+                        Quantity = item.Quantity,
+                        Status = item.Status
+                    };
+                }).ToList();
+
+                return Json(new { success = true, data = detailsViewModels });
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                return Json(new { success = false, message = "An error occurred" });
+            }
+        }
     }
 }

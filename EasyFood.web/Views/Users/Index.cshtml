@@ -256,6 +256,12 @@
                                             </a>
                                         </li>
                                         <li class="nav-item">
+                                            <a class="nav-link" id="order-details-tab" data-bs-toggle="tab" href="#order-details" role="tab" aria-controls="order-details" aria-selected="false" style="display: none;">
+                                                <i class="fi-rs-shopping-bag mr-10"></i>Order Details
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
                                             <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab"
                                                href="#track-orders" role="tab" aria-controls="track-orders"
                                                aria-selected="false">
@@ -321,59 +327,128 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
+                                    <div class="tab-pane fade show active" id="orders" role="tabpanel" aria-labelledby="orders-tab">
                                         <div class="card">
                                             <div class="card-header">
                                                 <h3 class="mb-0">Your Orders</h3>
                                             </div>
                                             <div class="card-body">
-                                                <div class="table-responsive" id="table-gridjs11112">
-                                                  
-                                                </div>
+                                                <div class="table-responsive" id="table-orders"></div>
                                             </div>
                                         </div>
                                     </div>
-                                  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const container = document.getElementById("table-gridjs11112");
 
-        container.innerHTML = "";
+                                    <div class="tab-pane fade" id="order-details" role="tabpanel" aria-labelledby="order-details-tab" style="display: none;">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h3 class="mb-0">Order Details</h3>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="table-responsive" id="table-order-details"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <script>
+                                        console.log("Hello");
+                                        let detailsGrid = null; // Biến lưu instance gridjs
 
-        // Lấy dữ liệu từ Razor Model và parse thành JavaScript object
-        const orderData = @Html.Raw(JsonSerializer.Serialize(Model.OrderViewodels));
+                                        document.addEventListener("DOMContentLoaded", function () {
+                                            const orderContainer = document.getElementById("table-orders");
+                                            orderContainer.innerHTML = "";
 
-        new gridjs.Grid({
-            columns: [
-                { name: "Email", width: "200px" },
-                { name: "Name", width: "200px" },
-                { name: "Order Date", width: "220px", formatter: (e) => gridjs.html(`<a href="#">${e}</a>`) },
-                { name: "Payment Method", width: "220px" },
-                { name: "Status", width: "180px" },
-                { name: "Total", width: "180px" },
-                {
-                    name: "Actions",
-                    width: "150px",
-                    formatter: () => gridjs.html("<a href='#' class='text-reset text-decoration-underline'>Details</a>")
-                }
-            ],
-            pagination: {
-                enabled: true,
-                limit: 5,
-                summary: true
-            },
-            sort: true,
-            search: true,
-           data: orderData.map(o => [
-    o.Email,           // Changed from o.email
-    o.Name,            // Changed from o.name
-    o.OrderDate,       // Changed from o.orderDate
-    o.PaymentMethod,   // Changed from o.paymentMethod
-    o.Status,          // Changed from o.status
-    o.Total            // Changed from o.total
-])
-        }).render(document.getElementById("table-gridjs11112"));
-    });
-</script>
+                                            const orderData = @Html.Raw(JsonSerializer.Serialize(Model.OrderViewodels));
+
+                                            new gridjs.Grid({
+                                                columns: [
+                                                    { name: "Id", hidden: true },
+                                                    { name: "Email", width: "200px" },
+                                                    { name: "Name", width: "200px" },
+                                                    { name: "Order Date", width: "220px" },
+                                                    { name: "Payment Method", width: "200px" },
+                                                    { name: "Status", width: "150px" },
+                                                    { name: "Total", width: "150px" },
+                                                    {
+                                                        name: "Actions",
+                                                        width: "150px",
+                                                        formatter: (_, row) => {
+                                                            const orderId = row.cells[0].data;
+                                                            return gridjs.html(`<button class="btn btn-sm btn-primary view-details" data-id="${orderId}">Details</button>`);
+                                                        }
+                                                    }
+                                                ],
+                                                pagination: { enabled: true, limit: 5, summary: true },
+                                                sort: true,
+                                                search: true,
+                                                data: orderData.map(o => [
+                                                    o.OrderId, o.Email, o.Name, o.OrderDate, o.PaymentMethod, o.Status, o.Total
+                                                ])
+                                            }).render(orderContainer);
+
+                                            document.addEventListener("click", function (e) {
+                                                if (e.target.classList.contains("view-details")) {
+                                                    const orderId = e.target.getAttribute("data-id");
+                                                    loadOrderDetails(orderId);
+                                                }
+                                            });
+
+                                            // Ẩn #order-details khi chuyển sang tab khác
+                                            document.querySelectorAll('.nav-link[data-bs-toggle="tab"]').forEach(tab => {
+                                                tab.addEventListener('shown.bs.tab', function (e) {
+                                                    const targetTab = e.target.getAttribute('href');
+                                                    if (targetTab !== '#order-details') {
+                                                        document.getElementById("order-details").style.display = "none";
+                                                    }
+                                                });
+                                            });
+
+                                            function loadOrderDetails(orderId) {
+                                                fetch(`/Users/GetOrderDetails?orderId=${orderId}&_=${Date.now()}`, {
+                                                    cache: 'no-store'
+                                                })
+                                                    .then(response => {
+                                                        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                                                        return response.json();
+                                                    })
+                                                    .then(data => {
+                                                        console.log("Response data:", data);
+                                                        if (data.success) {
+                                                            const detailsContainer = document.getElementById("table-order-details");
+                                                            detailsContainer.innerHTML = "";
+                                                            if (detailsGrid) {
+                                                                detailsGrid.destroy(); // Hủy instance cũ
+                                                            }
+                                                            detailsGrid = new gridjs.Grid({
+                                                                columns: [
+                                                                    { name: "Product Name", width: "250px" },
+                                                                    { name: "Product Price", width: "150px" },
+                                                                    { name: "Total Price", width: "150px" },
+                                                                    { name: "Quantity", width: "100px" },
+                                                                    { name: "Status", width: "150px" }
+                                                                ],
+                                                                pagination: { enabled: true, limit: 5, summary: true },
+                                                                search: true,
+                                                                sort: true,
+                                                                data: data.data.map(od => [
+                                                                    od.productName, od.productPrice, od.totalPrice, od.quantity, od.status
+                                                                ])
+                                                            });
+                                                            detailsGrid.render(detailsContainer);
+
+                                                            // Hiển thị tab Order Details
+                                                            const orderDetailsPane = document.getElementById("order-details");
+                                                            orderDetailsPane.style.display = "block"; // Hiển thị nội dung
+                                                            const orderDetailsTab = new bootstrap.Tab(document.getElementById("order-details-tab"));
+                                                            orderDetailsTab.show(); // Kích hoạt tab
+                                                        } else {
+                                                            console.log("Success is false:", data.message);
+                                                        }
+                                                    })
+                                                    .catch(error => console.error("Fetch error:", error));
+                                            }
+                                        });
+                                    </script>
+
+
                                     <div class="tab-pane fade" id="track-orders" role="tabpanel"
                                          aria-labelledby="track-orders-tab">
                                         <div class="card">
