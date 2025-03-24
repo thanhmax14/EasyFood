@@ -43,12 +43,13 @@
                     <div class="row">
                         <div class="col-lg-5 mx-auto">
                             <div class="sidebar-widget-2 widget_search mb-50">
-                                @* <div class="search-form"> *@
-                                @*     <form action="#"> *@
-                                @*         <input type="text" placeholder="Search stores by name" /> *@
-                                @*         <button type="submit"><i class="fi-rs-search"></i></button> *@
-                                @*     </form> *@
-                                @* </div> *@
+                                <div class="search-form">
+                                    <form asp-controller="Home" asp-action="GetAllStore" method="get">
+                                        <input name="searchName" placeholder="Search product by name" />
+                                        <button type="submit"><i class="fi-rs-search"></i></button>
+                                    </form>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -133,23 +134,24 @@
                     <!--end vendor card-->
                     <!--end vendor card-->
 
-                    @* <div class="pagination-area mt-20 mb-20"> *@
-                    @*     <nav aria-label="Page navigation example"> *@
-                    @*         <ul class="pagination justify-content-start"> *@
-                    @*             <li class="page-item"> *@
-                    @*                 <a class="page-link" href="#"><i class="fi-rs-arrow-small-left"></i></a> *@
-                    @*             </li> *@
-                    @*             <li class="page-item"><a class="page-link" href="#">1</a></li> *@
-                    @*             <li class="page-item active"><a class="page-link" href="#">2</a></li> *@
-                    @*             <li class="page-item"><a class="page-link" href="#">3</a></li> *@
-                    @*             <li class="page-item"><a class="page-link dot" href="#">...</a></li> *@
-                    @*             <li class="page-item"><a class="page-link" href="#">6</a></li> *@
-                    @*             <li class="page-item"> *@
-                    @*                 <a class="page-link" href="#"><i class="fi-rs-arrow-small-right"></i></a> *@
-                    @*             </li> *@
-                    @*         </ul> *@
-                    @*     </nav> *@
-                    @* </div> *@
+                    <div class="pagination-area mt-20 mb-20">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-start">
+                                <li class="page-item">
+                                    <a class="page-link" href="#"><i class="fi-rs-arrow-small-left"></i></a>
+                                </li>
+                                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item active"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                                <li class="page-item"><a class="page-link" href="#">6</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#"><i class="fi-rs-arrow-small-right"></i></a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+
                 </div>
             </div>
     </main>
