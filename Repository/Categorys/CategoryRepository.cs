@@ -32,7 +32,7 @@ namespace Repository.Categorys
                 .Select(c => new CategoryListViewModel
                 {
                     ID = c.ID,
-                    Img = c.Img,
+                    Img = !string.IsNullOrEmpty(c.Img) ? "/uploads/CategoryImage/" + c.Img : "/uploads/default.png",
                     Name = c.Name,
                     Number = c.Number,
                     Commission = c.Commission,
@@ -99,7 +99,7 @@ namespace Repository.Categorys
                 throw new Exception("Category not found.");
             }
 
-            // Kiểm tra nếu số thứ tự (Number) đã tồn tại ở danh mục khác
+            // Kiểm tra nếu số thứ tự (Number) đã tồn tại
             bool isNumberExists = _context.Categories.Any(c => c.Number == model.Number && c.ID != model.ID);
             if (isNumberExists)
             {
@@ -113,13 +113,29 @@ namespace Repository.Categorys
                 Directory.CreateDirectory(uploadsFolder);
             }
 
-            // Nếu có ảnh mới, lưu vào thư mục và cập nhật đường dẫn
+            // Xử lý upload ảnh mới nếu có
             if (model.ImageFile != null && model.ImageFile.Length > 0)
             {
-                string uniqueFileName = $"{Guid.NewGuid()}{Path.GetExtension(model.ImageFile.FileName)}";
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+                var fileExtension = Path.GetExtension(model.ImageFile.FileName).ToLower();
+
+                // Kiểm tra định dạng file
+                if (!allowedExtensions.Contains(fileExtension))
+                {
+                    throw new Exception("Only JPG, JPEG, and PNG formats are allowed.");
+                }
+
+                // Giới hạn dung lượng file (5MB)
+                if (model.ImageFile.Length > 5 * 1024 * 1024)
+                {
+                    throw new Exception("File size must be less than 5MB.");
+                }
+
+                // Tạo tên file duy nhất
+                string uniqueFileName = $"{Guid.NewGuid()}{fileExtension}";
                 string filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
-                // Lưu ảnh mới
+                // Lưu ảnh vào thư mục
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     model.ImageFile.CopyTo(stream);
@@ -129,20 +145,21 @@ namespace Repository.Categorys
                 if (!string.IsNullOrEmpty(category.Img))
                 {
                     string oldImagePath = Path.Combine(uploadsFolder, category.Img);
-                    if (System.IO.File.Exists(oldImagePath))
+                    if (File.Exists(oldImagePath))
                     {
-                        System.IO.File.Delete(oldImagePath);
+                        File.Delete(oldImagePath);
                     }
                 }
 
-                category.Img = uniqueFileName; // Lưu tên file vào DB
+                // Cập nhật ảnh mới vào DB
+                category.Img = uniqueFileName;
             }
 
             // Cập nhật thông tin danh mục
             category.Name = model.Name;
             category.Commission = model.Commission;
             category.Number = model.Number;
-            category.ModifiedDate = DateTime.UtcNow;
+            category.ModifiedDate = DateTime.UtcNow.Date; // Chỉ lấy ngày, không lấy giờ
 
             _context.SaveChanges();
         }
