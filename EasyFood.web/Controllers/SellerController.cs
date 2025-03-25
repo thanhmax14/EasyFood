@@ -722,11 +722,65 @@ namespace EasyFood.web.Controllers
      return Json(false);
  }
 
- public async Task<IActionResult> Index(string id)
+          public async Task<IActionResult> Index(string id)
         {
             return View();
         }
 
+        public async Task<IActionResult> GetDonutChart()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return Json(new ErroMess { msg = "Bạn chưa đăng nhập!!" });
+            }
+
+            this._url = $"https://localhost:5555/Gateway/RevenueService/GetProductStatistics";
+            var content = new StringContent($"\"{user.Id}\"", Encoding.UTF8, "application/json");
+            var response = await client.PostAsync($"{this._url}", content);
+            var options = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                PropertyNameCaseInsensitive = true
+            };
+            var mes = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+
+                var messErro = JsonSerializer.Deserialize<List<PieProductView>>(mes, options);
+
+                return Json(messErro);
+            }
+            return Json(false);
+        }
+        public async Task<IActionResult> GetRevenuToday()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return Json(new ErroMess { msg = "Bạn chưa đăng nhập!!" });
+            }
+
+            this._url = $"https://localhost:5555/Gateway/RevenueService/GetRevenueOrderToday";
+            var content = new StringContent($"\"{user.Id}\"", Encoding.UTF8, "application/json");
+            var response = await client.PostAsync($"{this._url}", content);
+            var options = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                PropertyNameCaseInsensitive = true
+            };
+            var mes = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+
+                var messErro = JsonSerializer.Deserialize<RevenuToday>(mes, options);
+
+                return Json(messErro);
+            }
+            return Json(false);
+        }
 
     }
 

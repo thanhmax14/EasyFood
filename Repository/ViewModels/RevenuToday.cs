@@ -6,14 +6,12 @@ using System.Threading.Tasks;
 
 namespace Repository.ViewModels
 {
-    public class RevenueSeller
+    public class RevenuToday
     {
-        public int PROCESSING { get; set; }
-        public int Success { get; set; }
-        public int CANCELLED { get; set; }
         public decimal Earnings { get; set; }
         public int Orders { get; set; }
-        public string Date { get; set; }
-      
+        public int Refunds { get; set; }
+        public decimal EarningsChange { get; set; }
+        public decimal CompletionRate { get; set; }
     }
 }
