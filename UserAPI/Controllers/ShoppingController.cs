@@ -70,6 +70,9 @@ namespace UserAPI.Controllers
                     if (checkcart != null)
                     {
                         var getQuatity = await this._productWariant.FindAsync(u => u.ProductID == id.Key &&u.IsActive);
+
+                        if(getQuatity==null)
+                            return NotFound(new ErroMess { msg = "Sản phẩm mua không tồn tại!" });
                         if (checkcart.Quantity < getQuatity.Stock)
                         {
                             totelPrice += getQuatity.Price * id.Value;
@@ -150,9 +153,9 @@ namespace UserAPI.Controllers
                     }
                     catch
                     {
-                        order.StatusPayment= "Fail";
-                        order.Status= "Fail";
-                        balan.Status = "Fail";
+                        order.StatusPayment= "Failed";
+                        order.Status= "Failed";
+                        balan.Status = "Failed";
                         balan.DueTime =DateTime.Now;
                         balan.MoneyBeforeChange = await _balance.GetBalance(user.Id);
                         balan.MoneyAfterChange = await _balance.GetBalance(user.Id) + totelPrice;
@@ -210,9 +213,9 @@ namespace UserAPI.Controllers
                 }
                 catch(Exception e)
                 {
-                    order.StatusPayment = "Fail";
-                    order.Status = "Fail";
-                    balan.Status = "Fail";
+                    order.StatusPayment = "Failed";
+                    order.Status = "Failed";
+                    balan.Status = "Failed";
                     balan.DueTime = DateTime.Now;
                     balan.MoneyBeforeChange = await _balance.GetBalance(user.Id);
                     balan.MoneyAfterChange = await _balance.GetBalance(user.Id) + totelPrice;
@@ -334,9 +337,9 @@ namespace UserAPI.Controllers
                     }
                     catch
                     {
-                        order.StatusPayment = "Fail";
-                        order.Status = "Fail";
-                      /*  balan.Status = "Fail";
+                        order.StatusPayment = "Failed";
+                        order.Status = "Failed";
+                      /*  balan.Status = "Failed";
                         balan.DueTime = DateTime.Now;
                         balan.MoneyBeforeChange = await _balance.GetBalance(user.Id);
                         balan.MoneyAfterChange = await _balance.GetBalance(user.Id) + totelPrice;
@@ -392,8 +395,8 @@ namespace UserAPI.Controllers
                 }
                 catch (Exception e)
                 {
-                    order.StatusPayment = "Fail";
-                    order.Status = "Fail";
+                    order.StatusPayment = "Failed";
+                    order.Status = "Failed";
                     await this._order.SaveChangesAsync();
                     return BadRequest(new ErroMess { msg = "Đã xảy ra lỗi trông quá trình mua!33" });
                 }

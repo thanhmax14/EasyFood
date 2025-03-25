@@ -3,8 +3,15 @@ using Ocelot.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-builder.Configuration.AddJsonFile("Ocelot.json");
+string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
+if (environment == "Development")
+{
+    builder.Configuration.AddJsonFile("Ocelot.json");
+}
+else
+{
+    builder.Configuration.AddJsonFile("Ocelot.Production.json");
+}
 
 
 builder.Services.AddControllers();

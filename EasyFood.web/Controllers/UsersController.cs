@@ -427,7 +427,7 @@ namespace EasyFood.web.Controllers
                 listItem.Add(new ListItems
                 {
                     ItemName = product.Name,
-                    ItemImage = getImg.ImageUrl,
+                    ItemImage = img,
                     ItemPrice = getQuatity.Price,
                     ItemQuantity = checkcart.Quantity,
                     productID = product.ID

@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using System.Security.Claims;
+using System.Text;
 using System.Text.Json;
 using AutoMapper;
 using BusinessLogic.Services.Products;
@@ -8,6 +9,7 @@ using BusinessLogic.Services.ProductVariantVariants;
 using BusinessLogic.Services.Reviews;
 using BusinessLogic.Services.StoreDetail;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -632,6 +634,32 @@ namespace EasyFood.web.Controllers
         public async Task<IActionResult> Index()
         {
             return View();
+        }  
+        public async Task<IActionResult> ManageOrder()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return Json(new ErroMess { msg = "Bạn chưa đăng nhập!!" });
+            }
+
+            this._url = $"https://localhost:5555/Gateway/ShoppingService/BuyProduct";
+            var content = new StringContent($"\"{user.Id}\"", Encoding.UTF8, "application/json");
+            var response = await client.PostAsync($"{this._url}", content);
+            var options = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                PropertyNameCaseInsensitive = true
+            };
+            var mes = await response.Content.ReadAsStringAsync();
+            var messErro = JsonSerializer.Deserialize<List<GetSellerOrder>>(mes, options);
+            if (response.IsSuccessStatusCode)
+            {
+                return Json(messErro);
+            }
+            return Json(messErro);
+
+            
         }
     }
 }
