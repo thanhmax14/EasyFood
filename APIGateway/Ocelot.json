@@ -151,21 +151,22 @@
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
 
     },
-        {
-      "DownstreamPathTemplate": "/api/OrderDetail/{everything}",
     {
-      "DownstreamPathTemplate": "/api/OrderSeller/{everything}",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7190
-        }
-      ],
+      "DownstreamPathTemplate": "/api/OrderDetail/{everything}",
+      
+        "DownstreamPathTemplate": "/api/OrderSeller/{everything}",
+        "DownstreamScheme": "https",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 7190
+          }
+        ],
 
-      "UpstreamPathTemplate": "/Gateway/OrderDetailService/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
-    }
+        "UpstreamPathTemplate": "/Gateway/OrderDetailService/{everything}",
+        "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+      }
+    
   ],
   "GlobalConfiguration": {
     "BaseUrl": "https://localhost:5555"
