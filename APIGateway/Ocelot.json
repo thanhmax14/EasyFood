@@ -153,18 +153,30 @@
     },
     {
 
-        "DownstreamPathTemplate": "/api/OrderDetail/{everything}",
-        "DownstreamScheme": "https",
-        "DownstreamHostAndPorts": [
-          {
-            "Host": "localhost",
-            "Port": 7190
-          }
-        ],
-        "UpstreamPathTemplate": "/Gateway/OrderDetailService/{everything}",
-        "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
-      }
-    
+      "DownstreamPathTemplate": "/api/OrderDetail/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7190
+        }
+      ],
+      "UpstreamPathTemplate": "/Gateway/OrderDetailService/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+    },
+    {
+
+      "DownstreamPathTemplate": "/api/Revenue/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7071
+        }
+      ],
+      "UpstreamPathTemplate": "/Gateway/RevenueAdminService/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+    }
   ],
   "GlobalConfiguration": {
     "BaseUrl": "https://localhost:5555"
