@@ -16,7 +16,7 @@ namespace Repository.ViewModels
         public string Name { get; set; }
 
         [Range(0, 100, ErrorMessage = "Commission must be between 0 and 100.")]
-        public decimal Commission { get; set; }
+        public float Commission { get; set; }
 
         [Required]
         public int Number { get; set; }
