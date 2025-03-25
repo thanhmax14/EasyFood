@@ -18,7 +18,6 @@ namespace Repository.ViewModels
         public string ProductName { get; set; }
 
         public Guid OrderID { get; set; }
-        public string OrderCode { get; set; }
 
         public string UserID { get; set; }
         public string UserName { get; set; }

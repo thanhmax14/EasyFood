@@ -153,7 +153,7 @@
     },
     {
 
-        "DownstreamPathTemplate": "/api/OrderSeller/{everything}",
+        "DownstreamPathTemplate": "/api/OrderDetail/{everything}",
         "DownstreamScheme": "https",
         "DownstreamHostAndPorts": [
           {
