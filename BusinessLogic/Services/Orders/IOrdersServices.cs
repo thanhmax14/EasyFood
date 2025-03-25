@@ -23,5 +23,7 @@ namespace BusinessLogic.Services.Orders
             Expression<Func<Order, bool>> filter = null,
             Func<IQueryable<Order>, IOrderedQueryable<Order>> orderBy = null,
             Func<IQueryable<Order>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<Order, object>> includeProperties = null);
+        Task<bool> RejectOrder(Guid orderId);
+        Task<bool> AcceptOrder(Guid orderId);
     }
 }

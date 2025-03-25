@@ -21,5 +21,6 @@ namespace Repository.ViewModels
         public string StoreName { get; set; }
         public string ImageUrl { get; set; } // Hình ảnh nào là IsMain
         public Guid StoreId { get; set; } // Thêm StoreId
+        public bool StoreIsActive { get; set; } // Thêm trạng thái của Store
     }
 }

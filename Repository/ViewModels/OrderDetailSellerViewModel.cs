@@ -27,5 +27,7 @@ namespace Repository.ViewModels
 
         public string ImageUrl { get; set; } // Thêm đường dẫn ảnh chính của sản phẩm
         public string Address { get; set; }
+        public string Action { get; set; } // "ACCEPT" hoặc "REJECT"
+        public string Status { get; set; }
     }
 }
