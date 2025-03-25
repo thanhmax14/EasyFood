@@ -95,6 +95,45 @@ namespace ProductsService.Controllers
             return BadRequest(false);
         }
 
+
+        [HttpGet("SearchStoreByName")]
+        public async Task<IActionResult> SearchStoreByName(string searchName)
+        {
+            if (string.IsNullOrWhiteSpace(searchName))
+                return BadRequest("Store name is required");
+
+
+
+
+            var list = new List<CategoryViewModel>();
+            var store = await _categoryService.ListAsync(
+                s =>  s.Name.ToLower().Contains(searchName),
+                orderBy: x => x.OrderByDescending(s => s.CreatedDate));
+            if (!store.Any())
+            {
+                return NotFound("Store Not found");
+            }
+
+            foreach (var item in store)
+            {
+                list.Add(new CategoryViewModel
+                {
+                    ID = item.ID,
+                    Name = item.Name,
+                    CreatedDate = item.CreatedDate,
+                    Commission = item.Commission,
+                    Img = item.Img,
+                    ModifiedDate = item.ModifiedDate,
+                    Number = item.Number,
+
+                });
+            }
+
+
+            return Ok(list);
+        }
+
+
         [HttpGet("GetAllProductOfCategory")]
 
         public async Task<IActionResult> GetAllProductOfCategory(Guid id)
@@ -160,7 +199,9 @@ namespace ProductsService.Controllers
             
             var category = await _categoryService.FindAsync(c => c.ID == id);
 
+            
             CategoryList.ID = category.ID;
+            CategoryList.Name = category.Name;
             CategoryList.Number = category.Number;
             CategoryList.Commission = category.Commission;
             CategoryList.CreatedDate = category.CreatedDate;
@@ -175,7 +216,7 @@ namespace ProductsService.Controllers
             }
             else
             {
-                return Ok(category);
+                return Ok(CategoryList);
             }
 
 

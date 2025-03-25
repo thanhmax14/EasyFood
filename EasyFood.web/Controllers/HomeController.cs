@@ -67,6 +67,11 @@ namespace EasyFood.web.Controllers
 
 
 
+
+        public async Task<IActionResult> LearnMore()
+        {
+            return View();
+        }
         public async Task<IActionResult> Index()
         {
             var list = new List<ProductsViewModel>();

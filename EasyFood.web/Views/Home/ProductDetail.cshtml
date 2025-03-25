@@ -1,4 +1,5 @@
 ﻿@model Repository.ViewModels.ProductDetailsViewModel;
+
 <!DOCTYPE html>
 <html class="no-js" lang="en">
 
@@ -40,7 +41,7 @@
                     <div class="row">
                         <div class="col-md-6 col-sm-12 col-xs-12 mb-md-0 mb-sm-5">
                             <div class="detail-gallery">
-                                <span class="zoom-icon"><i class="fi-rs-search"></i></span>
+                               
                                 <!-- MAIN SLIDES -->
                                 <div class="product-image-slider">
                                     <figure class="border-radius-10">
@@ -227,8 +228,7 @@
                                                         </button>
                                                         <a aria-label="Add To Wishlist" class="action-btn hover-up"
                                                            href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                        <a aria-label="Compare" class="action-btn hover-up"
-                                                           href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                      
                                                     </div>
                                                 </div>
                                                 <div class="font-xs">
@@ -237,14 +237,13 @@
                                                         <li class="mb-5">
                                                             MFG:<span class="text-brand">@Model.CreatedDate</span>
                                                         </li>
-                                                        <li>LIFE: <span class="text-brand">70 days</span></li>
+                                                       
                                                     </ul>
                                                     <ul class="float-start">
-                                                        <li class="mb-5">SKU: <a href="#">FWM15VKT</a></li>
-
+                                                       
                                                         <li>
                                                             Stock:<span class="in-stock text-brand ml-5">
-                                                                @Model.Price
+                                                                @Model.Stocks
                                                             </span>
                                                         </li>
                                                     </ul>
