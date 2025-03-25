@@ -83,6 +83,5 @@ namespace SellerAPI.Controllers
             }
             return Ok(false);
         }
-      
     }
 }

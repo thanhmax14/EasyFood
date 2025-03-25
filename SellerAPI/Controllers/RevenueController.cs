@@ -93,7 +93,5 @@ namespace SellerAPI.Controllers
 
             return Ok(statistics);
         }
-
-
     }
 }

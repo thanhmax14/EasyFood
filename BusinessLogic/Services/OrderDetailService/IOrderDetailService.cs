@@ -29,5 +29,6 @@ namespace BusinessLogic.Services.OrderDetailService
             Expression<Func<OrderDetail, bool>> filter = null,
             Func<IQueryable<OrderDetail>, IOrderedQueryable<OrderDetail>> orderBy = null,
             Func<IQueryable<OrderDetail>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<OrderDetail, object>> includeProperties = null);
+        Task<List<OrderDetailSellerViewModel>> GetOrderDetailsByOrderIdAsync(Guid storeId);
     }
 }
