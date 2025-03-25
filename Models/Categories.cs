@@ -14,7 +14,7 @@ namespace Models
         public string? Img { get; set; }
         public string Name { get; set; }
         public int Number { get; set; } = 0;
-        public float Commission { get; set; }
+        public decimal Commission { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? ModifiedDate { get; set; }
         public ICollection<Product> Products { get; set; }
