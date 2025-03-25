@@ -371,12 +371,12 @@ namespace EasyFood.web.Controllers
 
         public async Task<IActionResult> GetAllProductOfCategory(Guid iD)
         {
-            var FindProduct = await _product.FindAsync(x => x.CateID == iD);
+            var FindProduct = await _categoryService.FindAsync(x => x.ID == iD);
             if (FindProduct != null)
             {
-                var FindStore = await _categoryService.FindAsync(s => s.ID == FindProduct.CateID);
-                var list = new CategoryViewModel();
-                this._url = $"https://localhost:5555/Gateway/CategoryService/GetAllProductOfCategory?id{iD}";
+                
+                var list = new CategoryDetailsViewModel();
+                this._url = $"https://localhost:5555/Gateway/CategoryService/GetAllProductOfCategory?id={iD}";
 
 
                 try
@@ -388,7 +388,7 @@ namespace EasyFood.web.Controllers
                     }
 
                     var mes = await response.Content.ReadAsStringAsync();
-                    list = JsonSerializer.Deserialize<CategoryViewModel>(mes, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    list = JsonSerializer.Deserialize<CategoryDetailsViewModel>(mes, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
                     return View(list);
                 }
