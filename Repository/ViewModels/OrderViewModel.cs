@@ -22,6 +22,8 @@ namespace Repository.ViewModels
         public decimal Total { get; set; }
 
         public Guid OrderId { get; set; }
+        public string Username { get; set; }
+        public string UserId { get; set; }
 
     }
 }

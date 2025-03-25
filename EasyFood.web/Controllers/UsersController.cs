@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using Azure;
 using BusinessLogic.Services.BalanceChanges;
 using BusinessLogic.Services.Carts;
 using BusinessLogic.Services.OrderDetailService;
@@ -95,6 +96,7 @@ namespace EasyFood.web.Controllers
                 //list.Reivew = JsonSerializer.Deserialize<List<ReivewViewModel>>(feedbackJson, feedbackOptions);
 
                 var getOrder = await this._order.ListAsync(u => u.UserID ==user.Id);
+                getOrder = getOrder.OrderByDescending(x => x.CreatedDate).ToList();
                 if (getOrder.Any())
                 {
                     foreach(var item in getOrder)
@@ -108,7 +110,9 @@ namespace EasyFood.web.Controllers
                             PaymentMethod = item.MethodPayment,
                             Status = item.Status,
                             Total = item.TotalsPrice,
-                            OrderId = item.ID
+                            OrderId = item.ID,
+                            Username = user.UserName,
+                            UserId = user.Id
                         }); ;
                     }
                 }
@@ -650,7 +654,9 @@ namespace EasyFood.web.Controllers
                         ProductPrice = item.ProductPrice,
                         TotalPrice = item.TotalPrice,
                         Quantity = item.Quantity,
-                        Status = item.Status
+                        Status = item.Status,
+                        ProductId = product.ID,
+                        
                     };
                 }).ToList();
 
@@ -660,6 +666,42 @@ namespace EasyFood.web.Controllers
             {
                 // Log the exception
                 return Json(new { success = false, message = "An error occurred" });
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddFeekback([FromBody] ReivewViewModel model) 
+        {
+            if(model == null)
+            {
+                return Json(new { success = false, message = "Invalid" });
+            }
+            var user = await _userManager.GetUserAsync(User);
+            if(user == null)
+            {
+                return Json(new { success = false, message = "You are not logged in." });
+            }
+            string apiUrl = $"https://localhost:5555/Gateway/ReviewService/CreateReview";
+            try
+            {
+                var JsonCoent = JsonSerializer.Serialize(model);
+                var content = new StringContent(JsonCoent, System.Text.Encoding.UTF8, "application/json");
+                var reposone = await client.PostAsync(apiUrl, content);
+                
+                if (reposone.IsSuccessStatusCode)
+                {
+                    return Json(new { success = true, message = "Add feedback successful!" });
+                }
+                else
+                {
+                    var error = await reposone.Content.ReadAsStringAsync();
+                    return Json(new { success = false, message = "Add feedback fail" });
+                }
+         
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { success = false, message = "API Gateway connection error!" });
             }
         }
     }
