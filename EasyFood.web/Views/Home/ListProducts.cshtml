@@ -17,6 +17,7 @@
     <!-- Template CSS -->
     <link rel="stylesheet" href="~/assets/css/plugins/slider-range.css" />
     <link rel="stylesheet" href="~/assets/css/main.css?v=6.0" />
+
     @Html.Raw(" <link href='https://cdn.jsdelivr.net/npm/@flaticon/flaticon-uicons/css/all/all.css' rel='stylesheet'>");
 </head>
 
@@ -398,19 +399,23 @@
                     <div class="sidebar-widget price_range range mb-30">
                         <h5 class="section-title style-1 mb-30">Fill by price</h5>
                         <div class="price-filter">
-                            <div class="price-filter-inner">
-                                <div id="slider-range" class="mb-20"></div>
-                                <div class="d-flex justify-content-between">
-                                    <div class="caption">
-                                        From: <strong id="slider-range-value1"
-                                                      class="text-brand"></strong>
-                                    </div>
-                                    <div class="caption">
-                                        To: <strong id="slider-range-value2"
-                                                    class="text-brand"></strong>
-                                    </div>
-                                </div>
-                            </div>
+                          <form method="get" action="@Url.Action("ListProducts", "Home")">
+        <div class="price-filter-inner">
+            <div id="slider-range" class="mb-20"></div>
+            <div class="d-flex justify-content-between">
+                <div class="caption">
+                    From: <strong id="slider-range-value1" class="text-brand"></strong>
+                </div>
+                <div class="caption">
+                    To: <strong id="slider-range-value2" class="text-brand"></strong>
+                </div>
+            </div>
+        </div>
+        <input type="hidden" name="minPrice" id="minPrice" value="@ViewBag.MinPrice" />
+        <input type="hidden" name="maxPrice" id="maxPrice" value="@ViewBag.MaxPrice" />
+        <input type="hidden" name="filterCount" id="filterCount" value="@ViewBag.FilterCount" />
+        <button type="submit" id="filter-products" class="btn btn-primary mt-10">Filter</button>
+    </form>
                         </div>
                         <div class="list-group">
                             <div class="list-group-item mb-10 mt-10">
@@ -469,10 +474,10 @@
                                 </div>
                             </div>
                         </div>
-                        <a href="shop-grid-right.html" class="btn btn-sm btn-default">
+                        <button id="filter-products" class="btn btn-sm btn-default">
                             <i class="fi-rs-filter mr-5"></i>
                             Fillter
-                        </a>
+                        </button>
                     </div>
                     <!-- Product sidebar Widget -->
 
@@ -738,15 +743,21 @@
             </div>
         </div>
     </div>
-    <!-- Vendor JS-->
+    <!-- jQuery và jQuery UI -->
+    <!-- jQuery và jQuery UI -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <!-- Vendor JS -->
     <script src="~/assets/js/vendor/modernizr-3.6.0.min.js"></script>
-    <script src="~/assets/js/vendor/jquery-3.6.0.min.js"></script>
     <script src="~/assets/js/vendor/jquery-migrate-3.3.0.min.js"></script>
-    <script src="~/assets/js/vendor/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/js/vendor/bootstrap.bundle.min.js">    </script>
+
+    <!-- Plugin JS -->
     <script src="~/assets/js/plugins/slick.js"></script>
     <script src="~/assets/js/plugins/jquery.syotimer.min.js"></script>
     <script src="~/assets/js/plugins/wow.js"></script>
-    <script src="~/assets/js/plugins/slider-range.js"></script>
     <script src="~/assets/js/plugins/perfect-scrollbar.js"></script>
     <script src="~/assets/js/plugins/magnific-popup.js"></script>
     <script src="~/assets/js/plugins/select2.min.js"></script>
@@ -759,7 +770,37 @@
     <script src="~/assets/js/plugins/jquery.vticker-min.js"></script>
     <script src="~/assets/js/plugins/jquery.theia.sticky.js"></script>
     <script src="~/assets/js/plugins/jquery.elevatezoom.js"></script>
-    <!-- Template  JS -->
+
+    <!-- Slider Initialization Script -->
+    <script>
+            $(document).ready(function () {
+                $("#slider-range").slider({
+                    range: true,
+                    min: 0,
+                    max: 2000,
+                    step: 100,
+                    values: [@ViewBag.MinPrice, @ViewBag.MaxPrice],
+                    create: function (event, ui) {
+                        $(this).find('.ui-slider-handle').slice(2).remove();
+                    },
+                    slide: function (event, ui) {
+                        $("#slider-range-value1").text(formatCurrency(ui.values[0]));
+                        $("#slider-range-value2").text(formatCurrency(ui.values[1]));
+                        $("#minPrice").val(ui.values[0]); // Cập nhật giá trị minPrice
+                        $("#maxPrice").val(ui.values[1]); // Cập nhật giá trị maxPrice
+                    }
+                });
+
+                // Khởi tạo giá trị ban đầu
+                $("#slider-range-value1").text(formatCurrency(@ViewBag.MinPrice));
+                $("#slider-range-value2").text(formatCurrency(@ViewBag.MaxPrice));
+            });
+
+        function formatCurrency(value) {
+            return Number(value).toLocaleString("vi-VN", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " VNĐ";
+            }
+    </script>
+    <!-- Template JS -->
     <script src="~/assets/js/main.js?v=6.0"></script>
     <script src="~/assets/js/shop.js?v=6.0"></script>
 </body>

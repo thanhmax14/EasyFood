@@ -295,6 +295,52 @@ namespace ProductsService.Controllers
             return Ok(commentList);
         }
 
+        [HttpGet("GetAllFillter")]
+        public async Task<IActionResult> GetAllFillter(decimal? minPrice = null, decimal? maxPrice = null)
+        {
+            var list = new List<ProductsViewModel>();
+            var products = await _productService.ListAsync(u => u.IsActive, orderBy: x => x.OrderByDescending(s => s.CreatedDate));
+
+            foreach (var item in products)
+            {
+                var price = await _productVariantService.FindAsync(s => s.ProductID == item.ID && s.IsActive == true);
+                decimal productPrice = price?.Price ?? 0;
+
+                // Kiểm tra chính xác số thập phân
+                if (minPrice.HasValue && productPrice < minPrice.Value)
+                    continue;
+
+                if (maxPrice.HasValue && productPrice > maxPrice.Value)
+                    continue;
+
+                var storeName = await _storeDetailService.FindAsync(x => x.ID == item.StoreID);
+                var categoryName = await _categoryService.FindAsync(c => c.ID == item.CateID);
+                var imgList = await _productImageService.ListAsync(i => i.ProductID == item.ID);
+                var Listimg = imgList.Select(i => i.ImageUrl).ToList();
+
+                list.Add(new ProductsViewModel
+                {
+                    CategoryName = categoryName.Name,
+                    StoreName = storeName.Name,
+                    Price = productPrice,
+                    CateID = item.CateID,
+                    CreatedDate = item.CreatedDate,
+                    ID = item.ID,
+                    IsActive = item.IsActive,
+                    IsOnSale = item.IsOnSale,
+                    LongDescription = item.LongDescription,
+                    ManufactureDate = item.ManufactureDate,
+                    ModifiedDate = item.ModifiedDate,
+                    Name = item.Name,
+                    ShortDescription = item.ShortDescription,
+                    StoreId = item.StoreID,
+                    Img = Listimg
+                });
+            }
+            return Ok(list);
+        }
+
+
 
 
 
