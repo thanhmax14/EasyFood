@@ -645,6 +645,13 @@ namespace EasyFood.web.Controllers
                 return View(model);
             }
         }
+
+
+        public async Task<IActionResult> Revenue()
+        {
+           
+            return View();
+        }
     }
 }
 

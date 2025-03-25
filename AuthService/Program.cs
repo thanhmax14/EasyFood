@@ -118,7 +118,7 @@ static async Task SeedDataAsync(WebApplication app)
         var ctvUser = await userManager.FindByEmailAsync("ctv@gmail.com");
         if (ctvUser == null)
         {
-            ctvUser = new AppUser { UserName = "ctv", Email = "ctv@gmail.com" , EmailConfirmed = true };
+            ctvUser = new AppUser { UserName = "ctv", Email = "ctv@gmail.com", EmailConfirmed = true };
             var result = await userManager.CreateAsync(ctvUser, "Password123!");
             if (result.Succeeded)
             {
