@@ -115,7 +115,7 @@ namespace SellerAPI.Controllers
             if (store == null)
                 return NotFound("Store not found");
 
-            var productStats = await _dbContext.Products
+     var productStats = await _dbContext.Products
      .Where(p => p.StoreID == store)
      .Select(p => new PieProductView
      {
@@ -192,6 +192,52 @@ namespace SellerAPI.Controllers
             return Ok(result);
 
         }
-    }
+        [HttpPost("TotalRevenu")]
+        public async Task<IActionResult> TotalRevenu([FromBody] string sellerId)
+        {
+            if (string.IsNullOrEmpty(sellerId))
+            {
+                return BadRequest("Seller ID is required.");
+            }
+
+            var store = await _dbContext.StoreDetails
+                .Where(s => s.UserID == sellerId)
+                .Select(s => s.ID)
+                .FirstOrDefaultAsync();
+
+            if (store == null)
+                return NotFound("Store not found");
+
+            var productIds = await _dbContext.Products
+                .Where(p => p.StoreID == store)
+                .Select(p => p.ID)
+                .ToListAsync();
+
+            if (!productIds.Any())
+                return Ok(new { TotalProductsSold = 0, TotalEarnings = 0 });
+
+            // Tổng số lượng sản phẩm bán (đúng logic)
+            var totalProductsSold = await _dbContext.OrderDetails
+                .Where(od => productIds.Contains(od.ProductID) &&
+                            (od.Order.Status == "Success" ||
+                             od.Order.Status == "CANCELLED" ||
+                             od.Order.Status == "PROCESSING"))
+                .SumAsync(od => (int?)od.Quantity) ?? 0;
+
+            // Tổng doanh thu chỉ tính đơn thành công (trừ 3% hoa hồng)
+            var totalEarnings = await _dbContext.OrderDetails
+                .Where(od => productIds.Contains(od.ProductID) && od.Order.Status == "Success")
+                .SumAsync(od => (od.ProductPrice * od.Quantity) * 0.97m);
+
+            return Ok(new TotalRevenue
+            {
+                TotalOrders = totalProductsSold,
+                TotalEarnings = totalEarnings
+            });
+        }
+
+
 
     }
+
+}
