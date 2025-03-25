@@ -637,14 +637,20 @@ namespace EasyFood.web.Controllers
         }  
         public async Task<IActionResult> ManageOrder()
         {
+          return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetOrder()
+        {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
                 return Json(new ErroMess { msg = "Bạn chưa đăng nhập!!" });
             }
 
-            this._url = $"https://localhost:5555/Gateway/ShoppingService/BuyProduct";
-            var content = new StringContent($"\"{user.Id}\"", Encoding.UTF8, "application/json");
+            this._url = $"https://localhost:5555/Gateway/GetOrderSellerService/GetOrderSeller";
+            var content = new StringContent($"\"{"8e91c798-bc78-46a9-89a4-5d0aaea77f5f"}\"", Encoding.UTF8, "application/json");
             var response = await client.PostAsync($"{this._url}", content);
             var options = new JsonSerializerOptions
             {
@@ -658,8 +664,6 @@ namespace EasyFood.web.Controllers
                 return Json(messErro);
             }
             return Json(messErro);
-
-            
         }
     }
 }
