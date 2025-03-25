@@ -350,6 +350,20 @@
                     </div>
                 </div>
 
+                @* <script>
+                    ClassicEditor
+                        .create(document.querySelector('#ckeditor-classic'))
+                        .then(editor => {
+                            document.querySelector('form').addEventListener('submit', function (event) {
+                                let editorData = editor.getData();
+                                let plainText = editorData.replace(/<[^>]*>/g, ''); // Loại bỏ tất cả thẻ HTML
+                                editor.setData(plainText); // Cập nhật lại nội dung sạch vào editor
+                            });
+                        })
+                        .catch(error => console.error(error));
+                </script> *@
+
+
                 <!-- JavaScript để xem trước ảnh -->
                 <script>
                     document.getElementById("imgInput").addEventListener("change", function (event) {
