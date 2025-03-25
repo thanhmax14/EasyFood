@@ -197,7 +197,10 @@ namespace UserAPI.Controllers
 
             var products = await _productService.ListAsync();
             var productVariantIds = products.Select(x => x.ID).ToList();
-            var productVariants = await _productVariantService.ListAsync(p => productVariantIds.Contains(p.ProductID));
+
+            // 🔹 Lọc chỉ lấy các biến thể có IsActive == true
+            var productVariants = await _productVariantService.ListAsync(p => productVariantIds.Contains(p.ProductID) && p.IsActive);
+
             var result = new List<CartViewModels>(); // Danh sách kết quả
 
             foreach (var cart in carts)
@@ -208,8 +211,12 @@ namespace UserAPI.Controllers
                     continue; // Bỏ qua nếu không có sản phẩm
                 }
 
-                // 🔹 Lấy thông tin biến thể sản phẩm
+                // 🔹 Lấy thông tin biến thể sản phẩm, đã được lọc trước đó
                 var variant = productVariants.FirstOrDefault(v => v.ProductID == product.ID);
+                if (variant == null)
+                {
+                    continue; // Nếu không có biến thể nào active thì bỏ qua sản phẩm này
+                }
 
                 // 🔹 Lấy ảnh sản phẩm
                 var productImg = await _productImageService.FindAsync(x => x.ProductID == product.ID);
@@ -219,10 +226,10 @@ namespace UserAPI.Controllers
                     ProductID = cart.ProductID,
                     ProductName = product.Name ?? "Không có tên",
                     quantity = cart.Quantity,
-                    price = variant?.Price ?? 0,
-                    Subtotal = cart.Quantity * (variant?.Price ?? 0),
+                    price = variant.Price,
+                    Subtotal = cart.Quantity * variant.Price,
                     img = productImg?.ImageUrl ?? "/images/default.jpg", // Nếu không có ảnh thì lấy ảnh mặc định
-                    Stock = variant?.Stock ?? 0 // 🔹 Lấy số lượng trong kho từ ProductVariant
+                    Stock = variant.Stock // 🔹 Lấy số lượng trong kho từ ProductVariant
                 };
 
                 result.Add(cartItem);
@@ -230,6 +237,7 @@ namespace UserAPI.Controllers
 
             return Ok(result); // Trả về danh sách giỏ hàng
         }
+
 
         [HttpPost("AddCart")]
         public async Task<IActionResult> AddCart([FromBody] CartViewModels obj)
