@@ -24,7 +24,7 @@
     <link href="~/assetsAdmin/css/app.min.css" rel="stylesheet" type="text/css" />
     <!-- custom Css-->
     <link href="~/assetsAdmin/css/custom.min.css" rel="stylesheet" type="text/css" />
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -2325,7 +2325,7 @@
                                 <h4 class="mb-sm-0">Order Details</h4>
                                 <div class="page-title-right">
                                     <ol class="breadcrumb m-0">
-                                        <li class="breadcrumb-item"><a href="javascript: void(0);">Ecommerce</a></li>
+                                        <li class="breadcrumb-item"><a href="javascript:void(0);">Ecommerce</a></li>
                                         <li class="breadcrumb-item active">Order Details</li>
                                     </ol>
                                 </div>
@@ -2423,15 +2423,81 @@
                                             </li>
                                             <li><i class="ri-mail-line me-2 align-middle text-muted fs-16"></i> @customer.Email</li>
                                             <li><i class="ri-phone-line me-2 align-middle text-muted fs-16"></i> @customer.PhoneNumber</li>
-                                            <li><i class="ri-map-pin-line me-2 align-middle text-muted fs-16"></i> @customer.Address</li> <!-- Hiển thị địa chỉ -->
+                                            <li><i class="ri-map-pin-line me-2 align-middle text-muted fs-16"></i> @customer.Address</li>
                                         </ul>
                                     </div>
                                 </div>
                             </div>
+
+                            @* Hiển thị nút nếu Status là "PROCESSING" *@
+                            @if (ViewBag.Status == "PROCESSING")
+                            {
+                                @* <div class="col-xl-12 text-end mt-3">
+                                    <button type="button" class="btn btn-success accept-order" data-orderid="@ViewBag.OrderId">
+                                        Accept Order
+                                    </button>
+
+                                    <button type="button" class="btn btn-danger reject-order" data-orderid="@ViewBag.OrderId">
+                                        Reject Order
+                                    </button>
+                                </div> *@
+                            }
                         }
                     </div>
                 </div>
             </div>
+                
+                <script>
+                    $(document).ready(function () {
+                        $(".accept-order").click(function () {
+                            var orderId = $(this).data("orderid");
+                            Swal.fire({
+                                title: "Are you sure?",
+                                text: "Do you want to accept this order?",
+                                icon: "warning",
+                                showCancelButton: true,
+                                confirmButtonColor: "#28a745",
+                                cancelButtonColor: "#d33",
+                                confirmButtonText: "Yes, Accept it!"
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    $.post("/Seller/AcceptOrder", { orderId: orderId })
+                                        .done(function () {
+                                            Swal.fire("Accepted!", "The order has been accepted.", "success")
+                                                .then(() => location.reload());
+                                        })
+                                        .fail(function () {
+                                            Swal.fire("Error!", "Failed to accept order.", "error");
+                                        });
+                                }
+                            });
+                        });
+
+                        $(".reject-order").click(function () {
+                            var orderId = $(this).data("orderid");
+                            Swal.fire({
+                                title: "Are you sure?",
+                                text: "Do you want to reject this order?",
+                                icon: "warning",
+                                showCancelButton: true,
+                                confirmButtonColor: "#dc3545",
+                                cancelButtonColor: "#6c757d",
+                                confirmButtonText: "Yes, Reject it!"
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    $.post("/Seller/RejectOrder", { orderId: orderId })
+                                        .done(function () {
+                                            Swal.fire("Rejected!", "The order has been rejected.", "success")
+                                                .then(() => location.reload());
+                                        })
+                                        .fail(function () {
+                                            Swal.fire("Error!", "Failed to reject order.", "error");
+                                        });
+                                }
+                            });
+                        });
+                    });
+                </script>
 
             <footer class="footer">
                 <div class="container-fluid">
