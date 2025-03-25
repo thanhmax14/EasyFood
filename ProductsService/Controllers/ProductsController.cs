@@ -185,7 +185,7 @@ namespace ProductsService.Controllers
             var productDetail = await _productService.FindAsync(x => x.ID == id);
 
 
-
+        
             var price = await _productVariantService.FindAsync(s => s.ProductID == id && s.IsActive == true);
 
             if (price != null)

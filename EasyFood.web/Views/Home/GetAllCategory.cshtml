@@ -82,7 +82,7 @@
                                                 <span class="text-muted">@(item.CreatedDate?.ToString("dd/MM/yyyy") ?? "N/A")</span>
                                             </div>
 
-                                            <h4><a href="#">@item.Name</a></h4>
+                                            <h4><a asp-action="GetAllProductOfCategory" asp-controller="Home" asp-route-id="@item.ID">@item.Name</a></h4>
                                             <div class="product-rate-cover">
                                                 <div class="product-rate d-inline-block">
                                                     <div class="product-rating" style="width: 90%"></div>
@@ -113,23 +113,23 @@
                     <!--end vendor card-->
                     <!--end vendor card-->
 
-                    <div class="pagination-area mt-20 mb-20">
-                        <nav aria-label="Page navigation example">
-                            <ul class="pagination justify-content-start">
-                                <li class="page-item">
-                                    <a class="page-link" href="#"><i class="fi-rs-arrow-small-left"></i></a>
-                                </li>
-                                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item active"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                                <li class="page-item"><a class="page-link" href="#">6</a></li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#"><i class="fi-rs-arrow-small-right"></i></a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
+                    @* <div class="pagination-area mt-20 mb-20"> *@
+                    @*     <nav aria-label="Page navigation example"> *@
+                    @*         <ul class="pagination justify-content-start"> *@
+                    @*             <li class="page-item"> *@
+                    @*                 <a class="page-link" href="#"><i class="fi-rs-arrow-small-left"></i></a> *@
+                    @*             </li> *@
+                    @*             <li class="page-item"><a class="page-link" href="#">1</a></li> *@
+                    @*             <li class="page-item active"><a class="page-link" href="#">2</a></li> *@
+                    @*             <li class="page-item"><a class="page-link" href="#">3</a></li> *@
+                    @*             <li class="page-item"><a class="page-link dot" href="#">...</a></li> *@
+                    @*             <li class="page-item"><a class="page-link" href="#">6</a></li> *@
+                    @*             <li class="page-item"> *@
+                    @*                 <a class="page-link" href="#"><i class="fi-rs-arrow-small-right"></i></a> *@
+                    @*             </li> *@
+                    @*         </ul> *@
+                    @*     </nav> *@
+                    @* </div> *@
 
                 </div>
             </div>
