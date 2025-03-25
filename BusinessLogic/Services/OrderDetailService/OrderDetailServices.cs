@@ -15,11 +15,13 @@ namespace BusinessLogic.Services.OrderDetailService
     {
         private readonly IOrderDetailRepository _repository;
         private readonly IMapper _mapper;
+        private readonly OrderDetailRepository _repositorys;
 
-        public OrderDetailServices(IOrderDetailRepository repository, IMapper mapper)
+        public OrderDetailServices(IOrderDetailRepository repository, IMapper mapper, OrderDetailRepository repositorys)
         {
             _repository = repository;
             _mapper = mapper;
+            _repositorys = repositorys;
         }
 
         public IQueryable<OrderDetail> GetAll() => _repository.GetAll();
@@ -53,7 +55,10 @@ namespace BusinessLogic.Services.OrderDetailService
             Func<IQueryable<OrderDetail>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<OrderDetail, object>> includeProperties = null) =>
             await _repository.ListAsync(filter, orderBy, includeProperties);
         public async Task<int> SaveChangesAsync() => await _repository.SaveChangesAsync();
+        public async Task<List<OrderDetailSellerViewModel>> GetOrderDetailsByOrderIdAsync(Guid storeId)
+        {
+            return await _repositorys.GetOrderDetailsByOrderIdAsync(storeId);
+        }
 
-       
     }
 }

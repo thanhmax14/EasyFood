@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
@@ -632,7 +633,36 @@ namespace EasyFood.web.Controllers
             return Json(new { success = result });
         }
 
-        public async Task<IActionResult> ManageOrder()
+        [Route("Seller/ViewOrderDetails/{storeId}")]
+        public async Task<IActionResult> ViewOrderDetails(Guid storeId)
+        {
+            var orderDetails = new List<OrderDetailSellerViewModel>();
+
+            try
+            {
+                HttpResponseMessage response = await client.GetAsync($"https://localhost:5555/Gateway/OrderDetailService/GetOrderDetailsByOrderIdAsync/{storeId}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string json = await response.Content.ReadAsStringAsync();
+                    orderDetails = JsonSerializer.Deserialize<List<OrderDetailSellerViewModel>>(json, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+                }
+                else
+                {
+                    ViewBag.ErrorMessage = "Failed to retrieve order details from API Gateway.";
+                }
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = $"Error: {ex.Message}";
+            }
+
+            return View(orderDetails);
+        }
+    public async Task<IActionResult> ManageOrder()
  {
      return View();
  }

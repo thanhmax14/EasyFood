@@ -103,7 +103,5 @@ namespace SellerAPI.Controllers
             return Ok(list);
 
         }
-
-
     }
 }
