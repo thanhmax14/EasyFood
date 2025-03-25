@@ -68,3 +68,17 @@ services:
     build:
       context: .
       dockerfile: ./UserAPI/Dockerfile
+
+
+
+          
+  esyfood.web:
+    container_name: esyfood.web
+    image: esyfood.web:latest
+    ports:
+      - "5051:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    build:
+      context: .
+      dockerfile: ./UserAPI/Dockerfile

@@ -138,12 +138,12 @@
                 </div>
             </div>
             <div class="mobile-header-content-area">
-                <div class="mobile-search search-style-3 mobile-header-border">
-                    <form action="#">
-                        <input type="text" placeholder="Search for items…" />
-                        <button type="submit"><i class="fi-rs-search"></i></button>
-                    </form>
-                </div>
+                @* <div class="mobile-search search-style-3 mobile-header-border"> *@
+                @*     <form action="#"> *@
+                @*         <input type="text" placeholder="Search for items…" /> *@
+                @*         <button type="submit"><i class="fi-rs-search"></i></button> *@
+                @*     </form> *@
+                @* </div> *@
                 <div class="mobile-menu-wrap mobile-header-border">
                     <!-- mobile menu start -->
                     <nav>
@@ -315,12 +315,12 @@
                 <div class="row">
                     <div class="col-lg-5 mx-auto">
                         <div class="sidebar-widget-2 widget_search mb-50">
-                            <div class="search-form">
-                                <form action="#">
-                                    <input type="text" placeholder="Search product by Store" />
-                                    <button type="submit"><i class="fi-rs-search"></i></button>
-                                </form>
-                            </div>
+                            @* <div class="search-form"> *@
+                            @*     <form action="#"> *@
+                            @*         <input type="text" placeholder="Search product by Store" /> *@
+                            @*         <button type="submit"><i class="fi-rs-search"></i></button> *@
+                            @*     </form> *@
+                            @* </div> *@
 
                         </div>
                     </div>
@@ -328,10 +328,6 @@
             </div>
             <div class="row flex-row-reverse">
                 <div class="col-lg-4-5">
-                    <div class="shop-product-fillter">
-                       
-                       
-                    </div>
 
                     <div class="row product-grid">
                
@@ -410,13 +406,13 @@
                   
 
                     <section class="section-padding pb-5">
-                        <div class="section-title">
-                            <h3 class="">Deals Of The Day</h3>
-                            <a class="show-all" href="shop-grid-right.html">
-                                All Deals
-                                <i class="fi-rs-angle-right"></i>
-                            </a>
-                        </div>
+                        @* <div class="section-title"> *@
+                        @*     <h3 class="">Deals Of The Day</h3> *@
+                        @*     <a class="show-all" href="shop-grid-right.html"> *@
+                        @*         All Deals *@
+                        @*         <i class="fi-rs-angle-right"></i> *@
+                        @*     </a> *@
+                        @* </div> *@
                         <div class="row">
                             <div class="col-xl-3 col-lg-4 col-md-6">
                                 <div class="product-cart-wrap style-2">
@@ -548,12 +544,12 @@
                                     <li><img class="mr-5" src="~/assets/imgs/theme/icons/icon-location.svg" alt="" /><strong>Address: </strong> <span>@Model.Address</span></li>
                                     <li><img class="mr-5" src="~/assets/imgs/theme/icons/icon-contact.svg" alt="" /><strong>Call Us:</strong><span>@Model.Phone</span></li>
                                 </ul>
-                                <a href="vendor-details-1.html" class="btn btn-xs">Contact Seller <i class="fi-rs-arrow-small-right"></i></a>
+                                @* <a href="vendor-details-1.html" class="btn btn-xs">Contact Seller <i class="fi-rs-arrow-small-right"></i></a> *@
                             </div>
                         </div>
                     </div>
                     <div class="sidebar-widget widget-category-2 mb-30">
-                        <h5 class="section-title style-1 mb-30">Category</h5>
+                        <h5 class="section-title style-1 mb-30">@Model.CategoryName</h5>
                        
                             <ul>
                               
@@ -588,7 +584,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+       
     </main>
     <footer class="main">
         <section class="newsletter mb-15">
