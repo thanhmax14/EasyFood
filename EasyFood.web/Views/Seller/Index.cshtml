@@ -1198,7 +1198,7 @@
                                                 <div class="d-flex align-items-end justify-content-between mt-4">
                                                     <div>
                                                         <h4 class="fs-22 fw-semibold ff-secondary mb-4">
-                                                            $<span class="counter-value" data-target="559.25">0</span>k
+                                                            $<span class="counter-value" id="total-earnings">0</span>k
                                                         </h4>
                                                         <a href="#" class="text-decoration-underline">
                                                             View net
@@ -1235,9 +1235,9 @@
                                                 <div class="d-flex align-items-end justify-content-between mt-4">
                                                     <div>
                                                         <h4 class="fs-22 fw-semibold ff-secondary mb-4">
-                                                            $<span class="counter-value" data-target="165.89">0</span>k
+                                                            $<span class="counter-value" id="balance-display">0</span>k
                                                         </h4>
-                                                        <a href="#" class="text-decoration-underline">Withdraw money</a>
+                                                        <a asp-action="Index" asp-controller="Users" class="text-decoration-underline">Withdraw money</a>
                                                     </div>
                                                     @* <div class="avatar-sm flex-shrink-0">
                                                         <span class="avatar-title bg-primary-subtle rounded fs-3">
@@ -1261,18 +1261,18 @@
                                                         </p>
                                                     </div>
                                                     <div class="flex-shrink-0">
-                                                        <h5 class="text-danger fs-14 mb-0">
+                                                       @*  <h5 class="text-danger fs-14 mb-0">
                                                             <i class="ri-arrow-right-down-line fs-13 align-middle"></i>
                                                             -3.57 %
-                                                        </h5>
+                                                        </h5> *@
                                                     </div>
                                                 </div>
                                                 <div class="d-flex align-items-end justify-content-between mt-4">
                                                     <div>
                                                         <h4 class="fs-22 fw-semibold ff-secondary mb-4">
-                                                            <span class="counter-value" data-target="36894">0</span>
+                                                            <span class="counter-value" id="total-orders">0</span>
                                                         </h4>
-                                                        <a href="#" class="text-decoration-underline">
+                                                        <a asp-action="ManageOrder" class="text-decoration-underline">
                                                             View all
                                                             orders
                                                         </a>
@@ -1286,6 +1286,30 @@
                                             </div><!-- end card body -->
                                         </div><!-- end card -->
                                     </div><!-- end col -->
+
+                                    <script>
+                                        $(document).ready(function () {
+                                            fetchTotalRevenue();
+                                        });
+
+                                        function fetchTotalRevenue() {
+                                            $.ajax({
+                                                url: "/Seller/GetRevenuTotal",
+                                                type: "POST",
+                                                contentType: "application/json",
+                                                success: function (data) {
+                                                    if (data) {
+                                                        $("#total-orders").text(data.totalOrders);
+                                                        $("#total-earn").text(data.totalEarnings);
+                                                    }
+                                                },
+                                                error: function (xhr, status, error) {
+                                                    console.error("Error fetching revenue data:", error);
+                                                }
+                                            });
+                                        }
+                                         setInterval( fetchTotalRevenue, 3000);
+                                    </script>
 
                                     @* <div class="col-xl-3 col-md-8">
                                         <!-- card -->
