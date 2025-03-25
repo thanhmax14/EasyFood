@@ -42,7 +42,7 @@ namespace SellerAPI.Controllers
         }
 
         [HttpGet("GetOrderStatistics")]
-        public async Task<IActionResult> GetOrderStatistics(string sellerId)
+        public async Task<IActionResult> GetOrderStatistics([FromBody]string sellerId)
         {
             var now = DateTime.UtcNow;
             var startDate = now.AddDays(-30);
@@ -62,18 +62,21 @@ namespace SellerAPI.Controllers
                 .ToListAsync();
 
             var orderDetails = await _dbContext.OrderDetails
-                .Where(od => productIds.Contains(od.ProductID) && od.Order.CreatedDate >= startDate)
-                .GroupBy(od => od.Order.CreatedDate.Date)
-                .Select(g => new
-                {
-                    Date = g.Key,
-                    Orders = g.Select(od => od.OrderID).Distinct().Count(),
-                    Earnings = g.Where(od => od.Order.Status == "Success") // Lọc đơn hàng thành công
-                                .Sum(od => od.ProductPrice * od.Quantity),
-                    FailedOrders = g.Count(od => od.Order.Status == "Failed")
-                })
-                .OrderBy(x => x.Date)
-                .ToListAsync();
+    .Where(od => productIds.Contains(od.ProductID) && od.Order.CreatedDate >= startDate)
+    .GroupBy(od => od.Order.CreatedDate.Date)
+    .Select(g => new
+    {
+        Date = g.Key,
+        Orders = g.Select(od => od.OrderID).Distinct().Count(),
+        Earnings = g.Where(od => od.Order.Status == "Success")
+                    .Sum(od => (od.ProductPrice * od.Quantity) * (1m - (decimal)od.Product.Categories.Commission / 100m)),
+        Failed = g.Count(od => od.Order.Status == "Failed"),
+        Success = g.Count(od => od.Order.Status == "Success"),
+        PROCESSING = g.Count(od => od.Order.Status == "PROCESSING"),
+    })
+    .OrderBy(x => x.Date)
+    .ToListAsync();
+
 
             var statistics = Enumerable.Range(0, 31)
                 .Select(i =>
@@ -86,7 +89,9 @@ namespace SellerAPI.Controllers
                         Date = currentDate.ToString("yyyy-MM-dd"),
                         Orders = data?.Orders ?? 0,
                         Earnings = data?.Earnings ?? 0,
-                        FailedOrders = data?.FailedOrders ?? 0
+                        FailedOrders = data?.Failed ?? 0,
+                        Success = data?.Success ?? 0,
+                        PROCESSING = data?.PROCESSING ?? 0,
                     };
                 })
                 .ToList();
