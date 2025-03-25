@@ -1181,7 +1181,18 @@
                                         $("#submitPayment").html('Place an Order').prop('disabled', false);
                                     },
                                     error: function (xhr) {
-                                        alert("Có lỗi xảy ra: " + xhr.responseText);
+                                        new Notify({
+                                            status: 'error',
+                                            title: 'Thất Bại',
+                                            text: 'Mua thất bại vui lòng liên hệ admin!!',
+                                            effect: 'fade',
+                                            speed: 300,
+                                            showIcon: true,
+                                            showCloseButton: true,
+                                            autoclose: true,
+                                            autotimeout: 3000,
+                                            position: 'right top'
+                                        });
                                         $("#submitPayment").html('Place an Order').prop('disabled', false);
                                     }
                                 });

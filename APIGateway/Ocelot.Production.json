@@ -1,0 +1,131 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/auth/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/Gateway/authenticate/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Products/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7092
+        }
+      ],
+      "UpstreamPathTemplate": "/Gateway/ProductsService/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+
+    },
+    {
+      "DownstreamPathTemplate": "/api/Categories/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7092
+        }
+      ],
+      "UpstreamPathTemplate": "/Gateway/CategoryService/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+
+    },
+    {
+      "DownstreamPathTemplate": "/api/Store/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7092
+        }
+      ],
+      "UpstreamPathTemplate": "/Gateway/StoreDetailService/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+
+    },
+    {
+      "DownstreamPathTemplate": "/api/Users/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7042
+        }
+      ],
+      "UpstreamPathTemplate": "/Gateway/UsersService/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/ManagementSeller/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7071
+        }
+      ],
+      "UpstreamPathTemplate": "/Gateway/ManagementSellerService/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Review/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7190
+        }
+      ],
+      "UpstreamPathTemplate": "/Gateway/ReviewService/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Wallet/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7042
+        }
+      ],
+      "UpstreamPathTemplate": "/Gateway/WalletService/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Withdraw/{everything}","DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7071
+        }
+      ],
+      "UpstreamPathTemplate": "/Gateway/WithdrawService/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+
+    },
+    {
+  "DownstreamPathTemplate": "/api/Shopping/{everything}",
+  "DownstreamScheme": "https",
+  "DownstreamHostAndPorts": [
+    {
+      "Host": "localhost",
+      "Port": 7042
+    }
+  ],
+  "UpstreamPathTemplate": "/Gateway/ShoppingService/{everything}",
+  "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+
+}
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:5555"
+  }
+}

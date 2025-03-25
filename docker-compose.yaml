@@ -1,0 +1,70 @@
+services:
+  admin-api:
+    container_name: admin-api
+    image: admin-api:latest
+    ports:
+      - "5001:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    build:
+      context: .
+      dockerfile: ./AdminApi/Dockerfile
+
+      
+  gateway-api:
+    container_name: gateway-api
+    image: gateway-api:latest
+    ports:
+      - "5002:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    build:
+      context: .
+      dockerfile: ./APIGateway/Dockerfile
+    
+  authservice-api:
+    container_name: authservice-api
+    image: authservice-api:latest
+    ports:
+      - "5003:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    build:
+      context: .
+      dockerfile: ./AuthService/Dockerfile
+    
+  productsservice-api:
+    container_name: productsservice-api
+    image: productsservice-api:latest
+    ports:
+      - "5004:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    build:
+      context: .
+      dockerfile: ./ProductsService/Dockerfile
+    
+        
+  sellerapi-api:
+    container_name: sellerapi-api
+    image: sellerapi-api:latest
+    ports:
+      - "5005:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    build:
+      context: .
+      dockerfile: ./SellerAPI/Dockerfile
+    
+
+          
+  userapi-api:
+    container_name: userapi-api
+    image: userapi-api:latest
+    ports:
+      - "5006:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    build:
+      context: .
+      dockerfile: ./UserAPI/Dockerfile
