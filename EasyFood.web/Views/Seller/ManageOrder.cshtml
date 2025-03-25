@@ -2475,7 +2475,15 @@
                                                             }
                                                         },
                                                         { id: "userName", name: "Customer" },
-                                                        { id: "orderDate", name: "Order Date" },
+                                                        {
+                                                            id: "orderDate",
+                                                            name: "Order Date",
+                                                            formatter: (e) => {
+                                                                const date = new Date(e);
+                                                                const formatted = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+                                                                return formatted;
+                                                            }
+                                                        },
                                                         { id: "quantity", name: "Quantity" },
                                                         { id: "total", name: "Total", formatter: cell => `$${cell.toLocaleString()}` },
                                                         {

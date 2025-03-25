@@ -721,5 +721,13 @@ namespace EasyFood.web.Controllers
      }
      return Json(false);
  }
+
+ public async Task<IActionResult> Index(string id)
+        {
+            return View();
+        }
+
+
     }
+
 }
