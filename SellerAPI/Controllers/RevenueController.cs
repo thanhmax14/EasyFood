@@ -1,4 +1,4 @@
-﻿using BusinessLogic.Services.BalanceChanges;
+using BusinessLogic.Services.BalanceChanges;
 using BusinessLogic.Services.Carts;
 using BusinessLogic.Services.OrderDetailService;
 using BusinessLogic.Services.Orders;
@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Models;
 using Models.DBContext;
 using Repository.BalanceChange;
+using Repository.ViewModels;
 
 namespace SellerAPI.Controllers
 {
@@ -41,7 +42,7 @@ namespace SellerAPI.Controllers
             _dbContext = dbContext;
         }
 
-        [HttpGet("GetOrderStatistics")]
+        [HttpPost("GetOrderStatistics")]
         public async Task<IActionResult> GetOrderStatistics([FromBody]string sellerId)
         {
             var now = DateTime.UtcNow;
@@ -62,41 +63,45 @@ namespace SellerAPI.Controllers
                 .ToListAsync();
 
             var orderDetails = await _dbContext.OrderDetails
-    .Where(od => productIds.Contains(od.ProductID) && od.Order.CreatedDate >= startDate)
-    .GroupBy(od => od.Order.CreatedDate.Date)
-    .Select(g => new
-    {
-        Date = g.Key,
-        Orders = g.Select(od => od.OrderID).Distinct().Count(),
-        Earnings = g.Where(od => od.Order.Status == "Success")
-                    .Sum(od => (od.ProductPrice * od.Quantity) * (1m - (decimal)od.Product.Categories.Commission / 100m)),
-        Failed = g.Count(od => od.Order.Status == "Failed"),
-        Success = g.Count(od => od.Order.Status == "Success"),
-        PROCESSING = g.Count(od => od.Order.Status == "PROCESSING"),
-    })
-    .OrderBy(x => x.Date)
-    .ToListAsync();
+     .Where(od => productIds.Contains(od.ProductID) && od.Order.CreatedDate >= startDate)
+     .GroupBy(od => od.Order.CreatedDate.Date)
+     .Select(g => new
+     {
+         Date = g.Key,
+         Orders = g.Select(od => od.OrderID).Count(),
+         Earnings = g.Where(od => od.Order.Status == "Success")
+                     .Sum(od => (od.ProductPrice * od.Quantity) )- (g.Where(od => od.Order.Status == "Success")
+                     .Sum(od => (od.ProductPrice * od.Quantity) * 0.03m)),
+         Failed = g.Count(od => od.Order.Status == "Failed"),
+         Success = g.Count(od => od.Order.Status == "Success"),
+         PROCESSING = g.Count(od => od.Order.Status == "PROCESSING"),
+     })
+     .OrderBy(x => x.Date)
+     .ToListAsync();
 
 
-            var statistics = Enumerable.Range(0, 31)
-                .Select(i =>
+            var list = new List<RevenueSeller>();
+
+            foreach (var i in Enumerable.Range(0, 31))
+            {
+                var currentDate = startDate.AddDays(i).Date;
+                var data = orderDetails.FirstOrDefault(x => x.Date == currentDate);
+
+                var revenue = new RevenueSeller
                 {
-                    var currentDate = startDate.AddDays(i).Date;
-                    var data = orderDetails.FirstOrDefault(x => x.Date == currentDate);
+                    Failed = data?.Failed ?? 0,
+                    Success = data?.Success ?? 0,
+                    Earnings = data?.Earnings ?? 0,
+                    Orders = data?.Orders ?? 0,
+                    Date = currentDate.ToString("yyyy-MM-dd"),
+                    PROCESSING = data?.PROCESSING ?? 0
+                };
 
-                    return new
-                    {
-                        Date = currentDate.ToString("yyyy-MM-dd"),
-                        Orders = data?.Orders ?? 0,
-                        Earnings = data?.Earnings ?? 0,
-                        FailedOrders = data?.Failed ?? 0,
-                        Success = data?.Success ?? 0,
-                        PROCESSING = data?.PROCESSING ?? 0,
-                    };
-                })
-                .ToList();
+                list.Add(revenue);
+            }
 
-            return Ok(statistics);
+            return Ok(list);
+
         }
 
 

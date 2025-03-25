@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg"
     data-sidebar-image="none" data-preloader="disable" data-theme="default" data-theme-colors="default">
 
@@ -2379,7 +2379,6 @@
                                 </div>
 
 
-
                                 <div class="card-body pt-0">
                                     <div>
                                         <ul class="nav nav-tabs nav-tabs-custom nav-success mb-3" role="tablist">
@@ -2476,16 +2475,7 @@
                                                             }
                                                         },
                                                         { id: "userName", name: "Customer" },
-                                                        {
-                                                            id: "orderDate",
-                                                            name: "Order Date",
-                                                            formatter: (e) => {
-                                                                const date = new Date(e);
-                                                                const formatted = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
-                                                                return formatted;
-                                                            }
-                                                        },
-
+                                                        { id: "orderDate", name: "Order Date" },
                                                         { id: "quantity", name: "Quantity" },
                                                         { id: "total", name: "Total", formatter: cell => `$${cell.toLocaleString()}` },
                                                         {
@@ -2498,22 +2488,6 @@
                                                                     "PROCESSING": "warning"
                                                                 }[cell.toUpperCase()] || "secondary";
                                                                 return gridjs.html(`<span class="badge bg-${color}-subtle text-${color} text-uppercase">${cell}</span>`);
-                                                            }
-                                                        },
-                                                        {
-                                                            id: "action",
-                                                            name: "Action",
-                                                            formatter: (_, row) => {
-                                                                const fullOrderID = row.cells[1].data; // Lấy orderID đầy đủ
-                                                                return gridjs.html(`
-                                                                        <ul class="list-inline hstack gap-2 mb-0">
-                                                                            <li class="list-inline-item" title="View">
-                                                                                <a href="/seller/order/${fullOrderID}" class="text-primary d-inline-block">
-                                                                                    <i class="ri-eye-fill fs-16"></i>
-                                                                                </a>
-                                                                            </li>
-                                                                        </ul>
-                                                                    `);
                                                             }
                                                         }
                                                     ],

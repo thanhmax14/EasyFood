@@ -31,7 +31,8 @@
     <link href="~/assetsAdmin/css/app.min.css" rel="stylesheet" type="text/css" />
     <!-- custom Css-->
     <link href="~/assetsAdmin/css/custom.min.css" rel="stylesheet" type="text/css" />
-
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.js"></script>
 </head>
 
 <body>
@@ -1385,98 +1386,62 @@
                                                     <div id="customer_impression_charts1"
                                                          dir="ltr"></div>
                                                 </div>
-
                                                 <script>
                                                     document.addEventListener("DOMContentLoaded", function () {
-                                                        var chartColors = getChartColorsArray("customer_impression_charts1");
+                                                        function loadChartData() {
+                                                            $.ajax({
+                                                                url: "/seller/GetRevenue",
+                                                                type: "POST",
+                                                                contentType: "application/json",
+                                                                success: function (response) {
+                                                                    let categories = response.map(item => item.date);
+                                                                    let orders = response.map(item => item.orders || 0);
+                                                                    let earnings = response.map(item => (item.earnings || 0) / 1000); // Chia 1000 để hiển thị đơn vị 'k'
+                                                                    let failed = response.map(item => item.failed || 0);
+                                                                    let success = response.map(item => item.success || 0);
+                                                                    let processing = response.map(item => item.processing || 0);
 
-                                                        var options = {
-                                                            series: [
-                                                                {
-                                                                    name: "Orders",
-                                                                    type: "area",
-                                                                    data: [120, 140, 180, 200, 170, 160, 190, 210, 230, 250, 270, 300]
-                                                                },
-                                                                {
-                                                                    name: "Earnings",
-                                                                    type: "bar",
-                                                                    data: [450, 480, 520, 610, 580, 600, 650, 700, 720, 740, 800, 850]
-                                                                },
-                                                                {
-                                                                    name: "Failed Orders",
-                                                                    type: "line",
-                                                                    data: [5, 8, 6, 10, 7, 9, 11, 6, 12, 9, 10, 15]
-                                                                }
-                                                            ],
-                                                            chart: {
-                                                                height: 370,
-                                                                type: "line",
-                                                                toolbar: {
-                                                                    show: false
-                                                                }
-                                                            },
-                                                            stroke: {
-                                                                curve: "smooth",
-                                                                dashArray: [0, 0, 5],
-                                                                width: [2, 0, 2]
-                                                            },
-                                                            fill: {
-                                                                opacity: [0.1, 0.9, 1]
-                                                            },
-                                                            markers: {
-                                                                size: [0, 0, 3],
-                                                                strokeWidth: 2,
-                                                                hover: {
-                                                                    size: 5
-                                                                }
-                                                            },
-                                                            xaxis: {
-                                                                categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-                                                                axisTicks: { show: false },
-                                                                axisBorder: { show: false }
-                                                            },
-                                                            grid: {
-                                                                show: true,
-                                                                xaxis: { lines: { show: true } },
-                                                                yaxis: { lines: { show: false } },
-                                                                padding: { top: 0, right: -2, bottom: 15, left: 10 }
-                                                            },
-                                                            legend: {
-                                                                show: true,
-                                                                horizontalAlign: "center",
-                                                                offsetX: 0,
-                                                                offsetY: -5,
-                                                                markers: { width: 9, height: 9, radius: 6 },
-                                                                itemMargin: { horizontal: 10, vertical: 0 }
-                                                            },
-                                                            plotOptions: {
-                                                                bar: { columnWidth: "30%", barHeight: "70%" }
-                                                            },
-                                                            colors: chartColors,
-                                                            tooltip: {
-                                                                shared: true,
-                                                                y: [
-                                                                    {
-                                                                        formatter: function (e) {
-                                                                            return e !== undefined ? e.toFixed(0) + " Orders" : e;
-                                                                        }
-                                                                    },
-                                                                    {
-                                                                        formatter: function (e) {
-                                                                            return e !== undefined ? "$" + e.toFixed(2) + "k" : e;
-                                                                        }
-                                                                    },
-                                                                    {
-                                                                        formatter: function (e) {
-                                                                            return e !== undefined ? e.toFixed(0) + " Failed Orders" : e;
-                                                                        }
-                                                                    }
-                                                                ]
-                                                            }
-                                                        };
+                                                                    var chartColors = getChartColorsArray("customer_impression_charts1");
 
-                                                        var chart = new ApexCharts(document.querySelector("#customer_impression_charts1"), options);
-                                                        chart.render();
+                                                                    var options = {
+                                                                        series: [
+                                                                            { name: "Orders", type: "area", data: orders },
+                                                                            { name: "Earnings", type: "bar", data: earnings },
+                                                                            { name: "Failed Orders", type: "line", data: failed },
+                                                                            { name: "Success Orders", type: "line", data: success },
+                                                                            { name: "Processing Orders", type: "line", data: processing }
+                                                                        ],
+                                                                        chart: { height: 370, type: "line", toolbar: { show: false } },
+                                                                        stroke: { curve: "smooth", dashArray: [0, 0, 5, 5, 5], width: [2, 0, 2, 2, 2] },
+                                                                        fill: { opacity: [0.1, 0.9, 1, 1, 1] },
+                                                                        markers: { size: [0, 0, 3, 3, 3], strokeWidth: 2, hover: { size: 5 } },
+                                                                        xaxis: { categories: categories, axisTicks: { show: false }, axisBorder: { show: false } },
+                                                                        grid: { show: true, xaxis: { lines: { show: true } }, yaxis: { lines: { show: false } }, padding: { top: 0, right: -2, bottom: 15, left: 10 } },
+                                                                        legend: { show: true, horizontalAlign: "center", offsetX: 0, offsetY: -5, markers: { width: 9, height: 9, radius: 6 }, itemMargin: { horizontal: 10, vertical: 0 } },
+                                                                        plotOptions: { bar: { columnWidth: "30%", barHeight: "70%" } },
+                                                                        colors: chartColors,
+                                                                        tooltip: {
+                                                                            shared: true,
+                                                                            y: [
+                                                                                { formatter: e => (e !== undefined ? e + " Orders" : "0 Orders") },
+                                                                                { formatter: e => (e !== undefined ? "$" + e.toFixed(2) + "k" : "$0.00k") },
+                                                                                { formatter: e => (e !== undefined ? e + " Failed Orders" : "0 Failed Orders") },
+                                                                                { formatter: e => (e !== undefined ? e + " Success Orders" : "0 Success Orders") },
+                                                                                { formatter: e => (e !== undefined ? e + " Processing Orders" : "0 Processing Orders") }
+                                                                            ]
+                                                                        }
+                                                                    };
+
+                                                                    var chart = new ApexCharts(document.querySelector("#customer_impression_charts1"), options);
+                                                                    chart.render();
+                                                                },
+                                                                error: function (error) {
+                                                                    console.error("Error loading chart data:", error);
+                                                                }
+                                                            });
+                                                        }
+
+                                                        loadChartData();
                                                     });
                                                 </script>
 
