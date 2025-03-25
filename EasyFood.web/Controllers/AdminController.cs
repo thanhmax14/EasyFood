@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 using AutoMapper;
 using BusinessLogic.Services.BalanceChanges;
@@ -651,6 +652,60 @@ namespace EasyFood.web.Controllers
         {
            
             return View();
+        }   
+        
+        
+        public async Task<IActionResult> GetStatistics()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return Json(new ErroMess { msg = "Bạn chưa đăng nhập!!" });
+            }
+
+            string url = $"https://localhost:5555/Gateway/RevenueAdminService/GetDailyStatistics";  
+            var response = await client.GetAsync($"{url}");
+            var options = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                PropertyNameCaseInsensitive = true
+            };
+            var mes = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+
+                var messErro = JsonSerializer.Deserialize<List<RevenuAdmin>>(mes, options);
+
+                return Json(messErro);
+            }
+            return Json(false);
+        }
+        public async Task<IActionResult> GetReveTotalday()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return Json(new ErroMess { msg = "Bạn chưa đăng nhập!!" });
+            }
+
+            string url = $"https://localhost:5555/Gateway/RevenueAdminService/GetAdminStatistics";
+            var response = await client.GetAsync($"{url}");
+            var options = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                PropertyNameCaseInsensitive = true
+            };
+            var mes = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+
+                var messErro = JsonSerializer.Deserialize<GetRevenueTotal>(mes, options);
+
+                return Json(messErro);
+            }
+            return Json(false);
         }
     }
 }

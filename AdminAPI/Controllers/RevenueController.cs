@@ -11,6 +11,7 @@ using Models.DBContext;
 using Models;
 using Repository.BalanceChange;
 using Microsoft.EntityFrameworkCore;
+using Repository.ViewModels;
 
 namespace AdminAPI.Controllers
 {
@@ -59,7 +60,7 @@ namespace AdminAPI.Controllers
             // Đếm tổng số user
             var totalUsers = await _dbContext.Users.CountAsync();
 
-            return Ok(new
+            return Ok(new GetRevenueTotal
             {
                 TotalCommission = totalCommission,
                 TotalStores = totalStores,
@@ -68,32 +69,52 @@ namespace AdminAPI.Controllers
             });
         }
 
-        [HttpGet("GetMonthlyStatistics")]
-        public async Task<IActionResult> GetMonthlyStatistics()
+        [HttpGet("GetDailyStatistics")]
+        public async Task<IActionResult> GetDailyStatistics()
         {
-            var now = DateTime.UtcNow;
-            var startDate = now.AddDays(-30);
+            var startDate = DateTime.UtcNow.Date.AddDays(-30); // 30 ngày trước
+            var days = Enumerable.Range(0, 31)
+                .Select(i => startDate.AddDays(i))
+                .ToList();
 
-            // Doanh thu nhận được trong 30 ngày (tổng tiền hoa hồng)
-            var commissionLast30Days = await _dbContext.OrderDetails
+            // Lấy doanh thu từng ngày
+            var commissionDict = await _dbContext.OrderDetails
                 .Where(od => od.Order.Status == "Success" && od.Order.CreatedDate >= startDate)
-                .SumAsync(od => (od.ProductPrice * od.Quantity) * 0.03m);
+                .GroupBy(od => od.Order.CreatedDate.Date)
+                .ToDictionaryAsync(g => g.Key, g => g.Sum(od => (od.ProductPrice * od.Quantity) * 0.03m));
 
-            // Số store đăng ký trong 30 ngày qua
-            var newStoresLast30Days = await _dbContext.StoreDetails
-                .CountAsync(s => s.CreatedDate >= startDate);
+            // Lấy số tiền nạp từng ngày
+            var depositDict = await _dbContext.BalanceChanges
+                .Where(bc => bc.Method == "Deposit" && bc.StartTime >= startDate)
+                .GroupBy(bc => bc.StartTime.Value.Date)
+                .ToDictionaryAsync(g => g.Key, g => g.Sum(bc => bc.MoneyChange));
 
-            // Số user đăng ký trong 30 ngày qua
-            var newUsersLast30Days = await _dbContext.Users
-                .CountAsync(u => u.joinin >= startDate);
+            // Lấy số tiền rút từng ngày
+            var withdrawDict = await _dbContext.BalanceChanges
+                .Where(bc => bc.Method == "Withdraw" && bc.StartTime >= startDate)
+                .GroupBy(bc => bc.StartTime.Value.Date)
+                .ToDictionaryAsync(g => g.Key, g => g.Sum(bc => bc.MoneyChange));
 
-            return Ok(new
+            // Lấy số user đăng ký từng ngày
+            var userDict = await _dbContext.Users
+                .Where(u => u.joinin >= startDate)
+                .GroupBy(u => u.joinin.Value.Date)
+                .ToDictionaryAsync(g => g.Key, g => g.Count());
+
+            // Ghép dữ liệu lại theo từng ngày
+            var statistics = days.Select(date => new RevenuAdmin
             {
-                CommissionLast30Days = commissionLast30Days,
-                NewStoresLast30Days = newStoresLast30Days,
-                NewUsersLast30Days = newUsersLast30Days
-            });
+                Date = date.ToString("yyyy-MM-dd"),
+                Commission = commissionDict.GetValueOrDefault(date, 0),
+                Deposit = depositDict.GetValueOrDefault(date, 0),
+                Withdraw = withdrawDict.GetValueOrDefault(date, 0),
+                NewUsers = userDict.GetValueOrDefault(date, 0)
+            }).ToList();
+
+            return Ok(statistics);
         }
+
+
     }
 }
 
