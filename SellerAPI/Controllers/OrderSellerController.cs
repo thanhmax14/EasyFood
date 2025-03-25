@@ -45,7 +45,7 @@ namespace SellerAPI.Controllers
 
 
         [HttpPost("GetOrderSeller")]
-        public async Task<IActionResult> GetOrderSeller(string sellerId)
+        public async Task<IActionResult> GetOrderSeller([FromBody]string sellerId)
         {
             var getStore = await this._storedetail.FindAsync(u => u.UserID == sellerId);
             if (getStore == null)

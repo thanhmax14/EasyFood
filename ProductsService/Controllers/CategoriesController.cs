@@ -97,14 +97,12 @@ namespace ProductsService.Controllers
 
         [HttpGet("GetAllProductOfCategory")]
 
-        public async Task<IActionResult> GetAllProductOfCategory(Guid categoryId)
+        public async Task<IActionResult> GetAllProductOfCategory(Guid id)
         {
-            var store = new List<StoreDetailsViewModels>();
+            var CategoryList = new CategoryDetailsViewModel();
             var List = new List<ProductsViewModel>();
-            var categoryList = new CategoryViewModel();
-
-
-            var products = await _productService.ListAsync(u => u.IsActive && u.CateID == categoryId, orderBy: x => x.OrderByDescending(s => s.CreatedDate));
+            var StoreList = new List<StoreDetailsViewModels>();
+            var products = await _productService.ListAsync(u => u.IsActive && u.CateID == id, orderBy: x => x.OrderByDescending(s => s.CreatedDate));
 
             foreach (var item in products)
             {
@@ -112,8 +110,7 @@ namespace ProductsService.Controllers
                 var storeName = await _storeDetailService.FindAsync(x => x.ID == item.StoreID);
                 var categoryName = await _categoryService.FindAsync(c => c.ID == item.CateID);
                 var imgList = await _productImageService.ListAsync(i => i.ProductID == item.ID);
-
-                var Listimg = imgList.Select(i => i.ImageUrl).ToList();
+                var ListImg = imgList.Select(o => o.ImageUrl).ToList();
 
                 if (price != null)
                 {
@@ -133,9 +130,9 @@ namespace ProductsService.Controllers
                         Name = item.Name,
                         ShortDescription = item.ShortDescription,
                         StoreId = item.StoreID,
-                        Img = Listimg
-
+                        Img = ListImg
                     });
+
                 }
                 else
                 {
@@ -155,34 +152,31 @@ namespace ProductsService.Controllers
                         Name = item.Name,
                         ShortDescription = item.ShortDescription,
                         StoreId = item.StoreID,
-                        Img = Listimg // Gán danh sách URL hình ảnh cho sản phẩm
+                        Img = ListImg // Gán danh sách URL hình ảnh cho sản phẩm
 
                     });
                 }
+        }
+            
+            var category = await _categoryService.FindAsync(c => c.ID == id);
 
-            }
-            var category = await _categoryService.FindAsync(s => s.ID == categoryId);
-           
-
-            categoryList.ID = category.ID;
-            categoryList.Name = category.Name;
-            categoryList.Img = category.Img;
-            categoryList.Number = category.Number;
-            categoryList.Commission = category.Commission;
-            categoryList.CreatedDate = category.CreatedDate;
-            categoryList.ModifiedDate = category.ModifiedDate;
-            categoryList.ProductViewModel = List;
-            categoryList.StoreDetailViewModel = store;
+            CategoryList.ID = category.ID;
+            CategoryList.Number = category.Number;
+            CategoryList.Commission = category.Commission;
+            CategoryList.CreatedDate = category.CreatedDate;
+            CategoryList.ModifiedDate = category.CreatedDate;
+            CategoryList.Img = category.Img;
+            CategoryList.ProductViewModel = List;
+            CategoryList.StoreDetailViewModel = StoreList;
 
             if (category == null)
             {
-                return BadRequest("Category not found");
+                return BadRequest("Category Not Found");
             }
             else
             {
-                return Ok(categoryList);
+                return Ok(category);
             }
-
 
 
         }
