@@ -17,16 +17,7 @@
     <!-- Template CSS -->
     <link rel="stylesheet" href="~/assets/css/plugins/slider-range.css" />
     <link rel="stylesheet" href="~/assets/css/main.css?v=6.0" />
-
-    <!-- SweetAlert2 CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <!-- SweetAlert2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <script src="chrome-extension://mooikfkahbdckldjjndioackbalphokd/~/assets/prompt.js"></script>
     @Html.Raw(" <link href='https://cdn.jsdelivr.net/npm/@flaticon/flaticon-uicons/css/all/all.css' rel='stylesheet'>");
-
-    <link rel="stylesheet" href="~/assets/js/gridjs/theme/mermaid.min.css">
 </head>
 
 <body>
@@ -130,329 +121,93 @@
             </div>
         </div>
     </div>
-
     @await Html.PartialAsync("_Header")
-    <div class="mobile-header-active mobile-header-wrapper-style">
-        <div class="mobile-header-wrapper-inner">
-            <div class="mobile-header-top">
-                <div class="mobile-header-logo">
-                    <a href="index.html"><img src="~/assets/imgs/theme/logo.svg" alt="logo" /></a>
-                </div>
-                <div class="mobile-menu-close close-style-wrap close-style-position-inherit">
-                    <button class="close-style search-close">
-                        <i class="icon-top"></i>
-                        <i class="icon-bottom"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="mobile-header-content-area">
-                <div class="mobile-search search-style-3 mobile-header-border">
-                    <form action="#">
-                        <input type="text" placeholder="Search for items…" />
-                        <button type="submit"><i class="fi-rs-search"></i></button>
-                    </form>
-                </div>
-                <div class="mobile-menu-wrap mobile-header-border">
-                    <!-- mobile menu start -->
-                    <nav>
-                        <ul class="mobile-menu font-heading">
-                            <li class="menu-item-has-children">
-                                <a href="index.html">Home</a>
-                                <ul class="dropdown">
-                                    <li><a href="index.html">Home 1</a></li>
-                                    <li><a href="index-2.html">Home 2</a></li>
-                                    <li><a href="index-3.html">Home 3</a></li>
-                                    <li><a href="index-4.html">Home 4</a></li>
-                                    <li><a href="index-5.html">Home 5</a></li>
-                                    <li><a href="index-6.html">Home 6</a></li>
-                                </ul>
-                            </li>
-                            <li class="menu-item-has-children">
-                                <a href="shop-grid-right.html">shop</a>
-                                <ul class="dropdown">
-                                    <li><a href="shop-grid-right.html">Shop Grid – Right Sidebar</a></li>
-                                    <li><a href="shop-grid-left.html">Shop Grid – Left Sidebar</a></li>
-                                    <li><a href="shop-list-right.html">Shop List – Right Sidebar</a></li>
-                                    <li><a href="shop-list-left.html">Shop List – Left Sidebar</a></li>
-                                    <li><a href="shop-fullwidth.html">Shop - Wide</a></li>
-                                    <li class="menu-item-has-children">
-                                        <a href="#">Single Product</a>
-                                        <ul class="dropdown">
-                                            <li><a href="shop-product-right.html">Product – Right Sidebar</a></li>
-                                            <li><a href="shop-product-left.html">Product – Left Sidebar</a></li>
-                                            <li><a href="shop-product-full.html">Product – No sidebar</a></li>
-                                            <li><a href="shop-product-vendor.html">Product – Vendor Infor</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="shop-filter.html">Shop – Filter</a></li>
-                                    <li><a href="shop-wishlist.html">Shop – Wishlist</a></li>
-                                    <li><a href="shop-cart.html">Shop – Cart</a></li>
-                                    <li><a href="shop-checkout.html">Shop – Checkout</a></li>
-                                    <li><a href="shop-compare.html">Shop – Compare</a></li>
-                                    <li class="menu-item-has-children">
-                                        <a href="#">Shop Invoice</a>
-                                        <ul class="dropdown">
-                                            <li><a href="shop-invoice-1.html">Shop Invoice 1</a></li>
-                                            <li><a href="shop-invoice-2.html">Shop Invoice 2</a></li>
-                                            <li><a href="shop-invoice-3.html">Shop Invoice 3</a></li>
-                                            <li><a href="shop-invoice-4.html">Shop Invoice 4</a></li>
-                                            <li><a href="shop-invoice-5.html">Shop Invoice 5</a></li>
-                                            <li><a href="shop-invoice-6.html">Shop Invoice 6</a></li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="menu-item-has-children">
-                                <a href="#">Vendors</a>
-                                <ul class="dropdown">
-                                    <li><a href="vendors-grid.html">Vendors Grid</a></li>
-                                    <li><a href="vendors-list.html">Vendors List</a></li>
-                                    <li><a href="vendor-details-1.html">Vendor Details 01</a></li>
-                                    <li><a href="vendor-details-2.html">Vendor Details 02</a></li>
-                                    <li><a href="vendor-dashboard.html">Vendor Dashboard</a></li>
-                                    <li><a href="vendor-guide.html">Vendor Guide</a></li>
-                                </ul>
-                            </li>
-                            <li class="menu-item-has-children">
-                                <a href="#">Mega menu</a>
-                                <ul class="dropdown">
-                                    <li class="menu-item-has-children">
-                                        <a href="#">Women's Fashion</a>
-                                        <ul class="dropdown">
-                                            <li><a href="shop-product-right.html">Dresses</a></li>
-                                            <li><a href="shop-product-right.html">Blouses & Shirts</a></li>
-                                            <li><a href="shop-product-right.html">Hoodies & Sweatshirts</a></li>
-                                            <li><a href="shop-product-right.html">Women's Sets</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="menu-item-has-children">
-                                        <a href="#">Men's Fashion</a>
-                                        <ul class="dropdown">
-                                            <li><a href="shop-product-right.html">Jackets</a></li>
-                                            <li><a href="shop-product-right.html">Casual Faux Leather</a></li>
-                                            <li><a href="shop-product-right.html">Genuine Leather</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="menu-item-has-children">
-                                        <a href="#">Technology</a>
-                                        <ul class="dropdown">
-                                            <li><a href="shop-product-right.html">Gaming Laptops</a></li>
-                                            <li><a href="shop-product-right.html">Ultraslim Laptops</a></li>
-                                            <li><a href="shop-product-right.html">Tablets</a></li>
-                                            <li><a href="shop-product-right.html">Laptop Accessories</a></li>
-                                            <li><a href="shop-product-right.html">Tablet Accessories</a></li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="menu-item-has-children">
-                                <a href="blog-category-fullwidth.html">Blog</a>
-                                <ul class="dropdown">
-                                    <li><a href="blog-category-grid.html">Blog Category Grid</a></li>
-                                    <li><a href="blog-category-list.html">Blog Category List</a></li>
-                                    <li><a href="blog-category-big.html">Blog Category Big</a></li>
-                                    <li><a href="blog-category-fullwidth.html">Blog Category Wide</a></li>
-                                    <li class="menu-item-has-children">
-                                        <a href="#">Single Product Layout</a>
-                                        <ul class="dropdown">
-                                            <li><a href="blog-post-left.html">Left Sidebar</a></li>
-                                            <li><a href="blog-post-right.html">Right Sidebar</a></li>
-                                            <li><a href="blog-post-fullwidth.html">No Sidebar</a></li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="menu-item-has-children">
-                                <a href="#">Pages</a>
-                                <ul class="dropdown">
-                                    <li><a href="page-about.html">About Us</a></li>
-                                    <li><a href="page-contact.html">Contact</a></li>
-                                    <li><a href="page-account.html">My Account</a></li>
-                                    <li><a href="page-login.html">Login</a></li>
-                                    <li><a href="page-register.html">Register</a></li>
-                                    <li><a href="page-forgot-password.html">Forgot password</a></li>
-                                    <li><a href="page-reset-password.html">Reset password</a></li>
-                                    <li><a href="page-purchase-guide.html">Purchase Guide</a></li>
-                                    <li><a href="page-privacy-policy.html">Privacy Policy</a></li>
-                                    <li><a href="page-terms.html">Terms of Service</a></li>
-                                    <li><a href="page-404.html">404 Page</a></li>
-                                </ul>
-                            </li>
-                            <li class="menu-item-has-children">
-                                <a href="#">Language</a>
-                                <ul class="dropdown">
-                                    <li><a href="#">English</a></li>
-                                    <li><a href="#">French</a></li>
-                                    <li><a href="#">German</a></li>
-                                    <li><a href="#">Spanish</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </nav>
-                    <!-- mobile menu end -->
-                </div>
-                <div class="mobile-header-info-wrap">
-                    <div class="single-mobile-header-info">
-                        <a href="page-contact.html"><i class="fi-rs-marker"></i> Our location </a>
-                    </div>
-                    <div class="single-mobile-header-info">
-                        <a href="page-login.html"><i class="fi-rs-user"></i>Log In / Sign Up </a>
-                    </div>
-                    <div class="single-mobile-header-info">
-                        <a href="#"><i class="fi-rs-headphones"></i>(+01) - 2345 - 6789 </a>
-                    </div>
-                </div>
-                <div class="mobile-social-icon mb-50">
-                    <h6 class="mb-15">Follow Us</h6>
-                    <a href="#"><img src="~/assets/imgs/theme/icons/icon-facebook-white.svg" alt="" /></a>
-                    <a href="#"><img src="~/assets/imgs/theme/icons/icon-twitter-white.svg" alt="" /></a>
-                    <a href="#"><img src="~/assets/imgs/theme/icons/icon-instagram-white.svg" alt="" /></a>
-                    <a href="#"><img src="~/assets/imgs/theme/icons/icon-pinterest-white.svg" alt="" /></a>
-                    <a href="#"><img src="~/assets/imgs/theme/icons/icon-youtube-white.svg" alt="" /></a>
-                </div>
-                <div class="site-copyright">Copyright 2024 © Nest. All rights reserved. Powered by AliThemes.</div>
-            </div>
-        </div>
-    </div>
     <!--End header-->
     <main class="main">
         <div class="page-header mt-30 mb-50">
             <div class="container">
-                <div class="archive-header">
-                    <div>
-                        <div>
-                            <h1 style="text-align: center;">Products List</h1>
+                <div class="archive-header-2 text-center">
+                    <h1 class="display-2 mb-50">Products List</h1>
+                    <div class="row">
+                        <div class="col-lg-5 mx-auto">
+                            <div class="sidebar-widget-2 widget_search mb-50">
+                                <div class="search-form">
+                                    <form asp-controller="Home" asp-action="ListProducts" method="get">
+                                        <input name="searchName" placeholder="Search product by name" />
+                                        <button type="submit"><i class="fi-rs-search"></i></button>
+                                    </form>
+                                </div>
 
-
+                            </div>
                         </div>
-
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-5 mx-auto">
-                <div class="sidebar-widget-2 widget_search mb-50">
-                    <div class="search-form">
-                        <form asp-controller="Home" asp-action="ListProducts" method="get">
-                            <input name="searchName" placeholder="Search product by name" />
-                            <button type="submit"><i class="fi-rs-search"></i></button>
-                        </form>
-                    </div>
-
                 </div>
             </div>
         </div>
         <div class="container mb-30">
             <div class="row">
                 <div class="col-lg-4-5">
-                    @* <div class="shop-product-fillter"> *@
-                    @*     <div class="totall-product"> *@
-                    @*         <p>We found <strong class="text-brand">29</strong> items for you!</p> *@
-                    @*     </div> *@
+                    @if(Model.Any()){
 
-                    @* </div> *@
-                </div>
-                <div class="row product-grid">
-
-                    @if (Model.Any())
-                    {
-                        @Html.AntiForgeryToken()
-                        foreach (var item in Model)
-                        {
-                            <div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
-                                <div class="product-cart-wrap mb-30">
-                                    <div class="product-img-action-wrap">
-                                        <div class="product-img product-img-zoom">
-                                            <a asp-action="ProductDetail" asp-controller="Home" asp-route-id="@item.ID">
-                                                <img class="default-img" src="@item.Img.FirstOrDefault()" alt="" />
-
-                                                <img class="hover-img" src="@item.Img.Skip(1).FirstOrDefault()" alt="" />
+                    }
+                  @foreach(var item in Model){
+                        <div class="product-list mb-50">
+                            <div class="product-cart-wrap">
+                                <div class="product-img-action-wrap">
+                                    <div class="product-img product-img-zoom">
+                                        <div class="product-img-inner">
+                                            <a href="shop-product-right.html">
+                                                <img class="default-img" src="@item.Img" alt="" />
+                                                <img class="hover-img" src="@item.Img" alt="" />
                                             </a>
-                                        </div>
-                                        <div class="product-action-1">
-                                            <a aria-label="Add To Wishlist" class="action-btn" onclick="AddWishlist('@item.ID')"><i id="iconsave" class="fi-rs-heart"></i></a>
-                                            <a aria-label="Compare" class="action-btn" href="">
-                                                <i class="fi-rs-shuffle"></i>
-                                            </a>
-                                            <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal"
-                                               data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
-                                        </div>
-                                        <div class="product-badges product-badges-position product-badges-mrg">
-                                            <span class="hot">Hot</span>
                                         </div>
                                     </div>
-                                    <div class="product-content-wrap">
-                                        <div class="product-category">
-                                            <a href="shop-grid-right.html">@item.CategoryName</a>
+                                    <div class="product-action-1">
+                                        <a aria-label="Add To Wishlist" class="action-btn" href="shop-wishlist.html">
+                                            <i class="fi-rs-heart"></i>
+                                        </a>
+                                     
+                                        <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal"
+                                           data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
+                                    </div>
+                                   
+                                </div>
+                                <div class="product-content-wrap">
+                                    <div class="product-category">
+                                        <a href="shop-grid-right.html">@item.CategoryName</a>
+                                    </div>
+                                    <h2><a href="shop-product-right.html">@item.Name</a></h2>
+                                    <div class="product-rate-cover">
+                                        <div class="product-rate d-inline-block">
+                                            <div class="product-rating" style="width: 90%"></div>
                                         </div>
-                                        <h2><a asp-action="ProductDetail" asp-controller="Home" asp-route-id="@item.ID">@item.Name</a></h2>
-                                        <div class="product-rate-cover">
-                                            <div class="product-rate d-inline-block">
-                                                <div class="product-rating" style="width: 90%"></div>
-                                            </div>
-                                            <span class="font-small ml-5 text-muted"> (4.0)</span>
-                                        </div>
-                                        <div>
-                                            <span class="font-small text-muted">By  <a asp-action="GetStoreDetail" asp-controller="Home" asp-route-id="@item.StoreId">@item.StoreName</a> </span>
-                                        </div>
-                                        <div class="product-card-bottom">
-                                            <div class="product-card-bottom">
-                                                <div class="product-price">
-                                                    @if (item.Price == 0)
-                                                    {
-                                                        <span class="out-of-stock">Out of Stock</span>
-                                                    }
-                                                    else
-                                                    {
-                                                        <span>@item.Price</span>
-                                                        <span class="old-price">@item.Price</span>
-                                                    }
-                                                </div>
-                                                @if (item.Price > 0)
-                                                {
-                                                    <div class="add-cart">
-                                                        <a class="add" href="javascript:void(0);" onclick="AddToCart('@item.ID')">
-                                                            <i class="fi-rs-shopping-cart mr-5"></i>Add
-                                                        </a>
-                                                    </div>
-                                                }
-                                            </div>
-                                        </div>
+                                        <span class="font-small ml-5 text-muted"> (4.0)</span>
+                                        <span class="ml-30"></span>
+                                    </div>
+                                    <p class="mt-15 mb-15">
+                                       @item.LongDescription
+                                    </p>
+                                    <div class="product-price">
+                                        <span>@item.Price</span>
+                                      
+                                    </div>
+                                    <div class="mt-30 d-flex align-items-center">
+                                        <a aria-label="Buy now" class="btn" href="shop-cart.html">
+                                            <i class="fi-rs-shopping-cart mr-5"></i>Add to Cart
+                                        </a>
+                                      
                                     </div>
                                 </div>
                             </div>
-                        }
-                    }
-
-
-
-
-
-
-                    <!--product grid-->
-                    @* <div class="pagination-area mt-20 mb-20"> *@
-                    @*     <nav aria-label="Page navigation example"> *@
-                    @*         <ul class="pagination justify-content-start"> *@
-                    @*             <li class="page-item"> *@
-                    @*                 <a class="page-link" href="#"><i class="fi-rs-arrow-small-left"></i></a> *@
-                    @*             </li> *@
-                    @*             <li class="page-item"><a class="page-link" href="#">1</a></li> *@
-                    @*             <li class="page-item active"><a class="page-link" href="#">2</a></li> *@
-                    @*             <li class="page-item"><a class="page-link" href="#">3</a></li> *@
-                    @*         </ul> *@
-                    @*     </nav> *@
-                    @* </div> *@
-
-                    <section class="section-padding pb-5">
-                        <div class="section-title">
-                            <h3 class="">Deals Of The Day</h3>
-                            <a class="show-all" href="shop-grid-right.html">
-                                All Deals
-                                <i class="fi-rs-angle-right"></i>
-                            </a>
+                            <!--single product-->
+                            <!--single product-->
                         </div>
+                  }
+                    
+                    <!--product grid-->
+                 
+                    <section class="section-padding pb-5">
+                       
                         <div class="row">
                             <div class="col-xl-3 col-lg-4 col-md-6">
                                 <div class="product-cart-wrap style-2">
@@ -637,28 +392,205 @@
                     </section>
                     <!--End Deals-->
                 </div>
-
+                <div class="col-lg-1-5 primary-sidebar sticky-sidebar">
+                  
+                    <!-- Fillter By Price -->
+                    <div class="sidebar-widget price_range range mb-30">
+                        <h5 class="section-title style-1 mb-30">Fill by price</h5>
+                        <div class="price-filter">
+                            <div class="price-filter-inner">
+                                <div id="slider-range" class="mb-20"></div>
+                                <div class="d-flex justify-content-between">
+                                    <div class="caption">
+                                        From: <strong id="slider-range-value1"
+                                                      class="text-brand"></strong>
+                                    </div>
+                                    <div class="caption">
+                                        To: <strong id="slider-range-value2"
+                                                    class="text-brand"></strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group">
+                            <div class="list-group-item mb-10 mt-10">
+                                <label class="fw-900">Color</label>
+                                <div class="custome-checkbox">
+                                    <input class="form-check-input" type="checkbox" name="checkbox"
+                                           id="exampleCheckbox1" value="" />
+                                    <label class="form-check-label" for="exampleCheckbox1"><span>Red (56)</span></label>
+                                    <br />
+                                    <input class="form-check-input" type="checkbox" name="checkbox"
+                                           id="exampleCheckbox2" value="" />
+                                    <label class="form-check-label" for="exampleCheckbox2">
+                                        <span>
+                                            Green
+                                            (78)
+                                        </span>
+                                    </label>
+                                    <br />
+                                    <input class="form-check-input" type="checkbox" name="checkbox"
+                                           id="exampleCheckbox3" value="" />
+                                    <label class="form-check-label" for="exampleCheckbox3">
+                                        <span>
+                                            Blue
+                                            (54)
+                                        </span>
+                                    </label>
+                                </div>
+                                <label class="fw-900 mt-15">Item Condition</label>
+                                <div class="custome-checkbox">
+                                    <input class="form-check-input" type="checkbox" name="checkbox"
+                                           id="exampleCheckbox11" value="" />
+                                    <label class="form-check-label" for="exampleCheckbox11">
+                                        <span>
+                                            New
+                                            (1506)
+                                        </span>
+                                    </label>
+                                    <br />
+                                    <input class="form-check-input" type="checkbox" name="checkbox"
+                                           id="exampleCheckbox21" value="" />
+                                    <label class="form-check-label" for="exampleCheckbox21">
+                                        <span>
+                                            Refurbished
+                                            (27)
+                                        </span>
+                                    </label>
+                                    <br />
+                                    <input class="form-check-input" type="checkbox" name="checkbox"
+                                           id="exampleCheckbox31" value="" />
+                                    <label class="form-check-label" for="exampleCheckbox31">
+                                        <span>
+                                            Used
+                                            (45)
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="shop-grid-right.html" class="btn btn-sm btn-default">
+                            <i class="fi-rs-filter mr-5"></i>
+                            Fillter
+                        </a>
+                    </div>
+                    <!-- Product sidebar Widget -->
+                   
+                    <div class="banner-img wow fadeIn mb-lg-0 animated d-lg-block d-none">
+                        <img src="~/assets/imgs/banner/banner-11.png" alt="" />
+                        <div class="banner-text">
+                            <span>Oganic</span>
+                            <h4>
+                                Save 17% <br />
+                                on <span class="text-brand">Oganic</span><br />
+                                Juice
+                            </h4>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-
-
-
-
-
-
-
-
     </main>
     <footer class="main">
         <section class="newsletter mb-15">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-12">
+                        <div class="position-relative newsletter-inner">
+                            <div class="newsletter-content">
+                                <h2 class="mb-20">
+                                    Stay home & get your daily <br />
+                                    needs from our shop
+                                </h2>
+                                <p class="mb-45">
+                                    Start You'r Daily Shopping with <span class="text-brand">
+                                        Nest
+                                        Mart
+                                    </span>
+                                </p>
+                                <form class="form-subcriber d-flex">
+                                    <input type="email" placeholder="Your emaill address" />
+                                    <button class="btn" type="submit">Subscribe</button>
+                                </form>
+                            </div>
+                            <img src="~/assets/imgs/banner/banner-9.png" alt="newsletter" />
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
-
+        <section class="featured section-padding">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-1-5 col-md-4 col-12 col-sm-6 mb-md-4 mb-xl-0">
+                        <div class="banner-left-icon d-flex align-items-center wow fadeIn animated">
+                            <div class="banner-icon">
+                                <img src="~/assets/imgs/theme/icons/icon-1.svg" alt="" />
+                            </div>
+                            <div class="banner-text">
+                                <h3 class="icon-box-title">Best prices & offers</h3>
+                                <p>Orders $50 or more</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
+                        <div class="banner-left-icon d-flex align-items-center wow fadeIn animated">
+                            <div class="banner-icon">
+                                <img src="~/assets/imgs/theme/icons/icon-2.svg" alt="" />
+                            </div>
+                            <div class="banner-text">
+                                <h3 class="icon-box-title">Free delivery</h3>
+                                <p>24/7 amazing services</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
+                        <div class="banner-left-icon d-flex align-items-center wow fadeIn animated">
+                            <div class="banner-icon">
+                                <img src="~/assets/imgs/theme/icons/icon-3.svg" alt="" />
+                            </div>
+                            <div class="banner-text">
+                                <h3 class="icon-box-title">Great daily deal</h3>
+                                <p>When you sign up</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
+                        <div class="banner-left-icon d-flex align-items-center wow fadeIn animated">
+                            <div class="banner-icon">
+                                <img src="~/assets/imgs/theme/icons/icon-4.svg" alt="" />
+                            </div>
+                            <div class="banner-text">
+                                <h3 class="icon-box-title">Wide assortment</h3>
+                                <p>Mega Discounts</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-1-5 col-md-4 col-12 col-sm-6">
+                        <div class="banner-left-icon d-flex align-items-center wow fadeIn animated">
+                            <div class="banner-icon">
+                                <img src="~/assets/imgs/theme/icons/icon-5.svg" alt="" />
+                            </div>
+                            <div class="banner-text">
+                                <h3 class="icon-box-title">Easy returns</h3>
+                                <p>Within 30 days</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-1-5 col-md-4 col-12 col-sm-6 d-xl-none">
+                        <div class="banner-left-icon d-flex align-items-center wow fadeIn animated">
+                            <div class="banner-icon">
+                                <img src="~/assets/imgs/theme/icons/icon-6.svg" alt="" />
+                            </div>
+                            <div class="banner-text">
+                                <h3 class="icon-box-title">Safe delivery</h3>
+                                <p>Within 30 days</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
         <section class="section-padding footer-mid">
             <div class="container pt-15 pb-20">
                 <div class="row">
@@ -742,7 +674,22 @@
                             <li><a href="#">Cheese</a></li>
                         </ul>
                     </div>
-
+                    <div class="footer-link-widget widget-install-app col">
+                        <h4 class="widget-title">Install App</h4>
+                        <p class="wow fadeIn animated">From App Store or Google Play</p>
+                        <div class="download-app">
+                            <a href="#" class="hover-up mb-sm-2 mb-lg-0">
+                                <img class="active"
+                                     src="~/assets/imgs/theme/app-store.jpg" alt="" />
+                            </a>
+                            <a href="#" class="hover-up mb-sm-2">
+                                <img src="~/assets/imgs/theme/google-play.jpg"
+                                     alt="" />
+                            </a>
+                        </div>
+                        <p class="mb-20">Secured Payment Gateways</p>
+                        <img class="wow fadeIn animated" src="~/assets/imgs/theme/payment-method.png" alt="" />
+                    </div>
                 </div>
             </div>
         </section>
@@ -818,81 +765,3 @@
 </body>
 
 </html>
-
-<script>
-
-    function AddWishlist(id) {
-        var icon = document.getElementById("iconsave");
-        const actionBtn = icon.closest(".action-btn");
-        if (icon.classList.contains("text-danger")) {
-            Swal.fire({
-                title: "Bạn có chắc chắn?",
-                text: "Bạn muốn xóa khỏi danh sách yêu thích?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonText: "Có, xóa!",
-                cancelButtonText: "Hủy"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: "/Home/RemoveWish",
-                        type: "POST",
-                        data: { id: id },
-                        headers: {
-                            "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val()
-                        },
-                        success: function (response) {
-                            if (response.success) {
-                                cuteToast({
-                                    type: "success",
-                                    message: response.message,
-                                    timer: 5000
-                                });
-                                icon.classList.remove("text-danger");
-                                actionBtn.setAttribute("aria-label", "Add To Wishlist");
-                            } else if (response.notAuth) {
-                                Swal.fire('Thất bại', response.message, 'error');
-                            } else {
-                                Swal.fire('Thất bại', response.message, 'error');
-                            }
-                        },
-                        error: function () {
-                            alert("Lỗi xảy ra khi xóa khỏi wishlist.");
-                        }
-                    });
-                }
-            });
-        } else {
-            $.ajax({
-                url: "/Home/AddWish",
-                type: "POST",
-                data: { id: id },
-                headers: {
-                    "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val()
-                },
-                success: function (response) {
-                    if (response.success) {
-                        cuteToast({
-                            type: "success",
-                            message: response.message,
-                            timer: 5000
-                        });
-                        icon.classList.add("text-danger");
-                        actionBtn.setAttribute("aria-label", "Remove wishlist");
-
-                    } else if (response.notAuth) {
-                        Swal.fire('Thất bại', response.message, 'error');
-                    } else {
-                        Swal.fire('Thất bại', response.message, 'error');
-                    }
-                },
-                error: function () {
-                    alert("Lỗi xảy ra khi thêm vào wishlist.");
-                }
-            });
-        }
-    }
-
-
-
-</script>
