@@ -122,7 +122,6 @@ namespace ProductsService.Controllers
             foreach (var item in products)
             {
                 var price = await _productVariantService.FindAsync(s => s.ProductID == item.ID && s.IsActive == true);
-
                 var storeName = await _storeDetailService.FindAsync(x => x.ID == item.StoreID);
                 var categoryName = await _categoryService.FindAsync(c => c.ID == item.CateID);
                 var imgList = await _productImageService.ListAsync(i => i.ProductID == item.ID);
