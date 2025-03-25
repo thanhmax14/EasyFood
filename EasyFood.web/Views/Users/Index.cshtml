@@ -349,104 +349,296 @@
                                         </div>
                                     </div>
                                     <script>
-                                        console.log("Hello");
-                                        let detailsGrid = null; // Biến lưu instance gridjs
+     console.log("Hello");
+let detailsGrid = null;
 
-                                        document.addEventListener("DOMContentLoaded", function () {
-                                            const orderContainer = document.getElementById("table-orders");
-                                            orderContainer.innerHTML = "";
+document.addEventListener("DOMContentLoaded", function () {
+    const orderContainer = document.getElementById("table-orders");
+    orderContainer.innerHTML = "";
 
-                                            const orderData = @Html.Raw(JsonSerializer.Serialize(Model.OrderViewodels));
+    const orderData = @Html.Raw(JsonSerializer.Serialize(Model.OrderViewodels));
 
-                                            new gridjs.Grid({
-                                                columns: [
-                                                    { name: "Id", hidden: true },
-                                                    { name: "Email", width: "200px" },
-                                                    { name: "Name", width: "200px" },
-                                                    { name: "Order Date", width: "220px" },
-                                                    { name: "Payment Method", width: "200px" },
-                                                    { name: "Status", width: "150px" },
-                                                    { name: "Total", width: "150px" },
-                                                    {
-                                                        name: "Actions",
-                                                        width: "150px",
-                                                        formatter: (_, row) => {
-                                                            const orderId = row.cells[0].data;
-                                                            return gridjs.html(`<button class="btn btn-sm btn-primary view-details" data-id="${orderId}">Details</button>`);
-                                                        }
-                                                    }
-                                                ],
-                                                pagination: { enabled: true, limit: 5, summary: true },
-                                                sort: true,
-                                                search: true,
-                                                data: orderData.map(o => [
-                                                    o.OrderId, o.Email, o.Name, o.OrderDate, o.PaymentMethod, o.Status, o.Total
-                                                ])
-                                            }).render(orderContainer);
+    new gridjs.Grid({
+        columns: [
+            { name: "Id", hidden: true },
+            { name: "Email", width: "200px" },
+            { name: "Name", width: "200px" },
+            { 
+                name: "Order Date", 
+                width: "220px", 
+                formatter: (cell) => {
+                    const date = new Date(cell);
+                    return date.toLocaleDateString("vi-VN", { 
+                        day: "2-digit", 
+                        month: "2-digit", 
+                        year: "numeric" 
+                    }) + " " + date.toLocaleTimeString("vi-VN", { 
+                        hour: "2-digit", 
+                        minute: "2-digit", 
+                        second: "2-digit" 
+                    });
+                }
+            },
+            { name: "Payment Method", width: "200px" },
+            { name: "Status", width: "150px" },
+            { name: "Total", width: "150px" },
+            { name: "Username", hidden: true },
+            { name: "UserId", hidden: true },
+            {
+                name: "Actions",
+                width: "150px",
+                formatter: (_, row) => {
+                    const orderId = row.cells[0].data;
+                    const username = row.cells[7].data;
+                    const userId = row.cells[8].data;
+                    return gridjs.html(`<button class="btn btn-sm btn-primary view-details" data-id="${orderId}" data-username="${username}" data-userid="${userId}">Details</button>`);
+                }
+            }
+        ],
+        pagination: { enabled: true, limit: 5, summary: true },
+        sort: true,
+        search: true,
+        data: orderData.map(o => [
+            o.OrderId, o.Email, o.Name, o.OrderDate, o.PaymentMethod, o.Status, o.Total, o.Username, o.UserId
+        ])
+    }).render(orderContainer);
 
-                                            document.addEventListener("click", function (e) {
-                                                if (e.target.classList.contains("view-details")) {
-                                                    const orderId = e.target.getAttribute("data-id");
-                                                    loadOrderDetails(orderId);
-                                                }
-                                            });
+    document.addEventListener("click", function (e) {
+        if (e.target.classList.contains("view-details")) {
+            const orderId = e.target.getAttribute("data-id");
+            const username = e.target.getAttribute("data-username");
+            const userId = e.target.getAttribute("data-userid");
+            loadOrderDetails(orderId, username, userId);
+        } else if (e.target.classList.contains("feedback-btn")) {
+            const productName = e.target.getAttribute("data-product");
+            const orderId = e.target.getAttribute("data-order-id");
+            const username = e.target.getAttribute("data-username");
+            const userId = e.target.getAttribute("data-userid");
+            const productId = e.target.getAttribute("data-productid"); // Lấy ProductId
 
-                                            // Ẩn #order-details khi chuyển sang tab khác
-                                            document.querySelectorAll('.nav-link[data-bs-toggle="tab"]').forEach(tab => {
-                                                tab.addEventListener('shown.bs.tab', function (e) {
-                                                    const targetTab = e.target.getAttribute('href');
-                                                    if (targetTab !== '#order-details') {
-                                                        document.getElementById("order-details").style.display = "none";
-                                                    }
-                                                });
-                                            });
+            document.getElementById("id-field").value = userId;
+            document.getElementById("product_id-field").value = productId; // Điền ProductId vào input ẩn
+            document.getElementById("product_name-field").value = productName;
+            document.getElementById("email_id-field").value = username;
 
-                                            function loadOrderDetails(orderId) {
-                                                fetch(`/Users/GetOrderDetails?orderId=${orderId}&_=${Date.now()}`, {
-                                                    cache: 'no-store'
-                                                })
-                                                    .then(response => {
-                                                        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                                                        return response.json();
-                                                    })
-                                                    .then(data => {
-                                                        console.log("Response data:", data);
-                                                        if (data.success) {
-                                                            const detailsContainer = document.getElementById("table-order-details");
-                                                            detailsContainer.innerHTML = "";
-                                                            if (detailsGrid) {
-                                                                detailsGrid.destroy(); // Hủy instance cũ
-                                                            }
-                                                            detailsGrid = new gridjs.Grid({
-                                                                columns: [
-                                                                    { name: "Product Name", width: "250px" },
-                                                                    { name: "Product Price", width: "150px" },
-                                                                    { name: "Total Price", width: "150px" },
-                                                                    { name: "Quantity", width: "100px" },
-                                                                    { name: "Status", width: "150px" }
-                                                                ],
-                                                                pagination: { enabled: true, limit: 5, summary: true },
-                                                                search: true,
-                                                                sort: true,
-                                                                data: data.data.map(od => [
-                                                                    od.productName, od.productPrice, od.totalPrice, od.quantity, od.status
-                                                                ])
-                                                            });
-                                                            detailsGrid.render(detailsContainer);
+            const stars = document.querySelectorAll("#star-rating .star");
+            stars.forEach(star => star.classList.remove("selected"));
+            document.getElementById("designation-field").value = "0";
+        }
+    });
 
-                                                            // Hiển thị tab Order Details
-                                                            const orderDetailsPane = document.getElementById("order-details");
-                                                            orderDetailsPane.style.display = "block"; // Hiển thị nội dung
-                                                            const orderDetailsTab = new bootstrap.Tab(document.getElementById("order-details-tab"));
-                                                            orderDetailsTab.show(); // Kích hoạt tab
-                                                        } else {
-                                                            console.log("Success is false:", data.message);
-                                                        }
-                                                    })
-                                                    .catch(error => console.error("Fetch error:", error));
-                                            }
-                                        });
+    document.querySelectorAll('.nav-link[data-bs-toggle="tab"]').forEach(tab => {
+        tab.addEventListener('shown.bs.tab', function (e) {
+            const targetTab = e.target.getAttribute('href');
+            if (targetTab !== '#order-details') {
+                document.getElementById("order-details").style.display = "none";
+            }
+        });
+    });
+
+    const stars = document.querySelectorAll("#star-rating .star");
+    stars.forEach(star => {
+        star.addEventListener("click", function () {
+            const rating = this.getAttribute("data-value");
+            document.getElementById("designation-field").value = rating;
+
+            stars.forEach(s => {
+                if (s.getAttribute("data-value") <= rating) {
+                    s.classList.add("selected");
+                } else {
+                    s.classList.remove("selected");
+                }
+            });
+        });
+    });
+
+    document.querySelector("#showModal form").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const userId = document.getElementById("id-field").value;
+        const productId = document.getElementById("product_id-field").value; // Lấy ProductId từ input ẩn
+        const userName = document.getElementById("email_id-field").value;
+        const productName = document.getElementById("product_name-field").value;
+        const reply = document.getElementById("company_name-field").value;
+        const starRating = document.getElementById("designation-field").value;
+
+        console.log("Reply value:", reply);
+        if (!reply.trim()) {
+            alert("Please enter your reply.");
+            return;
+        }
+
+        const feedbackData = {
+            UserId: userId,
+            ProductId: productId, // Gửi ProductId
+            UserName: userName,
+            ProductName: productName,
+            Cmt: reply,
+            StarRating: starRating
+        };
+
+        console.log("Sending feedback data:", feedbackData);
+
+        fetch("/Users/AddFeekback", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(feedbackData)
+        })
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    bootstrap.Modal.getInstance(document.getElementById("showModal")).hide();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error("Fetch error:", error);
+                alert("An error occurred while submitting feedback.");
+            });
+    });
+
+    function loadOrderDetails(orderId, username, userId) {
+        fetch(`/Users/GetOrderDetails?orderId=${orderId}&_=${Date.now()}`, {
+            cache: 'no-store'
+        })
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                return response.json();
+            })
+            .then(data => {
+                console.log("Response data:", data);
+                if (data.success) {
+                    const detailsContainer = document.getElementById("table-order-details");
+                    detailsContainer.innerHTML = "";
+                    if (detailsGrid) {
+                        detailsGrid.destroy();
+                    }
+                    detailsGrid = new gridjs.Grid({
+                        columns: [
+                            { name: "Product Name", width: "250px" },
+                            { name: "Product Price", width: "150px" },
+                            { name: "Total Price", width: "150px" },
+                            { name: "Quantity", width: "100px" },
+                            { name: "Status", width: "150px" },
+                            {
+                                name: "Actions",
+                                width: "150px",
+                                formatter: (_, row) => {
+                                    const productName = row.cells[0].data;
+                                    const productId = row.cells[5].data; // ProductId ở cột thứ 6
+                                    return gridjs.html(`<button class="btn btn-sm btn-success feedback-btn" data-bs-toggle="modal" data-bs-target="#showModal" data-product="${productName}" data-order-id="${orderId}" data-username="${username}" data-userid="${userId}" data-productid="${productId}">Feedback</button>`);
+                                }
+                            }
+                        ],
+                        pagination: { enabled: true, limit: 5, summary: true },
+                        search: true,
+                        sort: true,
+                        data: data.data.map(od => [
+                            od.productName,
+                            od.productPrice,
+                            od.totalPrice,
+                            od.quantity,
+                            od.status,
+                            od.productId // Thêm ProductId vào dữ liệu
+                        ])
+                    });
+                    detailsGrid.render(detailsContainer);
+
+                    const orderDetailsPane = document.getElementById("order-details");
+                    orderDetailsPane.style.display = "block";
+                    const orderDetailsTab = new bootstrap.Tab(document.getElementById("order-details-tab"));
+                    orderDetailsTab.show();
+                } else {
+                    console.log("Success is false:", data.message);
+                }
+            })
+            .catch(error => console.error("Fetch error:", error));
+    }
+});
                                     </script>
+
+                                <div class="modal fade" id="showModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0">
+            <div class="modal-header bg-info-subtle p-3">
+                <h5 class="modal-title" id="exampleModalLabel">Enter Your Review</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
+            </div>
+            <form class="tablelist-form" autocomplete="off">
+                <div class="modal-body">
+                    <input type="hidden" id="id-field" />
+                    <input type="hidden" id="product_id-field" /> <!-- Lưu ProductId -->
+                    <div class="row g-3">
+                        <div class="col-lg-6">
+                            <div>
+                                <label for="email_id-field" class="form-label">User Name</label>
+                                <input type="text" id="email_id-field" class="form-control" placeholder="User Name" required />
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div>
+                                <label for="product_name-field" class="form-label">Product Name</label>
+                                <input type="text" id="product_name-field" class="form-control" placeholder="Product Name" required />
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div>
+                                <label for="company_name-field" class="form-label">Your Reply</label>
+                                <input type="text" id="company_name-field" class="form-control" placeholder="Your Reply" required />
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div>
+                                <label class="form-label">Star Rating</label>
+                                <div class="star-rating" id="star-rating">
+                                    <span class="star" data-value="1">&#9733;</span>
+                                    <span class="star" data-value="2">&#9733;</span>
+                                    <span class="star" data-value="3">&#9733;</span>
+                                    <span class="star" data-value="4">&#9733;</span>
+                                    <span class="star" data-value="5">&#9733;</span>
+                                </div>
+                                <input type="hidden" id="designation-field" name="starRating" value="0" required /> <!-- Lưu giá trị rating -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="hstack gap-2 justify-content-end">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success" id="add-btn">Add Review</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<style>
+.star-rating {
+    font-size: 24px;
+    color: #ddd; /* Màu mặc định của sao (chưa chọn) */
+    cursor: pointer;
+    display: inline-flex;
+    gap: 5px;
+}
+
+.star-rating .star:hover,
+.star-rating .star:hover ~ .star,
+.star-rating .star.selected {
+    color: #f5c518; /* Màu vàng khi hover hoặc được chọn */
+}
+
+.star-rating .star.selected {
+    color: #f5c518; /* Màu vàng cho sao đã chọn */
+}
+</style>
 
 
                                     <div class="tab-pane fade" id="track-orders" role="tabpanel"

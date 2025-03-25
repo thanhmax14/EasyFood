@@ -13,5 +13,6 @@ namespace Repository.ViewModels
         public decimal TotalPrice { get; set; } = 0;
         public int Quantity { get; set; } = 0;
         public string? Status { get; set; }
+        public Guid ProductId { get; set; }
     }
 }
