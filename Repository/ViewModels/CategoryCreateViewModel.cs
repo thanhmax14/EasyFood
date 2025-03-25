@@ -17,7 +17,7 @@ namespace Repository.ViewModels
 
         [Required]
         [Range(0, 100, ErrorMessage = "Commission must be between 0% and 100%.")]
-        public float Commission { get; set; } // Hoa hồng %
+        public decimal Commission { get; set; } // Hoa hồng %
 
         [Required]
         public int Number { get; set; } // Thứ tự hiển thị

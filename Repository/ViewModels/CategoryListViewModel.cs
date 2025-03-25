@@ -12,7 +12,7 @@ namespace Repository.ViewModels
         public string Img { get; set; }
         public string Name { get; set; }
         public int Number { get; set; } // Thứ tự hiển thị
-        public float Commission { get; set; } // % hoa hồng
+        public decimal Commission { get; set; } // % hoa hồng
         public DateTime? CreatedDate { get; set; }
         public DateTime? ModifiedDate { get; set; }
     }

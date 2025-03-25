@@ -14,7 +14,7 @@ namespace Repository.ViewModels
         public string? Img { get; set; }
 
         public int Number { get; set; } = 0;
-        public float Commission { get; set; }
+        public decimal Commission { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? ModifiedDate { get; set; }
     }
