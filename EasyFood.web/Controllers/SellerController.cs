@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis;
+using Microsoft.Extensions.Options;
 using Models;
 using Repository.StoreDetails;
 using Repository.ViewModels;
@@ -635,7 +636,14 @@ namespace EasyFood.web.Controllers
         {
             return View();
         }  
+
+
         public async Task<IActionResult> ManageOrder()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> GetOrder()
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -643,7 +651,34 @@ namespace EasyFood.web.Controllers
                 return Json(new ErroMess { msg = "Bạn chưa đăng nhập!!" });
             }
 
-            this._url = $"https://localhost:5555/Gateway/ShoppingService/BuyProduct";
+            this._url = $"https://localhost:5555/Gateway/OrderSellerService/GetOrderSeller";
+            var content = new StringContent($"\"{user.Id}\"", Encoding.UTF8, "application/json");
+            var response = await client.PostAsync($"{this._url}", content);
+            var options = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                PropertyNameCaseInsensitive = true
+            };
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var mes = await response.Content.ReadAsStringAsync();
+                var messErro = JsonSerializer.Deserialize<List<GetSellerOrder>>(mes, options);
+                return Json(messErro);
+            }
+            return Json(false);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetRevenue()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return Json(new ErroMess { msg = "Bạn chưa đăng nhập!!" });
+            }
+
+            this._url = $"https://localhost:5555/Gateway/RevenueService/GetOrderStatistics";
             var content = new StringContent($"\"{user.Id}\"", Encoding.UTF8, "application/json");
             var response = await client.PostAsync($"{this._url}", content);
             var options = new JsonSerializerOptions
@@ -652,14 +687,15 @@ namespace EasyFood.web.Controllers
                 PropertyNameCaseInsensitive = true
             };
             var mes = await response.Content.ReadAsStringAsync();
-            var messErro = JsonSerializer.Deserialize<List<GetSellerOrder>>(mes, options);
+
             if (response.IsSuccessStatusCode)
             {
+
+                var messErro = JsonSerializer.Deserialize<List<RevenueSeller>>(mes, options);
+
                 return Json(messErro);
             }
-            return Json(messErro);
-
-            
+            return Json(false);
         }
     }
 }
