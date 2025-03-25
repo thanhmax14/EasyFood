@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Azure;
 using BusinessLogic.Services.BalanceChanges;
 using BusinessLogic.Services.Carts;
@@ -310,30 +311,69 @@ namespace EasyFood.web.Controllers
             }
         }
 
-        public async Task<IActionResult> ListProducts(string searchName)
-
+        public async Task<IActionResult> ListProducts(string searchName, decimal? minPrice = null, decimal? maxPrice = null, int filterCount = 0)
         {
             var list = new List<ProductsViewModel>();
-            this._url = "https://localhost:5555/Gateway/ProductsService/GetAllProducts";
-            if (!string.IsNullOrEmpty(searchName))
-            {
-                this._url = $"https://localhost:5555/Gateway/ProductsService/SearchProductByName?searchName={searchName}";
-            }
+            string url = "https://localhost:5555/Gateway/ProductsService/GetAllProducts"; // Chỉ gọi GetAllProducts
+
             try
             {
-                var response = await client.GetAsync(this._url);
+                var response = await client.GetAsync(url);
                 if (!response.IsSuccessStatusCode)
                 {
-                    return View(list);
+                    ViewBag.MinPrice = minPrice ?? 0;
+                    ViewBag.MaxPrice = maxPrice ?? 2000;
+                    ViewBag.FilterCount = filterCount;
+                    ViewBag.ErrorMessage = "Không thể tải danh sách sản phẩm từ API.";
+                    return View(list); // Danh sách rỗng nếu lỗi
                 }
 
                 var mes = await response.Content.ReadAsStringAsync();
-                list = JsonSerializer.Deserialize<List<ProductsViewModel>>(mes, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                if (string.IsNullOrEmpty(mes))
+                {
+                    ViewBag.MinPrice = minPrice ?? 0;
+                    ViewBag.MaxPrice = maxPrice ?? 2000;
+                    ViewBag.FilterCount = filterCount;
+                    ViewBag.ErrorMessage = "API trả về dữ liệu rỗng.";
+                    return View(list); // Danh sách rỗng nếu rỗng
+                }
 
-                return View(list);
+                // Lấy toàn bộ danh sách từ API
+                list = JsonSerializer.Deserialize<List<ProductsViewModel>>(mes, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    NumberHandling = JsonNumberHandling.AllowReadingFromString
+                });
+
+                // Lọc danh sách theo searchName (nếu có)
+                if (!string.IsNullOrEmpty(searchName))
+                {
+                    list = list.Where(p => p.Name.Contains(searchName, StringComparison.OrdinalIgnoreCase)).ToList();
+                }
+
+                // Lọc danh sách theo giá (nếu có minPrice hoặc maxPrice)
+                if (minPrice.HasValue || maxPrice.HasValue)
+                {
+                    decimal min = minPrice ?? 0;
+                    decimal max = maxPrice ?? decimal.MaxValue; // Nếu không có maxPrice, lấy giá trị lớn nhất
+                    list = list.Where(p => p.Price >= min && p.Price <= max).ToList();
+                    filterCount++; // Tăng số lần lọc
+                }
+
+                // Cập nhật ViewBag để đồng bộ slider và đếm số lần lọc
+                ViewBag.MinPrice = minPrice ?? 0;
+                ViewBag.MaxPrice = maxPrice ?? 2000;
+                ViewBag.FilterCount = filterCount;
+
+                return View(list); // Trả về danh sách đã lọc
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Error in ListProducts: {ex.Message}\n{ex.StackTrace}");
+                ViewBag.MinPrice = minPrice ?? 0;
+                ViewBag.MaxPrice = maxPrice ?? 2000;
+                ViewBag.FilterCount = filterCount;
+                ViewBag.ErrorMessage = "Đã xảy ra lỗi khi tải danh sách sản phẩm.";
                 return View(list);
             }
         }
@@ -1138,9 +1178,44 @@ namespace EasyFood.web.Controllers
             }
 
         }
+      /*  [HttpGet]
+        public async Task<IActionResult> FilterPrice(decimal? minPrice = null, decimal? maxPrice = null)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Home");
+            }
 
+            if (minPrice.HasValue && maxPrice.HasValue && minPrice > maxPrice)
+            {
+                return BadRequest("Giá tối thiểu không thể lớn hơn giá tối đa");
+            }
 
+            string api = $"https://localhost:5555/Gateway/ProductsService/GetAllFillter?minPrice={minPrice}&maxPrice={maxPrice}";
+            List<ProductViewModel> product = new List<ProductViewModel>();
 
+            try
+            {
+                var response = await client.GetAsync(api);
+                if (response.IsSuccessStatusCode)
+                {
+                    var mes = await response.Content.ReadAsStringAsync();
+                    product = JsonSerializer.Deserialize<List<ProductViewModel>>(mes, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+                    ViewBag.MinPrice = minPrice ?? 10000;
+                    ViewBag.MaxPrice = maxPrice ?? 2000000;
+                    return View(product);
+                }
+                return StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync());
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Lỗi server", error = ex.Message });
+            }
+        }*/
 
     }
 
