@@ -6,7 +6,27 @@ using System.Threading.Tasks;
 
 namespace Repository.ViewModels
 {
-    public class OrderDetailSellerViewModel
+
+
+    public class OrderDetailview
+    {
+
+        public bool idDone { get; set; }
+        public Guid order { get; set; }
+        public List<OrderDetailSellerViewModel> list { get; set; } = new List<OrderDetailSellerViewModel>();
+    }
+
+
+
+
+
+
+
+
+
+
+
+        public class OrderDetailSellerViewModel
     {
         public Guid OrderDetailID { get; set; }
         public decimal ProductPrice { get; set; }
