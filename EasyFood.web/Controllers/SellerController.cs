@@ -660,8 +660,8 @@ namespace EasyFood.web.Controllers
             {
                 ViewBag.ErrorMessage = $"Error: {ex.Message}";
             }
-            ViewBag.OrderId = storeId; // Gán OrderId vào ViewBag
-            ViewBag.Status = orderDetails.First().Status; // Gán Status vào ViewBag
+            //ViewBag.OrderId = storeId; // Gán OrderId vào ViewBag
+            //ViewBag.Status = orderDetails.First().Status; // Gán Status vào ViewBag
 
             return View(orderDetails);
         }
