@@ -1,9 +1,12 @@
-﻿using System.Net.Http;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using AutoMapper;
+using BusinessLogic.Services.BalanceChanges;
+using BusinessLogic.Services.OrderDetailService;
+using BusinessLogic.Services.Orders;
 using BusinessLogic.Services.Products;
 using BusinessLogic.Services.ProductVariants;
 using BusinessLogic.Services.ProductVariantVariants;
@@ -36,8 +39,12 @@ namespace EasyFood.web.Controllers
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IProductVariantService _variantService;
+        private readonly IOrdersServices _order;
+        private readonly IBalanceChangeService _balance;
+        private readonly IOrderDetailService _orderDetail;
 
-        public SellerController(IReviewService reviewService, UserManager<AppUser> userManager, IProductService productService, IStoreDetailService storeDetailService, StoreDetailsRepository storeRepository, IMapper mapper, IWebHostEnvironment webHostEnvironment, IProductVariantService variantService)
+
+        public SellerController(IReviewService reviewService, UserManager<AppUser> userManager, IProductService productService, IStoreDetailService storeDetailService, StoreDetailsRepository storeRepository, IMapper mapper, IWebHostEnvironment webHostEnvironment, IProductVariantService variantService, IOrdersServices order, IBalanceChangeService balance, IOrderDetailService orderDetail)
         {
             _reviewService = reviewService;
             _userManager = userManager;
@@ -50,6 +57,9 @@ namespace EasyFood.web.Controllers
             _mapper = mapper;
             _webHostEnvironment = webHostEnvironment;
             _variantService = variantService;
+            _order = order;
+            _balance = balance;
+            _orderDetail = orderDetail;
         }
 
         public async Task<IActionResult> FeedbackList()
@@ -639,6 +649,15 @@ namespace EasyFood.web.Controllers
         {
             var orderDetails = new List<OrderDetailSellerViewModel>();
 
+            var tem = new OrderDetailview();
+            var getor = await this._order.FindAsync(u => u.ID == storeId);
+            tem.order = storeId;
+            if(getor.Status!= "PROCESSING")
+            {
+               tem.idDone = true;
+                return View(tem);
+            }
+
             try
             {
                 HttpResponseMessage response = await client.GetAsync($"https://localhost:5555/Gateway/OrderDetailService/GetOrderDetailsByOrderIdAsync/{storeId}");
@@ -646,7 +665,7 @@ namespace EasyFood.web.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     string json = await response.Content.ReadAsStringAsync();
-                    orderDetails = JsonSerializer.Deserialize<List<OrderDetailSellerViewModel>>(json, new JsonSerializerOptions
+                    tem.list = JsonSerializer.Deserialize<List<OrderDetailSellerViewModel>>(json, new JsonSerializerOptions
                     {
                         PropertyNameCaseInsensitive = true
                     });
@@ -663,7 +682,7 @@ namespace EasyFood.web.Controllers
             ViewBag.OrderId = storeId; // Gán OrderId vào ViewBag
             ViewBag.Status = orderDetails.First().Status; // Gán Status vào ViewBag
 
-            return View(orderDetails);
+            return View(tem);
         }
     public async Task<IActionResult> ManageOrder()
  {
@@ -839,5 +858,158 @@ namespace EasyFood.web.Controllers
             }
             return Json(false);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Rejectorder(Guid id)
+        {
+
+            try
+            {
+
+                var order = await _order.FindAsync(u => u.ID == id);
+                order.Status = "CANCELLED";
+                await this._order.SaveChangesAsync();
+                var getOrderdetai = await this._orderDetail.ListAsync(u => u.OrderID == id);
+                foreach (var item in getOrderdetai)
+                {
+                    item.Status = "CANCELLED";
+                    item.IsFeedBack = true;
+                    await this._orderDetail.UpdateAsync(item);
+                }
+                await this._orderDetail.SaveChangesAsync();
+
+                var getBalance = await this._balance.FindAsync(u => u.UserID == order.UserID);
+
+                if(getBalance== null)
+                {
+                    var tem = new BalanceChange
+                    {
+                        ID = Guid.NewGuid(),
+                        MoneyChange = order.TotalsPrice,
+                        MoneyBeforeChange = await _balance.GetBalance(order.UserID),
+                        MoneyAfterChange = 0 + order.TotalsPrice,
+                        UserID = order.UserID,
+                        checkDone = true,
+                        StartTime = DateTime.Now,
+                        DueTime = DateTime.Now,
+                        Status = "Success",
+                        Method = "Refund",
+
+                    };
+                    await this._balance.AddAsync(tem);
+                    this._balance.SaveChangesAsync();
+                }
+                else
+                {
+                    var tem = new BalanceChange
+                    {
+                        ID = Guid.NewGuid(),
+                        MoneyChange = order.TotalsPrice,
+                        MoneyBeforeChange = await _balance.GetBalance(order.UserID),
+                        MoneyAfterChange = getBalance.MoneyBeforeChange + order.TotalsPrice,
+                        UserID = order.UserID,
+                        checkDone = true,
+                        StartTime = DateTime.Now,
+                        DueTime = DateTime.Now,
+                        Status = "Success",
+                        Method = "Refund",
+
+                    };
+                    await this._balance.AddAsync(tem);
+                    this._balance.SaveChangesAsync();
+                }
+               
+
+                return Json(new ErroMess {success=true, msg = "Hủy đơn thành công" });
+            }
+            catch
+            {
+                return Json(new ErroMess { success = true, msg = "Hủy đơn thành công" });
+            }
+          
+
+
+        }
+        [HttpPost]
+        public async Task<IActionResult> Aaptcetorder(Guid id)
+        {
+
+            try
+            {
+
+                var order = await _order.FindAsync(u => u.ID == id);
+                order.Status = "Success";
+                await this._order.SaveChangesAsync();
+                var getOrderdetai = await this._orderDetail.ListAsync(u => u.OrderID == id);
+                foreach (var item in getOrderdetai)
+                {
+                    item.Status = "Success";
+                    item.IsFeedBack = true;
+                    await this._orderDetail.UpdateAsync(item);
+                }
+                await this._orderDetail.SaveChangesAsync();
+
+
+                var getproduct = await this._orderDetail.FindAsync(x=> x.OrderID == id);
+
+                var product = await this._productService.FindAsync(u => u.ID == getproduct.ProductID);
+
+
+                var getStore = await this._storeDetailService.FindAsync(u => u.ID == product.StoreID);
+
+
+                var getBalance = await this._balance.FindAsync(u => u.UserID == getStore.UserID);
+                if (getBalance == null)
+                {
+                    var tem = new BalanceChange
+                    {
+                        ID = Guid.NewGuid(),
+                        MoneyChange = order.TotalsPrice,
+                        MoneyBeforeChange = await _balance.GetBalance(getStore.UserID),
+                        MoneyAfterChange = 0 + order.TotalsPrice,
+                        UserID = order.UserID,
+                        checkDone = true,
+                        StartTime = DateTime.Now,
+                        DueTime = DateTime.Now,
+                        Status = "Success",
+                        Method = "Sell",
+
+                    };
+
+                    await this._balance.AddAsync(tem);
+                    this._balance.SaveChangesAsync();
+                }
+                else
+                {
+                    var tem = new BalanceChange
+                    {
+                        ID = Guid.NewGuid(),
+                        MoneyChange = order.TotalsPrice,
+                        MoneyBeforeChange = await _balance.GetBalance(getStore.UserID),
+                        MoneyAfterChange = getBalance.MoneyBeforeChange + order.TotalsPrice,
+                        UserID = order.UserID,
+                        checkDone = true,
+                        StartTime = DateTime.Now,
+                        DueTime = DateTime.Now,
+                        Status = "Success",
+                        Method = "Sell",
+
+                    };
+
+                    await this._balance.AddAsync(tem);
+                    this._balance.SaveChangesAsync();
+                }
+             
+                return Json(new ErroMess { success = true, msg = "Acept đơn thành công" });
+            }
+            catch
+            {
+                return Json(new ErroMess { success = true, msg = "Acept đơn thành công" });
+            }
+
+
+
+        }
+
     }
 }

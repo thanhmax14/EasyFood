@@ -165,7 +165,7 @@ namespace UserAPI.Controllers
                         var order = await this._ordersServices.FindAsync(u => u.OrderCode == data.orderCode+"");
                         if (order != null)
                         {
-                            order.Status = "Success";
+                            order.Status = "PROCESSING";
                             order.StatusPayment= "Success";
                             order.IsActive = true;
                             order.ModifiedDate = DateTime.Now;
@@ -174,7 +174,7 @@ namespace UserAPI.Controllers
                            var getOrderDetil = await this._detail.ListAsync(_detail => _detail.OrderID == order.ID);
                             foreach (var item in getOrderDetil)
                             {
-                                item.Status = "Success";
+                                item.Status = "PROCESSING";
                                 item.IsActive = true;
                                 item.ModifiedDate =DateTime.Now;
                                 await this._detail.UpdateAsync(item);

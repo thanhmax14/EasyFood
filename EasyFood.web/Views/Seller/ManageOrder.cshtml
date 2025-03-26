@@ -377,7 +377,7 @@
                                                             name: "Order ID",
                                                             formatter: (cell) => {
                                                                 const shortOrderID = cell.substring(0, 5);
-                                                                return gridjs.html(`<a href="/seller/order/${cell}" class="fw-medium link-primary">${shortOrderID}</a>`);
+                                                            return gridjs.html(`<a href="/seller/ViewOrderDetails/${cell}" class="fw-medium link-primary">${shortOrderID}</a>`);
                                                             }
                                                         },
                                                         { id: "userName", name: "Customer" },

@@ -1,4 +1,4 @@
-﻿@model List<Repository.ViewModels.OrderDetailSellerViewModel>
+﻿@model Repository.ViewModels.OrderDetailview
 
 <!doctype html>
 <html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg"
@@ -262,9 +262,10 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @if (Model != null && Model.Any())
+                                                @if (Model != null && Model.list.Any())
                                                 {
-                                                    foreach (var item in Model)
+                                                <input type="hidden" value="@Model.order" id="idsave" />
+                                                foreach (var item in Model.list)
                                                     {
                                                         <tr>
                                                             <td>
@@ -289,7 +290,7 @@
                                                     <tr class="border-top border-top-dashed">
                                                         <td colspan="3"></td>
                                                         <td class="fw-medium text-end">
-                                                            <strong>Total (VND): @Model.Sum(x => x.TotalPrice) VND</strong>
+                                                            <strong>Total (VND): @Model.list.Sum(x => x.TotalPrice) VND</strong>
                                                         </td>
                                                     </tr>
                                                 }
@@ -304,11 +305,182 @@
                                     </div>
                                 </div>
                             </div>
+
+                        @if (!Model.idDone)
+                        {
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="d-sm-flex align-items-center">
+                                        <h5 class="card-title flex-grow-1 mb-0">Order Status</h5>
+                                        <div class="flex-shrink-0 mt-2 mt-sm-0">
+                                            <button id="btnAccept" class="btn btn-soft-info material-shadow-none btn-sm mt-2 mt-sm-0"><i class="ri-map-pin-line align-middle me-1"></i> Accept Order</button>
+                                            <abutton id="btnReject" class="btn btn-soft-danger material-shadow-none btn-sm mt-2 mt-sm-0"><i class="mdi mdi-archive-remove-outline align-middle me-1"></i> Cancel Order</abutton>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        }
+                    
+
                         </div>
 
-                        @if (Model != null && Model.Any())
+                    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+                        <script>
+                        $("#btnReject").on("click", function () {
+                            var $btn = $(this);
+                            $btn.html('<i class="fa fa-spinner fa-spin"></i> Đang xử lý...').prop('disabled', true);
+
+                            // Gọi Swal trước, nếu xác nhận thì mới gửi request
+                            Swal.fire({
+                                title: "Bạn có chắc chắn?",
+                                text: "Bạn muốn hủy đơn hàng?",
+                                icon: "warning",
+                                showCancelButton: true,
+                                confirmButtonText: "Có, xóa!",
+                                cancelButtonText: "Hủy"
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    sendRejectRequest($btn);
+                                } else {
+                                    $btn.html('Reject').prop('disabled', false);
+                                }
+                            });
+                        });
+
+                        function sendRejectRequest($btn) {
+                            $.ajax({
+                                url: "/seller/Rejectorder",
+                                type: "POST",
+                                data: { id: $("#idsave").val() },
+                                headers: {
+                                    "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val()
+                                },
+                                success: function (response) {
+                                    if (response.success) {
+                                        $("#btnReject").remove();
+                                        $("#btnAccept").remove();
+                                        new Notify({
+                                            status: 'success',
+                                            title: 'Thành công!',
+                                            text: response.msg || 'Gửi thành công!',
+                                            effect: 'fade',
+                                            speed: 300,
+                                            showIcon: true,
+                                            showCloseButton: true,
+                                            autoclose: true,
+                                            autotimeout: 3000,
+                                            position: 'right top'
+                                        });
+                                    } else {
+                                        new Notify({
+                                            status: 'error',
+                                            title: 'Thất Bại',
+                                            text: response.msg || 'Gửi thất bại!',
+                                            effect: 'fade',
+                                            speed: 300,
+                                            showIcon: true,
+                                            showCloseButton: true,
+                                            autoclose: true,
+                                            autotimeout: 3000,
+                                            position: 'right top'
+                                        });
+                                    }
+                                    $btn.html('Reject').prop('disabled', false);
+                                },
+                                error: function () {
+                                    Swal.fire('Thất bại', "Đã xảy ra lỗi", 'error');
+                                    $btn.html('Reject').prop('disabled', false);
+                                }
+                            });
+                        }
+
+
+
+
+
+                        $("#btnAccept").on("click", function () {
+                            var $btn = $(this);
+                            $btn.html('<i class="fa fa-spinner fa-spin"></i> Đang xử lý...').prop('disabled', true);
+
+                            // Gọi Swal trước, nếu xác nhận thì mới gửi request
+                            Swal.fire({
+                                title: "Bạn có chắc chắn?",
+                                text: "Bạn muốn hủy đơn hàng?",
+                                icon: "warning",
+                                showCancelButton: true,
+                                confirmButtonText: "Có, xóa!",
+                                cancelButtonText: "Hủy"
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    sendRejectRequest($btn);
+                                } else {
+                                    $btn.html('Reject').prop('disabled', false);
+                                }
+                            });
+                        });
+
+                        function sendRejectRequest($btn) {
+                            $.ajax({
+                                url: "/seller/Aaptcetorder",
+                                type: "POST",
+                                data: { id: $("#idsave").val() },
+                                headers: {
+                                    "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val()
+                                },
+                                success: function (response) {
+                                    if (response.success) {
+                                        $("#btnReject").remove();
+                                        $("#btnAccept").remove();
+                                        new Notify({
+                                            status: 'success',
+                                            title: 'Thành công!',
+                                            text: response.msg || 'Gửi thành công!',
+                                            effect: 'fade',
+                                            speed: 300,
+                                            showIcon: true,
+                                            showCloseButton: true,
+                                            autoclose: true,
+                                            autotimeout: 3000,
+                                            position: 'right top'
+                                        });
+                                    } else {
+                                        new Notify({
+                                            status: 'error',
+                                            title: 'Thất Bại',
+                                            text: response.msg || 'Gửi thất bại!',
+                                            effect: 'fade',
+                                            speed: 300,
+                                            showIcon: true,
+                                            showCloseButton: true,
+                                            autoclose: true,
+                                            autotimeout: 3000,
+                                            position: 'right top'
+                                        });
+                                    }
+                                    $btn.html('Reject').prop('disabled', false);
+                                },
+                                error: function () {
+                                    Swal.fire('Thất bại', "Đã xảy ra lỗi", 'error');
+                                    $btn.html('Reject').prop('disabled', false);
+                                }
+                            });
+                        }
+
+
+
+
+
+
+
+
+
+
+                            </script>
+
+                        @if (Model != null && Model.list.Any())
                         {
-                            var customer = Model.FirstOrDefault();
+                        var customer = Model.list.FirstOrDefault();
                             <div class="col-xl-4">
                                 <div class="card">
                                     <div class="card-header">
