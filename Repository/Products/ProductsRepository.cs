@@ -289,6 +289,7 @@ namespace Repository.Products
                                 CateName = c.Name,
                                 StoreName = store.Name,
                                 StoreId = store.ID, // Gán StoreId
+                                StoreIsActive = store.IsActive,
                                 ImageUrl = img != null ? img.ImageUrl : "/images/default.png"
                             }).ToList();
 

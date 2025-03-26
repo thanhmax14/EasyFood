@@ -28,7 +28,9 @@ namespace Repository.OrdeDetails
                                       join pi in _context.ProductImages.Where(pi => pi.IsMain)
                                           on p.ID equals pi.ProductID into productImages
                                       from pi in productImages.DefaultIfEmpty() // LEFT JOIN ProductImages
-                                      where od.IsActive == true && o.ID == orderId
+                                      where od.IsActive == true
+                                            && o.ID == orderId
+                                            && o.Status == "PROCESSING" // ✅ Thêm điều kiện lọc theo Status
                                       select new OrderDetailSellerViewModel
                                       {
                                           OrderDetailID = od.ID,
@@ -41,7 +43,7 @@ namespace Repository.OrdeDetails
                                           ProductName = p.Name,
 
                                           OrderID = o.ID,
-
+                                          Status = o.Status, // Đảm bảo lấy trạng thái từ bảng Orders
                                           UserID = u != null ? u.Id : null,
                                           UserName = u != null ? u.UserName : null,
                                           Email = u != null ? u.Email : null,
@@ -54,5 +56,13 @@ namespace Repository.OrdeDetails
 
             return orderDetails;
         }
+
+        public async Task<List<OrderDetail>> GetByOrderId(Guid orderId)
+        {
+            var orderDetails = await _context.OrderDetails.Where(od => od.OrderID == orderId).ToListAsync();
+            return orderDetails.Any() ? orderDetails : throw new Exception("Order details not found");
+        }
+
+
     }
 }

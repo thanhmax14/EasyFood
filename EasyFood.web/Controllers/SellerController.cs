@@ -1,4 +1,4 @@
-﻿using System.Net.Http;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
@@ -12,6 +12,7 @@ using BusinessLogic.Services.ProductVariants;
 using BusinessLogic.Services.ProductVariantVariants;
 using BusinessLogic.Services.Reviews;
 using BusinessLogic.Services.StoreDetail;
+using MailKit.Search;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
@@ -678,6 +679,8 @@ namespace EasyFood.web.Controllers
             {
                 ViewBag.ErrorMessage = $"Error: {ex.Message}";
             }
+            ViewBag.OrderId = storeId; // Gán OrderId vào ViewBag
+            ViewBag.Status = orderDetails.First().Status; // Gán Status vào ViewBag
 
             return View(tem);
         }
@@ -744,6 +747,34 @@ namespace EasyFood.web.Controllers
           public async Task<IActionResult> Index(string id)
         {
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AcceptOrder(Guid orderId)
+        {
+            var response = await client.PostAsync($"https://localhost:5555/api/OrderDetailService/accept/{orderId}", null);
+            if (!response.IsSuccessStatusCode)
+            {
+                TempData["Error"] = "Failed to accept order.";
+                return RedirectToAction("Index");
+            }
+
+            TempData["Success"] = "Order accepted successfully.";
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RejectOrder(Guid orderId)
+        {
+            var response = await client.PostAsync($"https://localhost:5555/api/OrderDetailService/reject/{orderId}", null);
+            if (!response.IsSuccessStatusCode)
+            {
+                TempData["Error"] = "Failed to reject order.";
+                return RedirectToAction("Index");
+            }
+
+            TempData["Success"] = "Order rejected successfully.";
+            return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> GetDonutChart()
@@ -827,6 +858,7 @@ namespace EasyFood.web.Controllers
             }
             return Json(false);
         }
+
         [HttpPost]
         public async Task<IActionResult> Rejectorder(Guid id)
         {
@@ -978,6 +1010,6 @@ namespace EasyFood.web.Controllers
 
 
         }
-    }
 
+    }
 }

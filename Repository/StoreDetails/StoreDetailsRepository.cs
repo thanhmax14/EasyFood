@@ -237,5 +237,12 @@ namespace Repository.StoreDetails
                     IsActive = s.IsActive
                 }).ToListAsync();
         }
+        public async Task<Models.StoreDetails> GetByUserId(string userId)
+        {
+            return await _context.StoreDetails.FirstOrDefaultAsync(s => s.UserID == userId)
+                   ?? throw new Exception("Store not found");
+        }
+
+
     }
 }
