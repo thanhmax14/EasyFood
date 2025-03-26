@@ -28,7 +28,7 @@
     <link href="~/assetsAdmin/css/app.min.css" rel="stylesheet" type="text/css" />
     <!-- custom Css-->
     <link href="~/assetsAdmin/css/custom.min.css" rel="stylesheet" type="text/css" />
-
+    <script src="~/assetsAdmin/libs/%40ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>
 </head>
 
 <body>
@@ -288,7 +288,7 @@
                                             <div class="col-md-12">
                                                 <div class="mb-3">
                                                     <label asp-for="LongDescription" class="form-label">Detailed Description</label>
-                                                    <textarea asp-for="LongDescription" class="form-control" rows="4" placeholder="Enter detailed product description" required></textarea>
+                                                    <textarea id="ckeditor-classic" asp-for="LongDescription" class="form-control" rows="4" placeholder="Enter detailed product description" required></textarea>
                                                     <span asp-validation-for="LongDescription" class="text-danger"></span>
                                                 </div>
                                             </div>

@@ -325,10 +325,24 @@
                                                         </div>
                                                     </div>
 
+                                                    <style>
+                                                        .description-box {
+                                                            border: 1px solid #ced4da;
+                                                            border-radius: 5px;
+                                                            padding: 8px;
+                                                            min-height: 40px;
+                                                            display: block;
+                                                            width: 100%; /* Đảm bảo rộng bằng input */
+                                                            box-sizing: border-box; /* Giúp padding không làm thay đổi kích thước */
+                                                        }
+                                                    </style>
+
                                                     <div class="col-md-12">
                                                         <div class="mb-3">
                                                             <label class="form-label">Long Description</label>
-                                                            <textarea class="form-control" rows="4" readonly>@Model.LongDescriptions</textarea>
+                                                            <div class="description-box">
+                                                                @Html.Raw(@Model.LongDescriptions)
+                                                            </div>
                                                         </div>
                                                     </div>
 

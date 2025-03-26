@@ -168,5 +168,13 @@ namespace Repository.Categorys
         {
             return _context.Categories.FirstOrDefault(c => c.ID == id);
         }
+        public async Task<Categories> GetByProductId(Guid productId)
+        {
+            return await _context.Categories
+                .Include(c => c.Products)
+                .FirstOrDefaultAsync(c => c.Products.Any(p => p.ID == productId))
+                ?? throw new Exception("Category not found");
+        }
+
     }
 }

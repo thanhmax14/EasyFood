@@ -47,6 +47,8 @@ namespace BusinessLogic.Config
             services.AddScoped<Repository.ProductVariants.ProductVariantRepository>();
             services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
             services.AddScoped<Repository.OrdeDetails.OrderDetailRepository>();
+            services.AddScoped<Repository.OrdersRepository.OrdersRepository>();
+            services.AddScoped<Repository.BalanceChange.BalanceChangeRepository>();
         }
 
 

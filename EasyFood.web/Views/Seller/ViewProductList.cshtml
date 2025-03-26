@@ -257,9 +257,6 @@
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <h4 class="card-title mb-0">Product List</h4>
-                                <button onclick="goBack()" class="btn btn-secondary">
-                                    <i class="ri-arrow-left-line"></i> Back to List
-                                </button>
                             </div>
                             <div class="card-body">
                                 <div class="d-flex justify-content-start mb-3">
@@ -293,7 +290,7 @@
                                 { name: "ID", hidden: true },
                                 { name: "Name", width: "200px" },
                                 { name: "Short Description", width: "250px" },
-                                { name: "Long Description", width: "300px" },
+                                // { name: "Long Description", width: "300px" },
                                 { name: "Created Date", width: "150px" },
                                 { name: "Modified Date", width: "150px" },
                                 { name: "Manufacture Date", width: "150px" },
@@ -366,7 +363,7 @@
                             sort: true,
                             search: true,
                             data: products.map(p => [
-                                p.productId, p.name, p.shortDescription, p.longDescription, formatDate(p.createdDate), formatDate(p.modifiedDate),
+                                p.productId, p.name, p.shortDescription, /* p.longDescription, */ formatDate(p.createdDate), formatDate(p.modifiedDate),
                                 formatDate(p.manufactureDate), p.isActive, p.isOnSale, p.cateName, p.storeName, p.imageUrl
                             ])
                         }).render(document.getElementById("table-product"));
