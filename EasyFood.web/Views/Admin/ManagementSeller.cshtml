@@ -173,11 +173,11 @@
                     </div>
                     <ul class="navbar-nav" id="navbar-nav">
                         <li class="menu-title"><span data-key="t-menu">Menu</span></li>
-                        <li class="nav-item">
+                        @* <li class="nav-item">
                             <a class="nav-link menu-link" asp-controller="Admin" asp-action="UserStatistics">
                                 <i class="ri-bar-chart-box-line"></i> <span>User and Seller Statistics</span>
                             </a>
-                        </li>
+                        </li>*@
                         <li class="nav-item">
                             <a class="nav-link menu-link" asp-controller="Admin" asp-action="Revenue">
                                 <i class=" ri-pie-chart-line"></i> <span>Revenue Statistics</span>
@@ -189,7 +189,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link menu-link action" asp-controller="Admin" asp-action="ManagementSeller">
+                            <a class="nav-link menu-link" asp-controller="Admin" asp-action="ManagementSeller">
                                 <i class="ri-user-add-line"></i> <span>Seller Registration Requests</span>
                             </a>
                         </li>
@@ -204,7 +204,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link menu-link" asp-controller="Admin" asp-action="ViewCategories">
+                            <a class="nav-link menu-link action" asp-controller="Admin" asp-action="ViewCategories">
                                 <i class="ri-folder-2-line"></i> <span>Categories</span>
                             </a>
                         </li>

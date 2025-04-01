@@ -81,4 +81,4 @@ services:
       - ASPNETCORE_ENVIRONMENT=Production
     build:
       context: .
-      dockerfile: ./UserAPI/Dockerfile
+      dockerfile: ./EasyFood.web/Dockerfile

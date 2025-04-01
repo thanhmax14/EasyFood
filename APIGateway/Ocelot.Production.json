@@ -169,6 +169,23 @@
         "PUT",
         "DELETE"
       ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Shopping/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "userapi-api",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/Gateway/ShoppingService/{everything}",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ]
     }
   ],
   "GlobalConfiguration": {

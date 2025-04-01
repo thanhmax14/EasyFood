@@ -198,7 +198,7 @@
                                                 </div>
                                                 <div class="short-desc mb-30">
                                                     <p class="font-lg">
-                                                        @Model.LongDescription
+                                                        @Model.ShortDescription
                                                     </p>
                                                 </div>
                                                 <div class="attr-detail attr-size mb-30">
@@ -275,9 +275,7 @@
                                             <div class="tab-content shop_info_tab entry-main-content">
                                                 <div class="tab-pane fade show active" id="Description">
                                                     <div class="">
-                                                        <p>
-                                                            @Model.LongDescription
-                                                        </p>
+                                                        @Html.Raw(@Model.LongDescription)
 
                                                         @* <ul class="product-more-infor mt-30"> *@
                                                         @*     <li><span>Type Of Packing</span> Bottle</li> *@

@@ -164,7 +164,7 @@ namespace Models.DBContext
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-      => optionsBuilder.UseSqlServer("Server=tcp:easyfoodpro.database.windows.net,1433;Initial Catalog=Easyfood;Persist Security Info=False;User ID=huy;Password=Xinchao123@;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+      => optionsBuilder.UseSqlServer("Server=TRANGIAHUY;Database=Easyfoodtest;uid=sa;pwd=1035;encrypt=true;trustServerCertificate=true;");
 
 
     }
