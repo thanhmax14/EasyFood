@@ -277,7 +277,7 @@
                                                     <i class="fi-rs-marker mr-10"></i>Register Seller
                                                 </a>
                                             </li>
-                                        } else
+                                        } else if(Model.userView.RequestSeller == "2")
                                         {
                                             <li class="nav-item">
                                                 <a class="nav-link" id="address-tab" target="_blank" asp-controller="Seller" asp-action="viewstore"
@@ -696,6 +696,13 @@ document.addEventListener("DOMContentLoaded", function () {
                                                             <button class="btn btn-success mt-2" id="btnRegisterSeller">Register as Seller</button>
                                                         </div>
                                                     </div>
+                                                } else if(Model.userView.RequestSeller == "1")
+                                                
+                                                {
+                                                     <div class="alert alert-info mt-3" id="approvalMessage">
+                                                         <h5>Announcement!</h5>
+                                                         <p>Your request has been submitted. Please wait for admin approval.</p>
+                                                     </div> 
                                                 }
                                                 else if (Model.userView.RequestSeller == "1")
                                                 {
