@@ -16,9 +16,9 @@ namespace Models
         public string Status { get; set; }
         public bool IsActive { get; set; } = true;
         public int Quantity { get; set; } = 0;
-        public decimal TotalsPrice { get; set; }
-        public string MethodPayment { get; set; }
-        public string StatusPayment { get; set; }
+        public decimal TotalPrice { get; set; }
+        public string PaymentMethod { get; set; }
+        public string PaymentStatus { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public DateTime? ModifiedDate { get; set; }
         [ForeignKey("AppUser")]

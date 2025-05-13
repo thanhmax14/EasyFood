@@ -82,7 +82,7 @@ namespace BusinessLogic.Services.Products
                 ManufactureDate = model.ManufactureDate,
                 IsActive = true,
                 IsOnSale = false,
-                CateID = model.CateID,
+                CategoryID = model.CateID,
                 StoreID = storeId
             };
             var result = await _repositorys.AddAsync(product);
@@ -126,7 +126,7 @@ namespace BusinessLogic.Services.Products
                 ManufactureDate = model.ManufactureDate,
                 IsActive = model.IsActive,
                 IsOnSale = model.IsOnSale,
-                CateID = model.CateID,
+                CategoryID = model.CateID,
                 StoreID = model.StoreID
             };
 

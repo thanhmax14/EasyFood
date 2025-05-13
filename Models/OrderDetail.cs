@@ -17,7 +17,7 @@ namespace Models
         public int Quantity { get; set; } = 0;
         public string? Status { get; set; }
         public bool IsActive { get; set; } = true;
-        public bool IsFeedBack { get; set; } = false;
+        public bool IsFeedback { get; set; } = false;
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public DateTime? ModifiedDate { get; set; }
         [ForeignKey("Order")]

@@ -25,21 +25,21 @@ namespace BusinessLogic.Services.ProductVariantVariants
             _repositorys = repositorys;
         }
 
-        public IQueryable<ProductVariant> GetAll() => _repository.GetAll();
+        public IQueryable<ProductTypes> GetAll() => _repository.GetAll();
 
-        public ProductVariant GetById(Guid id) => _repository.GetById(id);
+        public ProductTypes GetById(Guid id) => _repository.GetById(id);
 
-        public async Task<ProductVariant> GetAsyncById(Guid id) => await _repository.GetAsyncById(id);
+        public async Task<ProductTypes> GetAsyncById(Guid id) => await _repository.GetAsyncById(id);
 
-        public ProductVariant Find(Expression<Func<ProductVariant, bool>> match) => _repository.Find(match);
+        public ProductTypes Find(Expression<Func<ProductTypes, bool>> match) => _repository.Find(match);
 
-        public async Task<ProductVariant> FindAsync(Expression<Func<ProductVariant, bool>> match) => await _repository.FindAsync(match);
+        public async Task<ProductTypes> FindAsync(Expression<Func<ProductTypes, bool>> match) => await _repository.FindAsync(match);
+      
+        public async Task AddAsync(ProductTypes entity) => await _repository.AddAsync(entity);
 
-        public async Task AddAsync(ProductVariant entity) => await _repository.AddAsync(entity);
+        public async Task UpdateAsync(ProductTypes entity) => await _repository.UpdateAsync(entity);
 
-        public async Task UpdateAsync(ProductVariant entity) => await _repository.UpdateAsync(entity);
-
-        public async Task DeleteAsync(ProductVariant entity) => await _repository.DeleteAsync(entity);
+        public async Task DeleteAsync(ProductTypes entity) => await _repository.DeleteAsync(entity);
 
         public async Task DeleteAsync(Guid id) => await _repository.DeleteAsync(id);
 
@@ -48,12 +48,12 @@ namespace BusinessLogic.Services.ProductVariantVariants
 
         public async Task<int> CountAsync() => await _repository.CountAsync();
 
-        public async Task<IEnumerable<ProductVariant>> ListAsync() => await _repository.ListAsync();
+        public async Task<IEnumerable<ProductTypes>> ListAsync() => await _repository.ListAsync();
 
-        public async Task<IEnumerable<ProductVariant>> ListAsync(
-            Expression<Func<ProductVariant, bool>> filter = null,
-            Func<IQueryable<ProductVariant>, IOrderedQueryable<ProductVariant>> orderBy = null,
-            Func<IQueryable<ProductVariant>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<ProductVariant, object>> includeProperties = null) =>
+        public async Task<IEnumerable<ProductTypes>> ListAsync(
+            Expression<Func<ProductTypes, bool>> filter = null,
+            Func<IQueryable<ProductTypes>, IOrderedQueryable<ProductTypes>> orderBy = null,
+            Func<IQueryable<ProductTypes>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<ProductTypes, object>> includeProperties = null) =>
             await _repository.ListAsync(filter, orderBy, includeProperties);
         public async Task<int> SaveChangesAsync() => await _repository.SaveChangesAsync();
         public async Task<List<ProductVariantViewModel>> GetVariantsByProductIdAsync(Guid productId)

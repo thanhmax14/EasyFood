@@ -75,7 +75,7 @@ namespace Repository.StoreDetails
                         LongDescriptions = s.LongDescriptions ?? "No description available",
                         Address = s.Address,
                         Phone = s.Phone,
-                        Img = !string.IsNullOrEmpty(s.Img) ? s.Img : "default-store.png",
+                        Img = !string.IsNullOrEmpty(s.ImageUrl) ? s.ImageUrl : "default-store.png",
                         IsActive = s.IsActive, // Giữ nguyên trạng thái hoạt động
                         Status = s.Status ?? "PENDING", // Lấy trạng thái từ DB hoặc mặc định "PENDING"
                         UserName = u.UserName,
@@ -104,7 +104,7 @@ namespace Repository.StoreDetails
                         LongDescriptions = s.LongDescriptions ?? "No description available",
                         Address = s.Address,
                         Phone = s.Phone,
-                        Img = !string.IsNullOrEmpty(s.Img) ? s.Img : "default-store.png",
+                        Img = !string.IsNullOrEmpty(s.ImageUrl) ? s.ImageUrl : "default-store.png",
                         IsActive = s.IsActive,
                         Status = s.Status ?? "PENDING",
                         UserName = u.UserName,
@@ -155,7 +155,7 @@ namespace Repository.StoreDetails
 
             // Lấy danh sách biến thể sản phẩm của store
             var productIds = products.Select(p => p.ID).ToList();
-            var productVariants = await _context.ProductVariants
+            var productVariants = await _context.ProductTypes
                 .Where(v => productIds.Contains(v.ProductID))
                 .ToListAsync();
 
@@ -232,7 +232,7 @@ namespace Repository.StoreDetails
                     ShortDescriptions = s.ShortDescriptions,
                     Address = s.Address,
                     Phone = s.Phone,
-                    Img = s.Img,
+                    Img = s.ImageUrl,
                     Status = s.Status,
                     IsActive = s.IsActive
                 }).ToListAsync();

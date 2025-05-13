@@ -95,7 +95,7 @@ public class StoreController : Controller
                     await ImgFile.CopyToAsync(fileStream);
                 }
 
-                storeEntity.Img = "/uploads/" + uniqueFileName;
+                storeEntity.ImageUrl = "/uploads/" + uniqueFileName;
             }
 
             await _storeService.AddStoreAsync(storeEntity, user.Id);
@@ -159,7 +159,7 @@ public class StoreController : Controller
                     await ImgFile.CopyToAsync(fileStream);
                 }
 
-                storeEntity.Img = "/uploads/" + uniqueFileName;
+                storeEntity.ImageUrl = "/uploads/" + uniqueFileName;
             }
 
             await _storeService.AddStoreAsync(storeEntity, user.Id);
@@ -201,7 +201,7 @@ public class StoreController : Controller
             ShortDescriptions = store.ShortDescriptions,
             Address = store.Address,
             Phone = store.Phone,
-            Img = store.Img // Giữ ảnh cũ
+            Img = store.ImageUrl // Giữ ảnh cũ
         };
 
         return View(model);
@@ -229,7 +229,7 @@ public class StoreController : Controller
             return View(model);
         }
 
-        string imgPath = existingStore.Img; // Giữ ảnh cũ nếu không có ảnh mới
+        string imgPath = existingStore.ImageUrl; // Giữ ảnh cũ nếu không có ảnh mới
 
         if (ImgFile != null && ImgFile.Length > 0)
         {
@@ -294,7 +294,7 @@ public class StoreController : Controller
             return View(model);
         }
 
-        string imgPath = existingStore.Img; // Giữ ảnh cũ nếu không có ảnh mới
+        string imgPath = existingStore.ImageUrl; // Giữ ảnh cũ nếu không có ảnh mới
 
         if (ImgFile != null && ImgFile.Length > 0)
         {
@@ -357,7 +357,7 @@ public class StoreController : Controller
             ShortDescriptions = store.ShortDescriptions,
             Address = store.Address,
             Phone = store.Phone,
-            Img = store.Img // Giữ ảnh cũ
+            Img = store.ImageUrl // Giữ ảnh cũ
         };
 
         return View(model);

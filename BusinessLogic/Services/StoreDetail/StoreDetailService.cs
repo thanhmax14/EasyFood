@@ -93,7 +93,7 @@ namespace BusinessLogic.Services.StoreDetail
             storeDetails.ShortDescriptions = shortDesc;
             storeDetails.Address = address;
             storeDetails.Phone = phone;
-            storeDetails.Img = img;
+            storeDetails.ImageUrl = img;
             storeDetails.ModifiedDate = DateTime.Now;
 
             await _repository.UpdateAsync(storeDetails);

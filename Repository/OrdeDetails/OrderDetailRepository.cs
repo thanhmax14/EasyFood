@@ -43,7 +43,7 @@ namespace Repository.OrdeDetails
                                           UserName = u != null ? u.UserName : null,
                                           Email = u != null ? u.Email : null,
                                           PhoneNumber = u != null ? u.PhoneNumber : null,
-                                          AvatarUrl = u != null ? u.img : null,
+                                          AvatarUrl = u != null ? u.ImageUrl : null,
                                           Address = u != null ? u.Address : null, // ➕ Lấy địa chỉ của khách hàng
 
                                           ImageUrl = pi != null ? pi.ImageUrl : null

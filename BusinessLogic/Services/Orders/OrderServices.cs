@@ -80,7 +80,7 @@ namespace BusinessLogic.Services.Orders
                 if (category == null) return false;
 
                 decimal commission = (decimal)category.Commission;
-                decimal moneyChange = order.TotalsPrice * (commission / 100);
+                decimal moneyChange = order.TotalPrice * (commission / 100);
 
                 var store = await _atoreDetailRepositorys.GetByUserId(order.UserID);
                 if (store == null) return false;
@@ -102,7 +102,7 @@ namespace BusinessLogic.Services.Orders
                     MoneyAfterChange = moneyAfterChange,
                     StartTime = DateTime.UtcNow,
                     Status = "Success",
-                    checkDone = true
+                    CheckDone = true
                 };
 
                 await _balanceRepositorys.AddAsync(balanceChange);
@@ -123,7 +123,7 @@ namespace BusinessLogic.Services.Orders
                 if (order == null) return false;
 
                 decimal moneyBeforeChange = await _balanceService.GetBalance(order.UserID);
-                decimal moneyChange = order.TotalsPrice;
+                decimal moneyChange = order.TotalPrice;
                 decimal moneyAfterChange = moneyBeforeChange + moneyChange;
 
                 // Cập nhật trạng thái order
@@ -140,7 +140,7 @@ namespace BusinessLogic.Services.Orders
                     MoneyAfterChange = moneyAfterChange,
                     StartTime = DateTime.UtcNow,
                     Status = "CANCELLED",
-                    checkDone = true
+                    CheckDone = true
                 };
 
                 await _balanceRepositorys.AddAsync(balanceChange);

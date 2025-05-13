@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Repository.ProductVariants
 {
-    public class ProductVariantRepository : BaseRepository<Models.ProductVariant>, IProductVariantRepository
+    public class ProductVariantRepository : BaseRepository<Models.ProductTypes>, IProductVariantRepository
     {
         private readonly EasyFoodDbContext _context;
         public ProductVariantRepository(EasyFoodDbContext context) : base(context) {
@@ -22,13 +22,13 @@ namespace Repository.ProductVariants
 
         public async Task<List<ProductVariantViewModel>> GetVariantsByProductIdAsync(Guid productId)
         {
-            var variants = await _context.ProductVariants
+            var variants = await _context.ProductTypes
                 .Where(v => v.ProductID == productId)
                 .Select(v => new ProductVariantViewModel
                 {
                     ID = v.ID,
-                    Size = v.Size,
-                    Price = v.Price,
+                    Size = v.Name,
+                    Price = v.SellPrice,
                     OriginalPrice = v.OriginalPrice,
                     Stock = v.Stock,
                     ModifiedDate = v.ModifiedDate,
@@ -44,11 +44,11 @@ namespace Repository.ProductVariants
 
         public async Task CreateProductVariantAsync(ProductVariantCreateViewModel model)
         {
-            var productVariant = new ProductVariant
+            var productVariant = new ProductTypes
             {
                 ID = Guid.NewGuid(),
-                Size = model.Size,
-                Price = model.Price,
+                Name = model.Size,
+                SellPrice = model.Price,
                 OriginalPrice = model.OriginalPrice,
                 Stock = model.Stock,
                 ManufactureDate = model.ManufactureDate,
@@ -56,19 +56,19 @@ namespace Repository.ProductVariants
                 ModifiedDate = DateTime.UtcNow
             };
 
-            await _context.ProductVariants.AddAsync(productVariant);
+            await _context.ProductTypes.AddAsync(productVariant);
             await _context.SaveChangesAsync();
         }
         public async Task<ProductVariantEditViewModel> GetProductVariantForEditAsync(Guid variantId)
         {
-            return await _context.ProductVariants
+            return await _context.ProductTypes
                 .Where(v => v.ID == variantId)
                 .Select(v => new ProductVariantEditViewModel
                 {
                     ID = v.ID,
                     ProductID = v.ProductID,
-                    Size = v.Size,
-                    Price = v.Price,
+                    Size = v.Name,
+                    Price = v.SellPrice,
                     OriginalPrice = v.OriginalPrice,
                     Stock = v.Stock,
                     ManufactureDate = v.ManufactureDate,
@@ -79,11 +79,11 @@ namespace Repository.ProductVariants
 
         public async Task<bool> UpdateProductVariantAsync(ProductVariantEditViewModel model)
         {
-            var variant = await _context.ProductVariants.FindAsync(model.ID);
+            var variant = await _context.ProductTypes.FindAsync(model.ID);
             if (variant == null) return false;
 
-            variant.Size = model.Size;
-            variant.Price = model.Price;
+            variant.Name = model.Size;
+            variant.SellPrice = model.Price;
             variant.OriginalPrice = model.OriginalPrice;
             variant.Stock = model.Stock;
             variant.ManufactureDate = model.ManufactureDate;
@@ -95,7 +95,7 @@ namespace Repository.ProductVariants
 
         public bool UpdateProductVariantStatus(Guid variantId, bool isActive)
         {
-            var variant = _context.ProductVariants.FirstOrDefault(v => v.ID == variantId);
+            var variant = _context.ProductTypes.FirstOrDefault(v => v.ID == variantId);
             if (variant == null)
                 return false;
 

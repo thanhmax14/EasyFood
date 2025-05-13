@@ -50,9 +50,9 @@ namespace SellerAPI.Controllers
                 var reviewModel = new ReivewViewModel
                 {
                     ID = review.ID,
-                    Cmt = review.Cmt,
-                    Relay = review.Relay,
-                    Datecmt = review.Datecmt,
+                    Cmt = review.Comment,
+                    Relay = review.Reply,
+                    Datecmt = review.CommentDate,
                     Status = review.Status,
                     Rating = review.Rating,
                     Username = user?.UserName,
@@ -89,9 +89,9 @@ namespace SellerAPI.Controllers
                 Username = user?.UserName,
                 ProductName = product?.Name,
                 Rating = reviewData.Rating,
-                Cmt = reviewData.Cmt,
-                Datecmt = reviewData.Datecmt,
-                Relay = reviewData.Relay,
+                Cmt = reviewData.Comment,
+                Datecmt = reviewData.CommentDate,
+                Relay = reviewData.Reply,
                 Status = reviewData.Status,
             };
 
@@ -117,8 +117,8 @@ namespace SellerAPI.Controllers
                 }
 
                 // Cập nhật phản hồi
-                review.Relay = obj.Relay;
-                review.DateRelay = DateTime.Now;
+                review.Reply = obj.Relay;
+                review.ReplyDate = DateTime.Now;
 
                 // Lưu thay đổi
                 await _reviewService.UpdateAsync(review);
@@ -259,8 +259,8 @@ namespace SellerAPI.Controllers
             var newReview = new Review
             {
                 ID = Guid.NewGuid(),
-                Cmt = model.Cmt,
-                Datecmt = DateTime.UtcNow,
+                Comment = model.Cmt,
+                CommentDate = DateTime.UtcNow,
                 //Relay = model.Relay,
                 //DateRelay = model.DateRelay ?? DateTime.UtcNow,
                 Status = model.Status = false, //hiện
@@ -304,7 +304,7 @@ namespace SellerAPI.Controllers
                 // Lấy danh sách review theo UserID, sắp xếp giảm dần theo Datecmt
                 var reviews = await _reviewService.ListAsync(
                     r => r.UserID == userId,
-                    orderBy: q => q.OrderByDescending(r => r.Datecmt) // Ưu tiên đánh giá mới nhất
+                    orderBy: q => q.OrderByDescending(r => r.CommentDate) // Ưu tiên đánh giá mới nhất
                 );
 
                 if (!reviews.Any())

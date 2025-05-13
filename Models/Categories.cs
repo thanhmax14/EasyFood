@@ -11,7 +11,8 @@ namespace Models
     {
         [Key]
         public Guid ID { get; set; } = Guid.NewGuid();
-        public string? Img { get; set; }
+        public string? ImageUrl { get; set; }
+        public string DisplayOrder { get; set; }
         public string Name { get; set; }
         public int Number { get; set; } = 0;
         public float Commission { get; set; }

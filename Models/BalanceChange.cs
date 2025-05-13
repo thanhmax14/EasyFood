@@ -22,10 +22,10 @@ namespace Models
         public string UserID { get; set; }
         public string Status { get; set; }
         public string Method { get; set; }
-        public bool DisPlay { get; set; } = true;
-        public int? orderCode { get; set; }
-        public bool IsComplele { get; set; } = false;
-        public bool checkDone { get; set; } = false;
+        public bool Display { get; set; } = true;
+        public int? OrderCode { get; set; }
+        public bool IsComplete { get; set; } = false;
+        public bool CheckDone { get; set; } = false;
         public virtual AppUser AppUser { get; set; }
     }
 }

@@ -51,9 +51,9 @@ namespace UserAPI.Controllers
                     {
                         Birthday = user.Birthday,
                         Address = user.Address,
-                        img = user.img,
+                        img = user.ImageUrl,
                         RequestSeller = user.RequestSeller,
-                        isUpdateProfile = user.isUpdateProfile,
+                        isUpdateProfile = user.IsProfileUpdated,
                         ModifyUpdate = user.ModifyUpdate,
                         PhoneNumber = user.PhoneNumber,
                         UserName = user.UserName,
@@ -84,9 +84,9 @@ namespace UserAPI.Controllers
                 {
                     Birthday = user.Birthday,
                     Address = user.Address,
-                    img = user.img,
+                    img = user.ImageUrl,
                     RequestSeller = user.RequestSeller,
-                    isUpdateProfile = user.isUpdateProfile,
+                    isUpdateProfile = user.IsProfileUpdated,
                     ModifyUpdate = user.ModifyUpdate,
                     PhoneNumber = user.PhoneNumber,
                     UserName = user.UserName,
@@ -205,7 +205,7 @@ namespace UserAPI.Controllers
 
             foreach (var cart in carts)
             {
-                var product = products.FirstOrDefault(p => p.ID == cart.ProductID);
+                var product = products.FirstOrDefault(p => p.ID == cart.ProductTypesID);
                 if (product == null)
                 {
                     continue; // Bỏ qua nếu không có sản phẩm
@@ -223,11 +223,11 @@ namespace UserAPI.Controllers
 
                 var cartItem = new CartViewModels
                 {
-                    ProductID = cart.ProductID,
+                    ProductID = cart.ProductTypesID,
                     ProductName = product.Name ?? "Không có tên",
                     quantity = cart.Quantity,
-                    price = variant.Price,
-                    Subtotal = cart.Quantity * variant.Price,
+                    price = variant.SellPrice,
+                    Subtotal = cart.Quantity * variant.SellPrice,
                     img = productImg?.ImageUrl ?? "/images/default.jpg", // Nếu không có ảnh thì lấy ảnh mặc định
                     Stock = variant.Stock // 🔹 Lấy số lượng trong kho từ ProductVariant
                 };
@@ -258,7 +258,7 @@ namespace UserAPI.Controllers
                     return BadRequest(new { message = "Product not found" });
                 }
 
-                var cartItem = await _cartService.FindAsync(x => x.UserID == user.Id && x.ProductID == obj.ProductID);
+                var cartItem = await _cartService.FindAsync(x => x.UserID == user.Id && x.ProductTypesID == obj.ProductID);
                 int currentQuantity = cartItem?.Quantity ?? 0;
                 int newTotalQuantity = currentQuantity + obj.quantity;
 
@@ -278,9 +278,9 @@ namespace UserAPI.Controllers
                     var newCart = new Cart
                     {
                         ID = Guid.NewGuid(),
-                        CreateDate = DateTime.Now,
+                        CreatedDate = DateTime.Now,
                         UserID = user.Id,
-                        ProductID = obj.ProductID,
+                        ProductTypesID = obj.ProductID,
                         Quantity = obj.quantity
                     };
                     await _cartService.AddAsync(newCart);
@@ -299,7 +299,7 @@ namespace UserAPI.Controllers
         public async Task<IActionResult> UpdateCart([FromBody] CartItem obj)
         {
             var productVarian = await _productVariantService.FindAsync(x => x.ProductID == obj.ProductID);
-            var carItem = await _cartService.FindAsync(x => x.ProductID == obj.ProductID);
+            var carItem = await _cartService.FindAsync(x => x.ProductTypesID == obj.ProductID);
 
             if (carItem == null)
             {
@@ -329,7 +329,7 @@ namespace UserAPI.Controllers
         {
             try
             {
-                var cartItem = await _cartService.FindAsync(z => z.ProductID == id);
+                var cartItem = await _cartService.FindAsync(z => z.ProductTypesID == id);
                 if (cartItem == null)
                 {
                     return BadRequest(new { message = "ProductId not found" });

@@ -183,8 +183,20 @@ namespace Models.Migrations
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsBanByadmin")
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsBannedByAdmin")
                         .HasColumnType("bit");
+
+                    b.Property<bool>("IsProfileUpdated")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("JoinedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastAccess")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
@@ -228,18 +240,6 @@ namespace Models.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<string>("img")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("isUpdateProfile")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("joinin")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("lastAssces")
-                        .HasColumnType("datetime2");
-
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
@@ -259,16 +259,19 @@ namespace Models.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("CheckDone")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("DisPlay")
+                    b.Property<bool>("Display")
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("DueTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsComplele")
+                    b.Property<bool>("IsComplete")
                         .HasColumnType("bit");
 
                     b.Property<string>("Method")
@@ -284,6 +287,9 @@ namespace Models.Migrations
                     b.Property<decimal>("MoneyChange")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int?>("OrderCode")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("StartTime")
                         .HasColumnType("datetime2");
 
@@ -294,12 +300,6 @@ namespace Models.Migrations
                     b.Property<string>("UserID")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("checkDone")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("orderCode")
-                        .HasColumnType("int");
 
                     b.HasKey("ID");
 
@@ -314,10 +314,10 @@ namespace Models.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("CreateDate")
+                    b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("ProductID")
+                    b.Property<Guid>("ProductTypesID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Quantity")
@@ -329,7 +329,7 @@ namespace Models.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("ProductID");
+                    b.HasIndex("ProductTypesID");
 
                     b.HasIndex("UserID");
 
@@ -348,7 +348,11 @@ namespace Models.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Img")
+                    b.Property<string>("DisplayOrder")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("ModifiedDate")
@@ -375,18 +379,18 @@ namespace Models.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DateReplay")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Descriptions")
+                    b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("OrderDetailID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Replay")
+                    b.Property<string>("Reply")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ReplyDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -408,6 +412,9 @@ namespace Models.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
 
@@ -417,9 +424,6 @@ namespace Models.Migrations
                     b.Property<string>("UserID")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("isActive")
-                        .HasColumnType("bit");
 
                     b.HasKey("ID");
 
@@ -442,14 +446,18 @@ namespace Models.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<string>("MethodPayment")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("OrderCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentStatus")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -460,11 +468,7 @@ namespace Models.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("StatusPayment")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("TotalsPrice")
+                    b.Property<decimal>("TotalPrice")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("UserID")
@@ -495,7 +499,7 @@ namespace Models.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsFeedBack")
+                    b.Property<bool>("IsFeedback")
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("ModifiedDate")
@@ -534,7 +538,7 @@ namespace Models.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CateID")
+                    b.Property<Guid>("CategoryID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedDate")
@@ -567,7 +571,7 @@ namespace Models.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("CateID");
+                    b.HasIndex("CategoryID");
 
                     b.HasIndex("StoreID");
 
@@ -597,7 +601,7 @@ namespace Models.Migrations
                     b.ToTable("ProductImages");
                 });
 
-            modelBuilder.Entity("Models.ProductVariant", b =>
+            modelBuilder.Entity("Models.ProductTypes", b =>
                 {
                     b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
@@ -612,18 +616,18 @@ namespace Models.Migrations
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal?>("OriginalPrice")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("Price")
+                    b.Property<decimal?>("OriginalPrice")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid>("ProductID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Size")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<decimal>("SellPrice")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Stock")
                         .HasColumnType("int");
@@ -632,7 +636,7 @@ namespace Models.Migrations
 
                     b.HasIndex("ProductID");
 
-                    b.ToTable("ProductVariants");
+                    b.ToTable("ProductTypes");
                 });
 
             modelBuilder.Entity("Models.Recipe", b =>
@@ -722,13 +726,10 @@ namespace Models.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Cmt")
+                    b.Property<string>("Comment")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("DateRelay")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("Datecmt")
+                    b.Property<DateTime>("CommentDate")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("ProductID")
@@ -737,8 +738,11 @@ namespace Models.Migrations
                     b.Property<int>("Rating")
                         .HasColumnType("int");
 
-                    b.Property<string>("Relay")
+                    b.Property<string>("Reply")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ReplyDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
@@ -768,7 +772,7 @@ namespace Models.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Img")
+                    b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
@@ -944,9 +948,9 @@ namespace Models.Migrations
 
             modelBuilder.Entity("Models.Cart", b =>
                 {
-                    b.HasOne("Models.Product", "Product")
+                    b.HasOne("Models.ProductTypes", "ProductTypes")
                         .WithMany("Carts")
-                        .HasForeignKey("ProductID")
+                        .HasForeignKey("ProductTypesID")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
@@ -958,7 +962,7 @@ namespace Models.Migrations
 
                     b.Navigation("AppUser");
 
-                    b.Navigation("Product");
+                    b.Navigation("ProductTypes");
                 });
 
             modelBuilder.Entity("Models.Complain", b =>
@@ -1032,7 +1036,7 @@ namespace Models.Migrations
                 {
                     b.HasOne("Models.Categories", "Categories")
                         .WithMany("Products")
-                        .HasForeignKey("CateID")
+                        .HasForeignKey("CategoryID")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
@@ -1058,10 +1062,10 @@ namespace Models.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Models.ProductVariant", b =>
+            modelBuilder.Entity("Models.ProductTypes", b =>
                 {
                     b.HasOne("Models.Product", "Product")
-                        .WithMany("ProductVariants")
+                        .WithMany("ProductTypes")
                         .HasForeignKey("ProductID")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
@@ -1193,15 +1197,18 @@ namespace Models.Migrations
 
             modelBuilder.Entity("Models.Product", b =>
                 {
-                    b.Navigation("Carts");
-
                     b.Navigation("OrderDetails");
 
                     b.Navigation("ProductImages");
 
-                    b.Navigation("ProductVariants");
+                    b.Navigation("ProductTypes");
 
                     b.Navigation("Wishlists");
+                });
+
+            modelBuilder.Entity("Models.ProductTypes", b =>
+                {
+                    b.Navigation("Carts");
                 });
 
             modelBuilder.Entity("Models.Recipe", b =>

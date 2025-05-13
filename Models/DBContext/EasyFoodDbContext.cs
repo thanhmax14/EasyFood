@@ -5,15 +5,15 @@ namespace Models.DBContext
 {
     public class EasyFoodDbContext : IdentityDbContext<AppUser>
     {
-        public EasyFoodDbContext(DbContextOptions<EasyFoodDbContext> options) : base(options)
+  /*      public EasyFoodDbContext(DbContextOptions<EasyFoodDbContext> options) : base(options)
         {
         }
-
+*/
         public DbSet<BalanceChange> BalanceChanges { get; set; }
         public DbSet<Categories> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductImage> ProductImages { get; set; }
-        public DbSet<ProductVariant> ProductVariants { get; set; }
+        public DbSet<ProductTypes> ProductTypes { get; set; }
         public DbSet<StoreDetails> StoreDetails { get; set; }
         public DbSet<Wishlist> Wishlists { get; set; }
         public DbSet<Cart> Carts { get; set; }
@@ -62,11 +62,11 @@ namespace Models.DBContext
             builder.Entity<Product>()
            .HasOne(h => h.Categories)
            .WithMany(h => h.Products)
-           .HasForeignKey(h => h.CateID).OnDelete(DeleteBehavior.NoAction);
+           .HasForeignKey(h => h.CategoryID).OnDelete(DeleteBehavior.NoAction);
 
-            builder.Entity<ProductVariant>()
+            builder.Entity<ProductTypes>()
            .HasOne(h => h.Product)
-           .WithMany(h => h.ProductVariants)
+           .WithMany(h => h.ProductTypes)
            .HasForeignKey(h => h.ProductID).OnDelete(DeleteBehavior.NoAction);
 
             builder.Entity<ProductImage>()
@@ -90,9 +90,9 @@ namespace Models.DBContext
             .HasForeignKey(h => h.UserID).OnDelete(DeleteBehavior.Cascade); ;
 
             builder.Entity<Cart>()
-            .HasOne(h => h.Product)
+            .HasOne(h => h.ProductTypes)
             .WithMany(h => h.Carts)
-            .HasForeignKey(h => h.ProductID).OnDelete(DeleteBehavior.NoAction); ;
+            .HasForeignKey(h => h.ProductTypesID).OnDelete(DeleteBehavior.NoAction); ;
 
 
             builder.Entity<Order>()
@@ -164,8 +164,7 @@ namespace Models.DBContext
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-      => optionsBuilder.UseSqlServer("Server=TRANGIAHUY;Database=Easyfoodtest;uid=sa;pwd=1035;encrypt=true;trustServerCertificate=true;");
-
+      => optionsBuilder.UseSqlServer("Server=DESKTOP-1E1A6I4;Database =EasyFoods;uid=sa;pwd=Thanh;encrypt=true;trustServerCertificate=true;");
 
     }
 }

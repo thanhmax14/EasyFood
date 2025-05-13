@@ -73,11 +73,11 @@ namespace UserAPI.Controllers
 
 
                     int orderCode = RandomCode.GenerateOrderCode();
-                    var check = await this._balance.FindAsync(u => u.orderCode == orderCode);
+                    var check = await this._balance.FindAsync(u => u.OrderCode == orderCode);
                     while (check != null)
                     {
                         orderCode = RandomCode.GenerateOrderCode();
-                        check = await this._balance.FindAsync(u => u.orderCode == orderCode);
+                        check = await this._balance.FindAsync(u => u.OrderCode == orderCode);
                     }
                     long expirationTimestamp = DateTimeOffset.Now.AddDays(1).ToUnixTimeSeconds();
 
@@ -100,10 +100,10 @@ namespace UserAPI.Controllers
                             Description = $"{url}",
                             Status = "PROCESSING",
                             Method = "Deposit",
-                            orderCode = orderCode,
+                            OrderCode = orderCode,
                             StartTime = statime,
                             DueTime = statime,
-                            checkDone = false,
+                            CheckDone = false,
 
                             UserID = getUser.Id,
 
@@ -133,7 +133,7 @@ namespace UserAPI.Controllers
                 WebhookData data = _payos.verifyPaymentWebhookData(webhook);
                 if (data != null && webhook.success)
                 {
-                    var getBalance = await this._balance.FindAsync(u => u.orderCode == data.orderCode && u.IsComplele == false);
+                    var getBalance = await this._balance.FindAsync(u => u.OrderCode == data.orderCode && u.IsComplete == false);
 
                     if (getBalance != null)
                     {
@@ -149,10 +149,10 @@ namespace UserAPI.Controllers
                                 getBalance.MoneyBeforeChange = await _balance.GetBalance(user.Id);
                                 getBalance.MoneyAfterChange = tongtien;
                                 getBalance.MoneyChange = data.amount;
-                                getBalance.DisPlay = true;
-                                getBalance.IsComplele = true;
+                                getBalance.Display = true;
+                                getBalance.IsComplete = true;
                                 getBalance.DueTime = DateTime.Now;
-                                getBalance.checkDone = true;
+                                getBalance.CheckDone = true;
                             }
                             await _balance.UpdateAsync(getBalance);
                         });
@@ -166,7 +166,7 @@ namespace UserAPI.Controllers
                         if (order != null)
                         {
                             order.Status = "PROCESSING";
-                            order.StatusPayment= "Success";
+                            order.PaymentStatus= "Success";
                             order.IsActive = true;
                             order.ModifiedDate = DateTime.Now;
                             await this._ordersServices.UpdateAsync(order);  
@@ -239,7 +239,7 @@ namespace UserAPI.Controllers
                 else
                 {
                     var getListBalance = await this._balance.ListAsync(
-                   u => u.DisPlay && getUser.Id == u.UserID,
+                   u => u.Display && getUser.Id == u.UserID,
                    orderBy: x => x.OrderByDescending(query => query.DueTime.HasValue)  // Ưu tiên bản ghi có DueTime
                                    .ThenByDescending(query => query.DueTime)           // Sắp xếp giảm dần theo DueTime
                                    .ThenByDescending(query => query.StartTime)         // Nếu DueTime = NULL, dùng StartTime
@@ -304,7 +304,7 @@ namespace UserAPI.Controllers
                     StartTime = statime,
                     DueTime = statime,
                     UserID = checkUser.Id,
-                    checkDone = true,
+                    CheckDone = true,
                 };
                 try
                 {

@@ -153,7 +153,7 @@ namespace EasyFood.web.Controllers
                         await ImgFile.CopyToAsync(fileStream);
                     }
 
-                    storeEntity.Img = "/uploads/" + uniqueFileName;
+                    storeEntity.ImageUrl = "/uploads/" + uniqueFileName;
                 }
 
                 await _storeDetailService.AddStoreAsync(storeEntity, user.Id);
@@ -207,7 +207,7 @@ namespace EasyFood.web.Controllers
                 return View(model);
             }
 
-            string imgPath = existingStore.Img; // Giữ ảnh cũ nếu không có ảnh mới
+            string imgPath = existingStore.ImageUrl; // Giữ ảnh cũ nếu không có ảnh mới
 
             if (ImgFile != null && ImgFile.Length > 0)
             {
@@ -270,7 +270,7 @@ namespace EasyFood.web.Controllers
                 ShortDescriptions = store.ShortDescriptions,
                 Address = store.Address,
                 Phone = store.Phone,
-                Img = store.Img // Giữ ảnh cũ
+                Img = store.ImageUrl // Giữ ảnh cũ
             };
 
             return View(model);
@@ -504,9 +504,9 @@ namespace EasyFood.web.Controllers
                     Username = user.UserName,
                     ProductName = product.Name,
                     Rating = review.Rating,
-                    Cmt = review.Cmt,
-                    Datecmt = review.Datecmt,
-                    Relay = review.Relay,
+                    Cmt = review.Comment,
+                    Datecmt = review.CommentDate,
+                    Relay = review.Reply,
                     Status = review.Status,
                     UserID = review.UserID,
                     ProductID = review.ProductID
@@ -873,7 +873,7 @@ namespace EasyFood.web.Controllers
                 foreach (var item in getOrderdetai)
                 {
                     item.Status = "CANCELLED";
-                    item.IsFeedBack = true;
+                    item.IsFeedback = true;
                     await this._orderDetail.UpdateAsync(item);
                 }
                 await this._orderDetail.SaveChangesAsync();
@@ -885,11 +885,11 @@ namespace EasyFood.web.Controllers
                     var tem = new BalanceChange
                     {
                         ID = Guid.NewGuid(),
-                        MoneyChange = order.TotalsPrice,
+                        MoneyChange = order.TotalPrice,
                         MoneyBeforeChange = await _balance.GetBalance(order.UserID),
-                        MoneyAfterChange = 0 + order.TotalsPrice,
+                        MoneyAfterChange = 0 + order.TotalPrice,
                         UserID = order.UserID,
-                        checkDone = true,
+                        CheckDone = true,
                         StartTime = DateTime.Now,
                         DueTime = DateTime.Now,
                         Status = "Success",
@@ -904,11 +904,11 @@ namespace EasyFood.web.Controllers
                     var tem = new BalanceChange
                     {
                         ID = Guid.NewGuid(),
-                        MoneyChange = order.TotalsPrice,
+                        MoneyChange = order.TotalPrice,
                         MoneyBeforeChange = await _balance.GetBalance(order.UserID),
-                        MoneyAfterChange = getBalance.MoneyBeforeChange + order.TotalsPrice,
+                        MoneyAfterChange = getBalance.MoneyBeforeChange + order.TotalPrice,
                         UserID = order.UserID,
-                        checkDone = true,
+                        CheckDone = true,
                         StartTime = DateTime.Now,
                         DueTime = DateTime.Now,
                         Status = "Success",
@@ -944,7 +944,7 @@ namespace EasyFood.web.Controllers
                 foreach (var item in getOrderdetai)
                 {
                     item.Status = "Success";
-                    item.IsFeedBack = true;
+                    item.IsFeedback = true;
                     await this._orderDetail.UpdateAsync(item);
                 }
                 await this._orderDetail.SaveChangesAsync();
@@ -964,11 +964,11 @@ namespace EasyFood.web.Controllers
                     var tem = new BalanceChange
                     {
                         ID = Guid.NewGuid(),
-                        MoneyChange = order.TotalsPrice,
+                        MoneyChange = order.TotalPrice,
                         MoneyBeforeChange = await _balance.GetBalance(getStore.UserID),
-                        MoneyAfterChange = 0 + order.TotalsPrice,
+                        MoneyAfterChange = 0 + order.TotalPrice,
                         UserID = order.UserID,
-                        checkDone = true,
+                        CheckDone = true,
                         StartTime = DateTime.Now,
                         DueTime = DateTime.Now,
                         Status = "Success",
@@ -984,11 +984,11 @@ namespace EasyFood.web.Controllers
                     var tem = new BalanceChange
                     {
                         ID = Guid.NewGuid(),
-                        MoneyChange = order.TotalsPrice,
+                        MoneyChange = order.TotalPrice,
                         MoneyBeforeChange = await _balance.GetBalance(getStore.UserID),
-                        MoneyAfterChange = getBalance.MoneyBeforeChange + order.TotalsPrice,
+                        MoneyAfterChange = getBalance.MoneyBeforeChange + order.TotalPrice,
                         UserID = order.UserID,
-                        checkDone = true,
+                        CheckDone = true,
                         StartTime = DateTime.Now,
                         DueTime = DateTime.Now,
                         Status = "Success",

@@ -11,24 +11,24 @@ namespace BusinessLogic.Services.ProductVariants
 {
     public interface IProductVariantService
     {
-        IQueryable<ProductVariant> GetAll();
-        ProductVariant GetById(Guid id);
-        Task<ProductVariant> GetAsyncById(Guid id);
-        ProductVariant Find(Expression<Func<ProductVariant, bool>> match);
-        Task<ProductVariant> FindAsync(Expression<Func<ProductVariant, bool>> match);
-        Task AddAsync(ProductVariant entity);
-        Task UpdateAsync(ProductVariant entity);
-        Task DeleteAsync(ProductVariant entity);
+        IQueryable<ProductTypes> GetAll();
+        ProductTypes GetById(Guid id);
+        Task<ProductTypes> GetAsyncById(Guid id);
+        ProductTypes Find(Expression<Func<ProductTypes, bool>> match);
+        Task<ProductTypes> FindAsync(Expression<Func<ProductTypes, bool>> match);
+        Task AddAsync(ProductTypes entity);
+        Task UpdateAsync(ProductTypes entity);
+        Task DeleteAsync(ProductTypes entity);
         Task DeleteAsync(Guid id);
         Task<bool> ExistsAsync(Guid id);
         Task<int> SaveChangesAsync();
         int Count();
         Task<int> CountAsync();
-        Task<IEnumerable<ProductVariant>> ListAsync();
-        Task<IEnumerable<ProductVariant>> ListAsync(
-            Expression<Func<ProductVariant, bool>> filter = null,
-            Func<IQueryable<ProductVariant>, IOrderedQueryable<ProductVariant>> orderBy = null,
-            Func<IQueryable<ProductVariant>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<ProductVariant, object>> includeProperties = null);
+        Task<IEnumerable<ProductTypes>> ListAsync();
+        Task<IEnumerable<ProductTypes>> ListAsync(
+            Expression<Func<ProductTypes, bool>> filter = null,
+            Func<IQueryable<ProductTypes>, IOrderedQueryable<ProductTypes>> orderBy = null,
+            Func<IQueryable<ProductTypes>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<ProductTypes, object>> includeProperties = null);
         Task<List<ProductVariantViewModel>> GetVariantsByProductIdAsync(Guid productId);
         Task CreateProductVariantAsync(ProductVariantCreateViewModel model);
         Task<bool> UpdateProductVariantAsync(ProductVariantEditViewModel model);
