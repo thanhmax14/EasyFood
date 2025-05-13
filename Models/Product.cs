@@ -21,14 +21,14 @@ namespace Models
         public bool IsActive { get; set; } = false;
         public bool IsOnSale { get; set; } // Có đang giảm giá?
         [ForeignKey("Categories")]
-        public Guid CateID { get; set; }
+        public Guid CategoryID { get; set; }
         public virtual Categories Categories { get; set; }  
         [ForeignKey("StoreDetails")]
         public Guid StoreID { get; set; }
         public virtual StoreDetails StoreDetails { get; set; }
-        public ICollection<ProductVariant> ProductVariants { get; set; }
+        public ICollection<ProductTypes> ProductTypes { get; set; }
         public ICollection<ProductImage> ProductImages { get; set; }
-        public ICollection<Cart> Carts { get; set; }
+
         public ICollection<Wishlist> Wishlists { get; set; }
 
         public ICollection<OrderDetail> OrderDetails { get; set; }

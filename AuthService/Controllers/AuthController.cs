@@ -41,7 +41,7 @@
                 {
                     return Unauthorized(new { status = "error", msg = "Tài khoản không tồn tại" });
                 }
-                if (user.IsBanByadmin)
+                if (user.IsBannedByAdmin)
                 {
                     return Unauthorized(new { status = "error", msg = "Tài khoản của bạn đã bị khóa bởi quản trị viên." });
                 }

@@ -37,7 +37,7 @@ namespace Repository.Products
         {
             // Bước 1: Lấy danh sách sản phẩm (không có ảnh)
             var productEntities = await (from p in _context.Products
-                                         join c in _context.Categories on p.CateID equals c.ID
+                                         join c in _context.Categories on p.CategoryID equals c.ID
                                          join s in _context.StoreDetails on p.StoreID equals s.ID
                                          where p.StoreID == storeId
                                          select new ProductListViewModel
@@ -54,7 +54,7 @@ namespace Repository.Products
                                              CategoryName = c.Name,
                                              StoreName = s.Name,
                                              StoreId = p.StoreID,
-                                             CateID = p.CateID,
+                                             CateID = p.CategoryID,
                                              Images = new List<ProductImageViewModel>() // Tạo danh sách rỗng ban đầu
                                          }).ToListAsync();
 
@@ -92,7 +92,7 @@ namespace Repository.Products
         public List<ProductIndexViewModel> GetProductsByStoreId(Guid storeId)
         {
             var products = (from p in _context.Products
-                            join c in _context.Categories on p.CateID equals c.ID
+                            join c in _context.Categories on p.CategoryID equals c.ID
                             join s in _context.StoreDetails on p.StoreID equals s.ID
                             join i in _context.ProductImages.Where(img => img.IsMain)
                                 on p.ID equals i.ProductID into imgGroup
@@ -157,7 +157,7 @@ namespace Repository.Products
                 ModifiedDate = product.ModifiedDate,
                 IsActive = product.IsActive,
                 IsOnSale = product.IsOnSale,
-                CateID = product.CateID,
+                CateID = product.CategoryID,
                 StoreID = product.StoreID,
                 ExistingImages = product.ProductImages.Select(i => i.ImageUrl).ToList()
             };
@@ -178,7 +178,7 @@ namespace Repository.Products
             product.ModifiedDate = DateTime.UtcNow;
             //product.IsActive = model.IsActive;
             product.IsOnSale = model.IsOnSale;
-            product.CateID = model.CateID;
+            product.CategoryID = model.CateID;
 
             // Xóa ảnh cũ nếu có trong danh sách RemoveImageUrls
             if (model.RemoveImageUrls?.Any() == true)
@@ -270,7 +270,7 @@ namespace Repository.Products
             }
 
             var products = (from p in _context.Products
-                            join c in _context.Categories on p.CateID equals c.ID
+                            join c in _context.Categories on p.CategoryID equals c.ID
                             join i in _context.ProductImages.Where(img => img.IsMain)
                                 on p.ID equals i.ProductID into imgGroup
                             from img in imgGroup.DefaultIfEmpty()

@@ -107,9 +107,9 @@ namespace EasyFood.web.Controllers
                             Email = user.Email,
                             Name = user.FirstName + ", "+user.LastName,
                             OrderDate = item.CreatedDate,
-                            PaymentMethod = item.MethodPayment,
+                            PaymentMethod = item.PaymentMethod,
                             Status = item.Status,
-                            Total = item.TotalsPrice,
+                            Total = item.TotalPrice,
                             OrderId = item.ID,
                             Username = user.UserName,
                             UserId = user.Id
@@ -408,7 +408,7 @@ namespace EasyFood.web.Controllers
                 {
                     return Json(new ErroMess { msg = "Sản phẩm mua không tồn tại!" });
                 }
-                var checkcart = await this._cart.FindAsync(u => u.UserID == user.Id && u.ProductID == id);
+                var checkcart = await this._cart.FindAsync(u => u.UserID == user.Id && u.ProductTypesID == id);
                 if (checkcart == null)
                 {
                     return Json(new ErroMess { msg = "Sản phẩm mua không tồn tại trong giỏ hàng!" });
@@ -432,7 +432,7 @@ namespace EasyFood.web.Controllers
                 {
                     ItemName = product.Name,
                     ItemImage = img,
-                    ItemPrice = getQuatity.Price,
+                    ItemPrice = getQuatity.SellPrice,
                     ItemQuantity = checkcart.Quantity,
                     productID = product.ID
                 });

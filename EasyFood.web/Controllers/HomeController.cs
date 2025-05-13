@@ -622,7 +622,7 @@ namespace EasyFood.web.Controllers
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var getUser = await this._userManager.FindByIdAsync(userId);
-                getUser.lastAssces = DateTime.Now;
+                getUser.LastAccess = DateTime.Now;
                 await this._userManager.UpdateAsync(getUser);
             }
             await _signInManager.SignOutAsync();
@@ -830,7 +830,7 @@ namespace EasyFood.web.Controllers
                         var getPrice = await this._productvarian.FindAsync(u => u.ProductID == getProduct.ID);
                         if (getPrice != null)
                         {
-                            defauPrice = getPrice.Price;
+                            defauPrice = getPrice.SellPrice;
                         }
                         list.Add(new wishlistViewModels
                         {
@@ -859,7 +859,7 @@ namespace EasyFood.web.Controllers
 
             if (int.TryParse(id, out var orderCode))
             {
-                var flagBalance = await this._balance.FindAsync(u => u.orderCode == orderCode);
+                var flagBalance = await this._balance.FindAsync(u => u.OrderCode == orderCode);
                 if (flagBalance != null)
                 {
                     var getUser = await this._userManager.FindByIdAsync(flagBalance.UserID);
@@ -867,7 +867,7 @@ namespace EasyFood.web.Controllers
                     {
                         return RedirectToAction("NotFoundPage", "Home");
                     }
-                    if (!flagBalance.IsComplele)
+                    if (!flagBalance.IsComplete)
                     {
                         var checkORder = await this._payos.getPaymentLinkInformation(orderCode);
                         var status = checkORder.status.ToUpper();
@@ -876,7 +876,7 @@ namespace EasyFood.web.Controllers
                             case "CANCELLED":
                                 flagBalance.DueTime = DateTime.Now;
                                 flagBalance.Status = status;
-                                flagBalance.IsComplele = true;
+                                flagBalance.IsComplete = true;
                                 break;
                             case "PENDING":
                                 flagBalance.DueTime = DateTime.Now;

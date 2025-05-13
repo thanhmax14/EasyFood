@@ -58,7 +58,7 @@ namespace ProductsService.Controllers
                     if (price != null)
                     {
                         var storeName = await _storeDetailService.FindAsync(x => x.ID == item.StoreID);
-                        var categoryName = await _categoryService.FindAsync(c => c.ID == item.CateID);
+                        var categoryName = await _categoryService.FindAsync(c => c.ID == item.CategoryID);
                         // Tạo danh sách hình ảnh riêng cho từng sản phẩm
                         var imgList = await _productImageService.ListAsync(i => i.ProductID == item.ID);
 
@@ -67,8 +67,8 @@ namespace ProductsService.Controllers
                         {
                             CategoryName = categoryName.Name,
                             StoreName = storeName.Name,
-                            Price = price.Price,
-                            CateID = item.CateID,
+                            Price = price.SellPrice,
+                            CateID = item.CategoryID,
                             CreatedDate = item.CreatedDate,
                             ID = item.ID,
                             IsActive = item.IsActive,
@@ -86,7 +86,7 @@ namespace ProductsService.Controllers
                     else
                     {
                         var storeName = await _storeDetailService.FindAsync(x => x.ID == item.StoreID);
-                        var categoryName = await _categoryService.FindAsync(c => c.ID == item.CateID);
+                        var categoryName = await _categoryService.FindAsync(c => c.ID == item.CategoryID);
                         // Tạo danh sách hình ảnh riêng cho từng sản phẩm
                         var imgList = await _productImageService.ListAsync(i => i.ProductID == item.ID);
 
@@ -96,7 +96,7 @@ namespace ProductsService.Controllers
                             CategoryName = categoryName.Name,
                             StoreName = storeName.Name,
                             Price = 0,
-                            CateID = item.CateID,
+                            CateID = item.CategoryID,
                             CreatedDate = item.CreatedDate,
                             ID = item.ID,
                             IsActive = item.IsActive,
@@ -138,7 +138,7 @@ namespace ProductsService.Controllers
             {
                 var price = await _productVariantService.FindAsync(s => s.ProductID == item.ID && s.IsActive);
                 var storeName = await _storeDetailService.FindAsync(x => x.ID == item.StoreID);
-                var categoryName = await _categoryService.FindAsync(c => c.ID == item.CateID);
+                var categoryName = await _categoryService.FindAsync(c => c.ID == item.CategoryID);
                 var imgList = await _productImageService.ListAsync(i => i.ProductID == item.ID);
                 var Listimg = imgList.Select(i => i.ImageUrl).ToList();
 
@@ -146,8 +146,8 @@ namespace ProductsService.Controllers
                 {
                     CategoryName = categoryName?.Name ?? "Unknown",
                     StoreName = storeName?.Name ?? "Unknown",
-                    Price = price?.Price ?? 0,
-                    CateID = item.CateID,
+                    Price = price?.SellPrice ?? 0,
+                    CateID = item.CategoryID,
                     CreatedDate = item.CreatedDate,
                     ID = item.ID,
                     IsActive = item.IsActive,
@@ -202,19 +202,19 @@ namespace ProductsService.Controllers
                 foreach(var item in getFullsize)
 
                 {
-                    producct.size.Add(item.Size);
+                    producct.size.Add(item.Name);
 
                 }
 
 
                 var storeName = await _storeDetailService.FindAsync(t => t.ID == productDetail.StoreID);
-                var categoryName = await _categoryService.FindAsync(c => c.ID == productDetail.CateID);
+                var categoryName = await _categoryService.FindAsync(c => c.ID == productDetail.CategoryID);
 
                 producct.ID = productDetail.ID;
                 producct.Name = productDetail.Name;
                 producct.StoreName = storeName.Name;
                 producct.CategoryName = categoryName.Name;
-                producct.Price = price.Price;
+                producct.Price = price.SellPrice;
                 producct.ShortDescription = productDetail.ShortDescription;
                 producct.LongDescription = productDetail.LongDescription;
                 producct.CreatedDate = productDetail.CreatedDate;
@@ -224,7 +224,7 @@ namespace ProductsService.Controllers
             else
             {
                 var storeName = await _storeDetailService.FindAsync(t => t.ID == productDetail.StoreID);
-                var categoryName = await _categoryService.FindAsync(c => c.ID == productDetail.CateID);
+                var categoryName = await _categoryService.FindAsync(c => c.ID == productDetail.CategoryID);
 
                 producct.ID = productDetail.ID;
                 producct.Name = productDetail.Name;
@@ -283,10 +283,10 @@ namespace ProductsService.Controllers
                 {
                     storeName = storeName,
                     Username = userDict.ContainsKey(review.UserID) ? userDict[review.UserID] : "Unknown",
-                    Cmt = review.Cmt,
-                    Datecmt = review.Datecmt,
-                    Relay = review.Relay,
-                    DateRelay = review.DateRelay,
+                    Cmt = review.Comment,
+                    Datecmt = review.CommentDate,
+                    Relay = review.Reply,
+                    DateRelay = review.ReplyDate,
                     Status = review.Status,
                     Rating = review.Rating
                 }).ToList();
@@ -304,7 +304,7 @@ namespace ProductsService.Controllers
             foreach (var item in products)
             {
                 var price = await _productVariantService.FindAsync(s => s.ProductID == item.ID && s.IsActive == true);
-                decimal productPrice = price?.Price ?? 0;
+                decimal productPrice = price?.SellPrice ?? 0;
 
                 // Kiểm tra chính xác số thập phân
                 if (minPrice.HasValue && productPrice < minPrice.Value)
@@ -314,7 +314,7 @@ namespace ProductsService.Controllers
                     continue;
 
                 var storeName = await _storeDetailService.FindAsync(x => x.ID == item.StoreID);
-                var categoryName = await _categoryService.FindAsync(c => c.ID == item.CateID);
+                var categoryName = await _categoryService.FindAsync(c => c.ID == item.CategoryID);
                 var imgList = await _productImageService.ListAsync(i => i.ProductID == item.ID);
                 var Listimg = imgList.Select(i => i.ImageUrl).ToList();
 
@@ -323,7 +323,7 @@ namespace ProductsService.Controllers
                     CategoryName = categoryName.Name,
                     StoreName = storeName.Name,
                     Price = productPrice,
-                    CateID = item.CateID,
+                    CateID = item.CategoryID,
                     CreatedDate = item.CreatedDate,
                     ID = item.ID,
                     IsActive = item.IsActive,

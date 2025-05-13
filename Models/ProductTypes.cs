@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace Models
 {
-    public class ProductVariant
+    public class ProductTypes
     {
         [Key]
         public Guid ID { get; set; } = Guid.NewGuid();
-        public string Size { get; set; } // Kích thước (VD: "50g", "100g")
-        public decimal Price { get; set; } = 0; // Giá bán
+        public string Name { get; set; } // Kích thước (VD: "50g", "100g")
+        public decimal SellPrice { get; set; } = 0; // Giá bán
         public decimal? OriginalPrice { get; set; }
         public int Stock { get; set; } = 0;
         public DateTime? ModifiedDate { get; set; }
@@ -22,6 +22,7 @@ namespace Models
         [ForeignKey("Product")]
         public Guid ProductID { get; set; }
         public virtual Product Product { get; set; }
+        public ICollection<Cart> Carts { get; set; }
     }
 
 }

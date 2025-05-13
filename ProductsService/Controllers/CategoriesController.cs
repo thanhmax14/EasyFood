@@ -45,7 +45,7 @@ namespace ProductsService.Controllers
                         Name = item.Name,
                         CreatedDate = item.CreatedDate,
                         Commission = item.Commission,
-                        Img = item.Img,
+                        Img = item.ImageUrl,
                         ModifiedDate = item.ModifiedDate,
                         Number = item.Number,
 
@@ -82,7 +82,7 @@ namespace ProductsService.Controllers
                         Name = item.Name,
                         CreatedDate = item.CreatedDate,
                         Commission = item.Commission,
-                        Img = item.Img,
+                        Img = item.ImageUrl,
                         ModifiedDate = item.ModifiedDate,
                         Number = item.Number,
 
@@ -122,7 +122,7 @@ namespace ProductsService.Controllers
                     Name = item.Name,
                     CreatedDate = item.CreatedDate,
                     Commission = item.Commission,
-                    Img = item.Img,
+                    Img = item.ImageUrl,
                     ModifiedDate = item.ModifiedDate,
                     Number = item.Number,
 
@@ -141,13 +141,13 @@ namespace ProductsService.Controllers
             var CategoryList = new CategoryDetailsViewModel();
             var List = new List<ProductsViewModel>();
             var StoreList = new List<StoreDetailsViewModels>();
-            var products = await _productService.ListAsync(u => u.IsActive && u.CateID == id, orderBy: x => x.OrderByDescending(s => s.CreatedDate));
+            var products = await _productService.ListAsync(u => u.IsActive && u.CategoryID == id, orderBy: x => x.OrderByDescending(s => s.CreatedDate));
 
             foreach (var item in products)
             {
                 var price = await _productVariantService.FindAsync(s => s.ProductID == item.ID && s.IsActive == true);
                 var storeName = await _storeDetailService.FindAsync(x => x.ID == item.StoreID);
-                var categoryName = await _categoryService.FindAsync(c => c.ID == item.CateID);
+                var categoryName = await _categoryService.FindAsync(c => c.ID == item.CategoryID);
                 var imgList = await _productImageService.ListAsync(i => i.ProductID == item.ID);
                 var ListImg = imgList.Select(o => o.ImageUrl).ToList();
 
@@ -157,8 +157,8 @@ namespace ProductsService.Controllers
                     {
                         CategoryName = categoryName.Name,
                         StoreName = storeName.Name,
-                        Price = price.Price,
-                        CateID = item.CateID,
+                        Price = price.SellPrice,
+                        CateID = item.CategoryID,
                         CreatedDate = item.CreatedDate,
                         ID = item.ID,
                         IsActive = item.IsActive,
@@ -180,7 +180,7 @@ namespace ProductsService.Controllers
                         CategoryName = categoryName.Name,
                         StoreName = storeName.Name,
                         Price = 0,
-                        CateID = item.CateID,
+                        CateID = item.CategoryID,
                         CreatedDate = item.CreatedDate,
                         ID = item.ID,
                         IsActive = item.IsActive,
@@ -206,7 +206,7 @@ namespace ProductsService.Controllers
             CategoryList.Commission = category.Commission;
             CategoryList.CreatedDate = category.CreatedDate;
             CategoryList.ModifiedDate = category.CreatedDate;
-            CategoryList.Img = category.Img;
+            CategoryList.Img = category.ImageUrl;
             CategoryList.ProductViewModel = List;
             CategoryList.StoreDetailViewModel = StoreList;
 

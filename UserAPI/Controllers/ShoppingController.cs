@@ -66,7 +66,7 @@ namespace UserAPI.Controllers
 
                 foreach (var id in request.Products)
                 {
-                    var checkcart = await this._cart.FindAsync(u => u.UserID == request.UserID && u.ProductID == id.Key);
+                    var checkcart = await this._cart.FindAsync(u => u.UserID == request.UserID && u.ProductTypesID == id.Key);
                     if (checkcart != null)
                     {
                         var getQuatity = await this._productWariant.FindAsync(u => u.ProductID == id.Key &&u.IsActive);
@@ -75,7 +75,7 @@ namespace UserAPI.Controllers
                             return NotFound(new ErroMess { msg = "Sản phẩm mua không tồn tại!" });
                         if (checkcart.Quantity < getQuatity.Stock)
                         {
-                            totelPrice += getQuatity.Price * id.Value;
+                            totelPrice += getQuatity.SellPrice * id.Value;
                         }
                     }
                 }
@@ -91,7 +91,7 @@ namespace UserAPI.Controllers
                     {
                         return NotFound(new ErroMess { msg = "Sản phẩm mua không tồn tại!" });
                     }
-                    var checkcart = await this._cart.FindAsync(u => u.UserID == request.UserID && u.ProductID == id.Key);
+                    var checkcart = await this._cart.FindAsync(u => u.UserID == request.UserID && u.ProductTypesID == id.Key);
                     if (checkcart == null)
                     {
                         return NotFound(new ErroMess { msg = "Sản phẩm mua không tồn tại trong giỏ hàng!" });
@@ -108,8 +108,8 @@ namespace UserAPI.Controllers
                         OrderID = orderID,
                         ProductID = id.Key,
                         Quantity = id.Value,
-                        ProductPrice = getQuatity.Price,
-                        TotalPrice = getQuatity.Price * id.Value,
+                        ProductPrice = getQuatity.SellPrice,
+                        TotalPrice = getQuatity.SellPrice * id.Value,
                         Status = "Success"
                     });
 
@@ -119,11 +119,11 @@ namespace UserAPI.Controllers
                 {
                     ID = orderID,
                     UserID = request.UserID,
-                    TotalsPrice = totelPrice,
+                    TotalPrice = totelPrice,
                     Status = "PROCESSING",
                     CreatedDate = DateTime.Now,
-                    MethodPayment = "wallet",
-                    StatusPayment = "PROCESSING",
+                    PaymentMethod = "wallet",
+                    PaymentStatus = "PROCESSING",
                     Quantity = request.Products.Sum(u => u.Value),
                     OrderCode=""
 
@@ -136,9 +136,9 @@ namespace UserAPI.Controllers
                     MoneyAfterChange = await _balance.GetBalance(user.Id) - totelPrice,
                     Method = "Buy",
                     Status = "PROCESSING",
-                    DisPlay = true,
-                    IsComplele = false,
-                    checkDone = true,
+                    Display = true,
+                    IsComplete = false,
+                    CheckDone = true,
                     StartTime = DateTime.Now
                 };
 
@@ -153,7 +153,7 @@ namespace UserAPI.Controllers
                     }
                     catch
                     {
-                        order.StatusPayment= "Failed";
+                        order.PaymentStatus= "Failed";
                         order.Status= "Failed";
                         balan.Status = "Failed";
                         balan.DueTime =DateTime.Now;
@@ -178,14 +178,14 @@ namespace UserAPI.Controllers
                     if (result)
                     {
                         balan.Status= "Success";
-                        order.StatusPayment = "Success";
+                        order.PaymentStatus = "Success";
                         order.Status = "Success";
                         balan.DueTime = DateTime.Now;
                         var productKeys = request.Products; 
 
                         foreach (var productId in productKeys)
                         {
-                            var getCart = await this._cart.FindAsync(u => u.ProductID == productId.Key);
+                            var getCart = await this._cart.FindAsync(u => u.ProductTypesID == productId.Key);
 
                             if (getCart != null)
                             {
@@ -213,7 +213,7 @@ namespace UserAPI.Controllers
                 }
                 catch(Exception e)
                 {
-                    order.StatusPayment = "Failed";
+                    order.PaymentStatus = "Failed";
                     order.Status = "Failed";
                     balan.Status = "Failed";
                     balan.DueTime = DateTime.Now;
@@ -245,7 +245,7 @@ namespace UserAPI.Controllers
 
                 foreach (var id in request.Products)
                 {
-                    var checkcart = await this._cart.FindAsync(u => u.UserID == request.UserID && u.ProductID == id.Key);
+                    var checkcart = await this._cart.FindAsync(u => u.UserID == request.UserID && u.ProductTypesID == id.Key);
                     if (checkcart != null)
                     {
                         var getQuatity = await this._productWariant.FindAsync(u => u.ProductID == id.Key && u.IsActive);
@@ -257,7 +257,7 @@ namespace UserAPI.Controllers
 
                         if (id.Value< getQuatity.Stock)
                         {
-                            totelPrice += getQuatity.Price * id.Value;
+                            totelPrice += getQuatity.SellPrice * id.Value;
                         }
                     }
                 }
@@ -287,8 +287,8 @@ namespace UserAPI.Controllers
                         OrderID = orderID,
                         ProductID = id.Key,
                         Quantity = id.Value,
-                        ProductPrice = getQuatity.Price,
-                        TotalPrice = getQuatity.Price * id.Value,
+                        ProductPrice = getQuatity.SellPrice,
+                        TotalPrice = getQuatity.SellPrice * id.Value,
                         Status = "PROCESSING", IsActive =false
                     });
 
@@ -304,11 +304,11 @@ namespace UserAPI.Controllers
                 {
                     ID = orderID,
                     UserID = request.UserID,
-                    TotalsPrice = totelPrice,
+                    TotalPrice = totelPrice,
                     Status = "PROCESSING",
                     CreatedDate = DateTime.Now,
-                    MethodPayment = "wallet",
-                    StatusPayment = "PROCESSING",
+                    PaymentMethod = "wallet",
+                    PaymentStatus = "PROCESSING",
                     Quantity = request.Products.Sum(u => u.Value),
                     OrderCode = ""+ orderCode
 
@@ -335,10 +335,11 @@ namespace UserAPI.Controllers
                         await this._balance.SaveChangesAsync();
                         await this._order.SaveChangesAsync();
                     }
-                    catch
-                    {
-                        order.StatusPayment = "Failed";
-                        order.Status = "Failed";
+                catch
+                {
+                    order.PaymentStatus = "Failed";
+
+                    order.Status = "Failed";
                       /*  balan.Status = "Failed";
                         balan.DueTime = DateTime.Now;
                         balan.MoneyBeforeChange = await _balance.GetBalance(user.Id);
@@ -395,7 +396,7 @@ namespace UserAPI.Controllers
                 }
                 catch (Exception e)
                 {
-                    order.StatusPayment = "Failed";
+                    order.PaymentStatus = "Failed";
                     order.Status = "Failed";
                     await this._order.SaveChangesAsync();
                     return BadRequest(new ErroMess { msg = "Đã xảy ra lỗi trông quá trình mua!33" });

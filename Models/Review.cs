@@ -12,11 +12,11 @@ namespace Models
     {
         [Key]
         public Guid ID { get; set; } = Guid.NewGuid();
-        public string? Cmt { get; set; }
-        public DateTime Datecmt { get; set; } = DateTime.Now;
+        public string? Comment { get; set; }
+        public DateTime CommentDate { get; set; } = DateTime.Now;
 
-        public string? Relay { get; set; }
-        public DateTime? DateRelay { get; set; } = DateTime.Now;
+        public string? Reply { get; set; }
+        public DateTime? ReplyDate { get; set; } = DateTime.Now;
         public bool Status { get; set; } = false;
         public int Rating { get; set; } = 5;
         [ForeignKey("AppUser")]

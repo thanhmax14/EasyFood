@@ -32,7 +32,7 @@ namespace Repository.Categorys
                 .Select(c => new CategoryListViewModel
                 {
                     ID = c.ID,
-                    Img = !string.IsNullOrEmpty(c.Img) ? "/uploads/CategoryImage/" + c.Img : "/uploads/default.png",
+                    Img = !string.IsNullOrEmpty(c.ImageUrl) ? "/uploads/CategoryImage/" + c.ImageUrl : "/uploads/default.png",
                     Name = c.Name,
                     Number = c.Number,
                     Commission = c.Commission,
@@ -76,7 +76,7 @@ namespace Repository.Categorys
                 Name = model.Name,
                 Commission = model.Commission,
                 Number = model.Number,
-                Img = fileName, // Chỉ lưu tên file vào database
+                ImageUrl = fileName, // Chỉ lưu tên file vào database
                 CreatedDate = DateTime.UtcNow,
                 ModifiedDate = null
             };
@@ -142,9 +142,9 @@ namespace Repository.Categorys
                 }
 
                 // Xóa ảnh cũ nếu có
-                if (!string.IsNullOrEmpty(category.Img))
+                if (!string.IsNullOrEmpty(category.ImageUrl))
                 {
-                    string oldImagePath = Path.Combine(uploadsFolder, category.Img);
+                    string oldImagePath = Path.Combine(uploadsFolder, category.ImageUrl);
                     if (File.Exists(oldImagePath))
                     {
                         File.Delete(oldImagePath);
@@ -152,7 +152,7 @@ namespace Repository.Categorys
                 }
 
                 // Cập nhật ảnh mới vào DB
-                category.Img = uniqueFileName;
+                category.ImageUrl = uniqueFileName;
             }
 
             // Cập nhật thông tin danh mục

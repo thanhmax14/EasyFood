@@ -37,14 +37,14 @@ namespace AdminAPI.Controllers
                         {
                             Birthday = user.Birthday,
                             Address = user.Address,
-                            img = user.img,
+                            img = user.ImageUrl,
                             RequestSeller = user.RequestSeller,
-                            isUpdateProfile = user.isUpdateProfile,
+                            isUpdateProfile = user.IsProfileUpdated,
                             ModifyUpdate = user.ModifyUpdate,
                             PhoneNumber = user.PhoneNumber,
                             UserName = user.UserName,
                             Email = user.Email,
-                            IsBanByadmin = user.IsBanByadmin,
+                            IsBanByadmin = user.IsBannedByAdmin,
                         });
                     }
                 }
@@ -74,9 +74,9 @@ namespace AdminAPI.Controllers
                     UserName = user.UserName,
                     PhoneNumber = user.PhoneNumber,
                     ModifyUpdate = user.ModifyUpdate,
-                    isUpdateProfile = user.isUpdateProfile,
+                    isUpdateProfile = user.IsBannedByAdmin,
                     RequestSeller = user.RequestSeller,
-                    img = user.img,
+                    img = user.ImageUrl,
                     Address = user.Address,
                     Birthday = user.Birthday,
                 };
@@ -171,7 +171,7 @@ namespace AdminAPI.Controllers
                     return BadRequest(new { message = "User not found" });
                 }
 
-                user.IsBanByadmin = true; // Cập nhật theo yêu cầu từ client (ẩn hoặc bỏ ẩn)
+                user.IsBannedByAdmin = true; // Cập nhật theo yêu cầu từ client (ẩn hoặc bỏ ẩn)
                 var result = await _userManager.UpdateAsync(user);
 
                 if (!result.Succeeded)
@@ -201,7 +201,7 @@ namespace AdminAPI.Controllers
                 {
                     return BadRequest(new { message = "User not found" });
                 }
-                user.IsBanByadmin = false;
+                user.IsBannedByAdmin = false;
                 var result = await _userManager.UpdateAsync(user);
                 if (!result.Succeeded)
                 {

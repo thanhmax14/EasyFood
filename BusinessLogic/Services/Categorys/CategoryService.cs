@@ -89,7 +89,7 @@ namespace BusinessLogic.Services.Categorys
                 Name = category.Name,
                 Commission = category.Commission,
                 Number = category.Number,
-                Img = category.Img,
+                Img = category.ImageUrl,
                 CreatedDate = category.CreatedDate,
                 ModifiedDate = category.ModifiedDate
             };

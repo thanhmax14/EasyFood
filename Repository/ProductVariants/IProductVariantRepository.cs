@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Repository.ProductVariants
 {
-    public interface IProductVariantRepository : IBaseRepository<Models.ProductVariant>
+    public interface IProductVariantRepository : IBaseRepository<Models.ProductTypes>
     {
     }
 }
