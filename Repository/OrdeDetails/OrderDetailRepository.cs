@@ -3,15 +3,10 @@ using Models;
 using Models.DBContext;
 using Repository.BaseRepository;
 using Repository.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Repository.OrdeDetails
 {
-    public class OrderDetailRepository:BaseRepository<OrderDetail>, IOrderDetailRepository  
+    public class OrderDetailRepository : BaseRepository<OrderDetail>, IOrderDetailRepository
     {
         private readonly EasyFoodDbContext _context;
         public OrderDetailRepository(EasyFoodDbContext context) : base(context)
@@ -30,7 +25,7 @@ namespace Repository.OrdeDetails
                                       from pi in productImages.DefaultIfEmpty() // LEFT JOIN ProductImages
                                       where od.IsActive == true
                                             && o.ID == orderId
-                                            && o.Status == "PROCESSING" // ✅ Thêm điều kiện lọc theo Status
+                                      //&& o.Status == "PROCESSING" // ✅ Thêm điều kiện lọc theo Status
                                       select new OrderDetailSellerViewModel
                                       {
                                           OrderDetailID = od.ID,

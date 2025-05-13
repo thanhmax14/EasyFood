@@ -166,6 +166,5 @@ namespace Models.DBContext
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
       => optionsBuilder.UseSqlServer("Server=DESKTOP-1E1A6I4;Database =EasyFoods;uid=sa;pwd=Thanh;encrypt=true;trustServerCertificate=true;");
 
-
     }
 }
